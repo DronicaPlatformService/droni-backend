@@ -50,14 +50,15 @@ swaggerSources {
                     "jakarta":true,
                     "useBeanValidation":true,
                     "dateLibrary": "java8",
-                    "java21":true,
-
-]
+                    "java21":true
+            ]
         }
     }
 
 }
-
+compileJava.dependsOn(swaggerSources.droni.code)
+sourceSets.main.java.srcDir("${swaggerSources.droni.code.outputDir}/src/main/java")
+sourceSets.main.resources.srcDir("${swaggerSources.droni.code.outputDir}/src/main/resources")
 tasks.named('test') {
     useJUnitPlatform()
 }
