@@ -1,0 +1,4 @@
+{
+  "modelPackage": "droni.backend.model",
+  "apiPackage": "droni.backend.api"
+}

@@ -1,0 +1,24 @@
+openapi: 3.1.0
+servers:
+    - description: localhost
+      url: http://localhost:8080
+info:
+  title: droni-api
+  description: |
+    droni-api <br />
+  termsOfService: https://swagger.io/terms/
+  license:
+    name: Apache License Version 2.0
+    url: https://www.apache.org/licenses/LICENSE-2.0
+  version: '0.0.1'
+tags:
+  - name: default
+    description: default tag
+paths:
+  /test:
+    get:
+      tags:
+        - default
+      summary: test api
+      description: swagger code gen test api
+
