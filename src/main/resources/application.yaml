@@ -1,3 +1,35 @@
+spring:
+  profiles:
+    group:
+      "local": "default,local"
+      "dev": "default,dev"
+      "rel": "default, rel"
+      "prod": "default,prod"
+---
+spring:
+  config:
+    activate:
+      on-profile: default
+  application:
+    name: droni-backend-api
+  datasource:
+    url: jdbc:postgresql://${droni.postgresql.ip}:${droni.postgresql.port}/${droni.postgresql.database}
+    username: droniadmin
+    password: droni
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      max-lifetime: 50000
+      maximum-pool-size: 10
+  jpa:
+    show-sql: false
+    open-in-view: true
+    database: postgresql
+    properties:
+      hibernate:
+        format_sql: true
+server:
+  port: 8080
+# OpenAPI sprigDOC configuration
 springdoc:
   swagger-ui:
     path: /swagger-ui.html
@@ -7,3 +39,18 @@ springdoc:
     display-request-duration: true
   default-consumes-media-type: application/json
   default-produces-media-type: application/json
+
+---
+spring:
+  config:
+    activate:
+      on-profile: local
+  jpa:
+    hibernate:
+      ddl-auto: none
+droni:
+  postgresql:
+    ip: localhost
+    port: 5432
+    database: droni
+
