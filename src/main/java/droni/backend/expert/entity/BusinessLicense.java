@@ -1,4 +1,4 @@
-package droni.backend.expert;
+package droni.backend.expert.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
