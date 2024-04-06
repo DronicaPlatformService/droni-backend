@@ -28,8 +28,8 @@ public class DroniUser {
     private String refreshToken;
     private boolean notificationEnabled;
     private boolean marketingEnabled;
-    @Builder.Default
-    private LocalDateTime createdAt = LocalDateTime.now();
+    @Column(updatable = false)
+    private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     private LocalDateTime deletedAt;
 
