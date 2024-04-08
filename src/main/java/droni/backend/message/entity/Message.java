@@ -2,8 +2,6 @@ package droni.backend.message.entity;
 
 import droni.backend.attacthfile.entity.DroniFile;
 import droni.backend.droniuser.entity.DroniUser;
-import droni.backend.expert.entity.DroniExpert;
-import droni.backend.insectcontrol.entity.InsectControlRequest;
 import droni.backend.insectcontrol.entity.Land;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -21,7 +19,7 @@ import java.time.LocalDateTime;
 public class Message {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long message_id;
+    private Long messageId;
     @ManyToOne
     @JoinColumn(name = "message_group_id", nullable = false)
     private MessageGroup group;
