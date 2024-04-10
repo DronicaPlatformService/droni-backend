@@ -2,7 +2,7 @@ package droni.backend.message.entity;
 
 import droni.backend.droniuser.entity.DroniUser;
 import droni.backend.expert.entity.DroniExpert;
-import droni.backend.message.dto.MessageGroupStatus;
+import droni.backend.message.dto.DroniServiceKind;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -27,11 +27,10 @@ public class MessageGroup {
     @JoinColumn(name = "expert_id", nullable = false)
     private DroniExpert expert;
     @Column(nullable = false)
-    private Long serviceRequestId;
+    private Long serviceId;
     @Enumerated(value = EnumType.ORDINAL)
-    private MessageGroupStatus status;
+    private DroniServiceKind service;
     private LocalDateTime lastConnection;
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
 }

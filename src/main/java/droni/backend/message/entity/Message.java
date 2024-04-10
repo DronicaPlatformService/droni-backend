@@ -29,7 +29,8 @@ public class Message {
     @ManyToOne
     @JoinColumn(name = "message_to", nullable = false)
     private DroniUser toUser;
-    private Boolean isPinned;
+    @Column(name = "is_pinned") @Builder.Default
+    private boolean pinned = false;
     @ManyToOne
     @JoinColumn(name = "reply_message_id", nullable = false)
     private Message reply;
@@ -42,6 +43,4 @@ public class Message {
     private Land land;
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
-    private LocalDateTime deletedAt;
-    private LocalDateTime updatedAt;
 }
