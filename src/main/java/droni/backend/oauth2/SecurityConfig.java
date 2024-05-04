@@ -1,5 +1,6 @@
 package droni.backend.oauth2;
 
+import droni.backend.oauth2.handler.DroniOAuth2AuthFailureHandler;
 import droni.backend.oauth2.handler.DroniOAuth2AuthSuccessHandler;
 import droni.backend.oauth2.jwt.JwtAuthorizationFilter;
 import droni.backend.oauth2.service.DroniOAuthUserService;
@@ -21,7 +22,7 @@ public class SecurityConfig {
     private final JwtAuthorizationFilter jwtAuthorizationFilter;
     private final DroniCookieAuthorizationRequestRepository droniCookieAuthorizationRequestRepository;
     private final DroniOAuth2AuthSuccessHandler successHandler;
-
+    private final DroniOAuth2AuthFailureHandler failureHandler;
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.csrf(AbstractHttpConfigurer::disable)
@@ -32,6 +33,7 @@ public class SecurityConfig {
                         conigurer -> conigurer.userInfoEndpoint(config -> config.userService(droniOAuthUserService))
                                 .authorizationEndpoint(config -> config.authorizationRequestRepository(droniCookieAuthorizationRequestRepository))
                                 .successHandler(successHandler)
+                                .failureHandler(failureHandler)
                 );
         http.addFilterBefore(jwtAuthorizationFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
