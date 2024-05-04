@@ -1,6 +1,7 @@
 HELP.md
 .gradle
 .generated
+**/src/main/resources/application-auth.yaml
 build/
 !gradle/wrapper/gradle-wrapper.jar
 !**/src/main/**/build/
