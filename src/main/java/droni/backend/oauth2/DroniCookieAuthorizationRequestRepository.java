@@ -11,6 +11,8 @@ import org.springframework.stereotype.Component;
 public class DroniCookieAuthorizationRequestRepository implements AuthorizationRequestRepository<OAuth2AuthorizationRequest> {
     public static final String OAUTH2_AUTHORIZATION_REQUEST_COOKIE_NAME = "oauth2_auth_request";
     public static final String REDIRECT_URI_PARAM_COOKIE_NAME = "redirect_uri";
+    public final static String REFRESH_TOKEN = "refresh_token";
+
     public final String MODE_PARAM_COOKIE_NAME = "mode";
 
     @Override
@@ -27,7 +29,7 @@ public class DroniCookieAuthorizationRequestRepository implements AuthorizationR
 
     @Override
     public OAuth2AuthorizationRequest removeAuthorizationRequest(HttpServletRequest request, HttpServletResponse response) {
-        return null;
+        return this.loadAuthorizationRequest(request);
     }
 
     public void removeAuthorizationRequestCookies(HttpServletRequest request, HttpServletResponse response) {

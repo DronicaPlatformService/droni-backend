@@ -1,10 +1,10 @@
 spring:
   profiles:
     group:
-      "local": "default,local"
-      "dev": "default,dev"
-      "rel": "default, rel"
-      "prod": "default,prod"
+      "local": "default,auth,local"
+      "dev": "default,auth,dev"
+      "rel": "default,auth,rel"
+      "prod": "default,auth,prod"
 ---
 spring:
   config:
@@ -27,6 +27,8 @@ spring:
     properties:
       hibernate:
         format_sql: true
+        hbm2ddl:
+          auto: none
 server:
   port: 8080
 # OpenAPI sprigDOC configuration

@@ -1,5 +1,6 @@
 package droni.backend.oauth2.service;
 
+import droni.backend.droniuser.entity.DroniUser;
 import droni.backend.oauth2.user.OAuth2UserInfo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
@@ -26,7 +27,7 @@ public class OAuth2UserPrincipal implements OAuth2User, UserDetails {
 
     @Override
     public String getUsername() {
-        return userInfo.getEmail();
+        return userInfo.getNickname();
     }
 
     @Override
@@ -57,5 +58,24 @@ public class OAuth2UserPrincipal implements OAuth2User, UserDetails {
     @Override
     public Map<String, Object> getAttributes() {
         return userInfo.getAttributes();
+    }
+
+    public String getOAuth2Id() {
+        return this.userInfo.getId();
+    }
+
+    public DroniUser newDroniUserFromPrincipal(String refreshToken) {
+        return DroniUser.builder()
+                .name(this.getName())
+                .email(userInfo.getEmail())
+                .profileImage(userInfo.getProfileImageUrl())
+                .oauth2id(this.getOAuth2Id())
+                .provider(userInfo.getProvider())
+                .nickname(userInfo.getNickname())
+                .timeZone("Asia/Seoul")
+                .refreshToken(refreshToken)
+                .notificationEnabled(true)
+                .marketingEnabled(true)
+                .build();
     }
 }
