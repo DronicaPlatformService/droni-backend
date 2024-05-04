@@ -1,8 +1,9 @@
-package droni.backend.oauth2;
+package droni.backend.config.security;
 
+import droni.backend.oauth2.DroniCookieAuthorizationRequestRepository;
 import droni.backend.oauth2.handler.DroniOAuth2AuthFailureHandler;
 import droni.backend.oauth2.handler.DroniOAuth2AuthSuccessHandler;
-import droni.backend.oauth2.jwt.JwtAuthorizationFilter;
+import droni.backend.oauth2.jwt.TokenAuthenticationFilter;
 import droni.backend.oauth2.service.DroniOAuthUserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -19,7 +20,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @RequiredArgsConstructor
 public class SecurityConfig {
     private final DroniOAuthUserService droniOAuthUserService;
-    private final JwtAuthorizationFilter jwtAuthorizationFilter;
+    private final TokenAuthenticationFilter tokenAuthenticationFilter;
     private final DroniCookieAuthorizationRequestRepository droniCookieAuthorizationRequestRepository;
     private final DroniOAuth2AuthSuccessHandler successHandler;
     private final DroniOAuth2AuthFailureHandler failureHandler;
@@ -35,7 +36,7 @@ public class SecurityConfig {
                                 .successHandler(successHandler)
                                 .failureHandler(failureHandler)
                 );
-        http.addFilterBefore(jwtAuthorizationFilter, UsernamePasswordAuthenticationFilter.class);
+        http.addFilterBefore(tokenAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
 }
