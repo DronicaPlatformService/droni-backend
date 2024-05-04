@@ -28,8 +28,8 @@ public class NaverOAuth2UserInfo implements OAuth2UserInfo{
 
 
     @Override
-    public OAuth2Provider getProvider() {
-        return OAuth2Provider.NAVER;
+    public OAuth2ProviderEnum getProvider() {
+        return OAuth2ProviderEnum.NAVER;
     }
 
     @Override
