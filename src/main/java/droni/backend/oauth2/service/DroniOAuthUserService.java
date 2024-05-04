@@ -15,15 +15,16 @@ import org.springframework.util.StringUtils;
 /**
  * OAuth2LoginAuthenticationFilter 에서 해당 클래스의 load user가 호출된다.
  * access token 을 provider 로 부터 받았을 때 실행되는 클래스
- * access token 으로 resource server 에서 정보를 받아와야한다.
+ * access token 으로 resource server 에서 정보를 받고 가공하는 서비스
  */
 @Service
 public class DroniOAuthUserService extends DefaultOAuth2UserService {
     @Override
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
+        // DefaultService에서 accesstoken 을 사용해서 resource server에서 User를 받아온다.
         OAuth2User OAuth2User = super.loadUser(userRequest);
         try {
-           return this.processOAuth2User(userRequest, OAuth2User);
+            return this.processOAuth2User(userRequest, OAuth2User);
         } catch (AuthenticationException exception) {
             throw exception;
         } catch (Exception e) {
