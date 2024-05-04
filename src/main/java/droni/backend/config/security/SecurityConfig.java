@@ -15,6 +15,8 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import static org.springframework.security.web.util.matcher.AntPathRequestMatcher.antMatcher;
+
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
@@ -24,12 +26,15 @@ public class SecurityConfig {
     private final DroniCookieAuthorizationRequestRepository droniCookieAuthorizationRequestRepository;
     private final DroniOAuth2AuthSuccessHandler successHandler;
     private final DroniOAuth2AuthFailureHandler failureHandler;
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.csrf(AbstractHttpConfigurer::disable)
                 .formLogin(AbstractHttpConfigurer::disable)
                 .httpBasic(AbstractHttpConfigurer::disable)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .authorizeHttpRequests((request) -> request
+                        .anyRequest().authenticated())
                 .oauth2Login(
                         conigurer -> conigurer.userInfoEndpoint(config -> config.userService(droniOAuthUserService))
                                 .authorizationEndpoint(config -> config.authorizationRequestRepository(droniCookieAuthorizationRequestRepository))

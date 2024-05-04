@@ -49,7 +49,7 @@ spring:
       on-profile: local
   jpa:
     hibernate:
-      ddl-auto: none
+      ddl-auto: validate
 droni:
   postgresql:
     ip: localhost

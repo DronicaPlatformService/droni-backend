@@ -27,7 +27,7 @@ public class OAuth2UserPrincipal implements OAuth2User, UserDetails {
 
     @Override
     public String getUsername() {
-        return userInfo.getNickname();
+        return userInfo.getEmail();
     }
 
     @Override
@@ -68,8 +68,9 @@ public class OAuth2UserPrincipal implements OAuth2User, UserDetails {
         return DroniUser.builder()
                 .name(this.getName())
                 .email(userInfo.getEmail())
+                .phoneNumber("EMPTY_NUMBER")
                 .profileImage(userInfo.getProfileImageUrl())
-                .oauth2id(this.getOAuth2Id())
+                .oauthId(this.getOAuth2Id())
                 .provider(userInfo.getProvider())
                 .nickname(userInfo.getNickname())
                 .timeZone("Asia/Seoul")

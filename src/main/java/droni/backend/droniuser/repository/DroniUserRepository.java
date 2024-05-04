@@ -7,5 +7,5 @@ import java.util.Optional;
 
 public interface DroniUserRepository extends JpaRepository<DroniUser, Integer> {
 
-    Optional<DroniUser> findDroniUserByOauth2id(String oauth2Id);
+    Optional<DroniUser> findDroniUserByOauthId(String oauthId);
 }

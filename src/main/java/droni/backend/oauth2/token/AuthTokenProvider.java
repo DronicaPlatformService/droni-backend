@@ -2,8 +2,9 @@ package droni.backend.oauth2.token;
 
 
 import droni.backend.oauth2.execption.TokenValidFailedException;
-import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
+import io.jsonwebtoken.security.SignatureException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -51,5 +52,29 @@ public class AuthTokenProvider {
         } else {
             throw new TokenValidFailedException("Invalid Token Exception");
         }
+    }
+    public boolean validateToken(String token) {
+
+        try {
+            // jwt claim parsing 성공시 true 반환
+            Jwts.parserBuilder()
+                    .setSigningKey(key)
+                    .build()
+                    .parseClaimsJws(token);
+
+            return true;
+        } catch (UnsupportedJwtException | MalformedJwtException exception) {
+            log.error("JWT is not valid");
+        } catch (SignatureException exception) {
+            log.error("JWT signature validation fails");
+        } catch (ExpiredJwtException exception) {
+            log.error("JWT is expired");
+        } catch (IllegalArgumentException exception) {
+            log.error("JWT is null or empty or only whitespace");
+        } catch (Exception exception) {
+            log.error("JWT validation fails", exception);
+        }
+
+        return false;
     }
 }

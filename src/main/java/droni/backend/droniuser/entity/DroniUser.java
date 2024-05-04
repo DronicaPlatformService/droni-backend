@@ -27,10 +27,11 @@ public class DroniUser {
     private String name;
     private String profileImage;
     @Column(unique = true, updatable = false)
-    private String oauth2id;
+    private String oauthId;
     @Enumerated(value = EnumType.STRING)
     private ProviderType provider;
     private String nickname;
+    @Column(name = "zone_code")
     private String timeZone;
     private String address;
     private String addressDetail;

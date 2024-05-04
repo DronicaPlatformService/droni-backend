@@ -49,4 +49,8 @@ public class DroniCookieUtils {
         cookie.setMaxAge(maxAge);
         response.addCookie(cookie);
     }
+    public static String serialize(Object obj) {
+        return Base64.getUrlEncoder()
+                .encodeToString(SerializationUtils.serialize(obj));
+    }
 }

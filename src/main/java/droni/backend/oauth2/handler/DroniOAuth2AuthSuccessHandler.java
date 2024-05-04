@@ -107,7 +107,8 @@ public class DroniOAuth2AuthSuccessHandler extends SimpleUrlAuthenticationSucces
     }
 
     private void authenticateOrRegisterUser(OAuth2UserPrincipal userPrincipal, AuthToken refreshToken) {
-        Optional<DroniUser> optionalDroniUser = userRepository.findDroniUserByOauth2id(userPrincipal.getOAuth2Id());
+        // 같은 이름, 이메일의 계정이 있을 경우 병합 로직 나중에
+        Optional<DroniUser> optionalDroniUser = userRepository.findDroniUserByOauthId(userPrincipal.getOAuth2Id());
         if (optionalDroniUser.isPresent()) {
             DroniUser droniUser = optionalDroniUser.get();
             droniUser.updateRefreshToken(refreshToken.getToken());

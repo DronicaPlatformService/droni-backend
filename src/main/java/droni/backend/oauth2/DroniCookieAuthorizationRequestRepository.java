@@ -1,5 +1,6 @@
 package droni.backend.oauth2;
 
+import com.nimbusds.oauth2.sdk.util.StringUtils;
 import droni.backend.oauth2.util.DroniCookieUtils;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -12,6 +13,7 @@ public class DroniCookieAuthorizationRequestRepository implements AuthorizationR
     public static final String OAUTH2_AUTHORIZATION_REQUEST_COOKIE_NAME = "oauth2_auth_request";
     public static final String REDIRECT_URI_PARAM_COOKIE_NAME = "redirect_uri";
     public final static String REFRESH_TOKEN = "refresh_token";
+    private final static int cookieExpireSeconds = 180;
 
     public final String MODE_PARAM_COOKIE_NAME = "mode";
 
@@ -24,7 +26,18 @@ public class DroniCookieAuthorizationRequestRepository implements AuthorizationR
 
     @Override
     public void saveAuthorizationRequest(OAuth2AuthorizationRequest authorizationRequest, HttpServletRequest request, HttpServletResponse response) {
+        if (authorizationRequest == null) {
+            DroniCookieUtils.deleteCookie(request, response, OAUTH2_AUTHORIZATION_REQUEST_COOKIE_NAME);
+            DroniCookieUtils.deleteCookie(request, response, REDIRECT_URI_PARAM_COOKIE_NAME);
+            DroniCookieUtils.deleteCookie(request, response, REFRESH_TOKEN);
+            return;
+        }
 
+        DroniCookieUtils.addCookie(response, OAUTH2_AUTHORIZATION_REQUEST_COOKIE_NAME, DroniCookieUtils.serialize(authorizationRequest), cookieExpireSeconds);
+        String redirectUriAfterLogin = request.getParameter(REDIRECT_URI_PARAM_COOKIE_NAME);
+        if (StringUtils.isNotBlank(redirectUriAfterLogin)) {
+            DroniCookieUtils.addCookie(response, REDIRECT_URI_PARAM_COOKIE_NAME, redirectUriAfterLogin, cookieExpireSeconds);
+        }
     }
 
     @Override
@@ -36,5 +49,6 @@ public class DroniCookieAuthorizationRequestRepository implements AuthorizationR
         DroniCookieUtils.deleteCookie(request, response, OAUTH2_AUTHORIZATION_REQUEST_COOKIE_NAME);
         DroniCookieUtils.deleteCookie(request, response, REDIRECT_URI_PARAM_COOKIE_NAME);
         DroniCookieUtils.deleteCookie(request, response, MODE_PARAM_COOKIE_NAME);
+        DroniCookieUtils.deleteCookie(request, response, REFRESH_TOKEN);
     }
 }
