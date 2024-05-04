@@ -27,9 +27,6 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
-    testImplementation 'org.springframework.boot:spring-boot-starter-test'
-    testImplementation 'org.springframework:spring-webflux'
-    testImplementation 'org.springframework.graphql:spring-graphql-test'
 
     // OpenAPI UI and codegen
     implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.3.0'
@@ -39,11 +36,21 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 
     // postgres driver
-    implementation group: 'org.postgresql', name:'postgresql', version: '42.7.3'
+    implementation group: 'org.postgresql', name: 'postgresql', version: '42.7.3'
 
     // https://mvnrepository.com/artifact/org.hibernate/hibernate-validator
     implementation group: 'org.hibernate', name: 'hibernate-validator', version: '8.0.1.Final'
 
+    //spring security
+    implementation "org.springframework.boot:spring-boot-starter-security"
+    implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
+
+    // test dependency
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.springframework:spring-webflux'
+    testImplementation 'org.springframework.graphql:spring-graphql-test'
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.3.1'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.3.1'
 }
 swaggerSources {
     droni {
@@ -53,12 +60,12 @@ swaggerSources {
             outputDir = file("$rootDir/.generated")
             configFile = file("$rootDir/src/main/resources/codegenConfig.json")
             additionalProperties = [
-                    "interfaceOnly":true,
+                    "interfaceOnly"          : true,
                     "hideGenerationTimestamp": true,
-                    "jakarta":true,
-                    "useBeanValidation":true,
-                    "dateLibrary": "java8",
-                    "java21":true
+                    "jakarta"                : true,
+                    "useBeanValidation"      : true,
+                    "dateLibrary"            : "java8",
+                    "java21"                 : true
             ]
         }
     }
@@ -72,5 +79,5 @@ sourceSets {
 }
 
 clean.doFirst {
-  delete "${swaggerSources.droni.code.outputDir}"
+    delete "${swaggerSources.droni.code.outputDir}"
 }
