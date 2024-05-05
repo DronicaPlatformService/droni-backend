@@ -12,13 +12,41 @@ info:
     url: https://www.apache.org/licenses/LICENSE-2.0
   version: '0.0.1'
 tags:
-  - name: default
-    description: default tag
+  - name: homex
+    description: home API
 paths:
-  /test:
+  /home/banner:
     get:
       tags:
-        - default
-      summary: test api
-      description: swagger code gen test api
-
+        - home
+      summary: get banner api
+      description: get banner image for home page
+      operationId: getBanner
+      responses:
+        200:
+          description: ok
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/DroniFile'
+        404:
+          description: no banner images
+        500:
+          description: internal server error
+components:
+  schemas:
+    DroniFile:
+      title: file
+      description: file object
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+          example: fileName
+        path:
+          type: string

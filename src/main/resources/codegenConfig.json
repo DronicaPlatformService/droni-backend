@@ -1,4 +1,5 @@
 {
-  "modelPackage": "droni.backend.model",
-  "apiPackage": "droni.backend.api"
+  "library": "spring-mvc",
+  "apiPackage": "backend.api",
+  "modelPackage": "backend.model"
 }
