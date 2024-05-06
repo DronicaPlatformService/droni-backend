@@ -64,6 +64,8 @@ swaggerSources {
             language = 'spring'
             outputDir = file("$rootDir/.generated")
             configFile = file("$rootDir/src/main/resources/codegenConfig.json")
+            components = ['models','apis']
+            jvmArgs = ['--add-opens=java.base/java.util=ALL-UNNAMED']
             additionalProperties = [
                     "interfaceOnly"          : true,
                     "hideGenerationTimestamp": true,

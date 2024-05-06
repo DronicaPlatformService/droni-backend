@@ -30,7 +30,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/File'
+                  $ref: '#/components/schemas/DroniFile'
         404:
           description: no banner images
         500:
@@ -57,7 +57,7 @@ paths:
           description: internal server error
 components:
   schemas:
-    File:
+    DroniFile:
       title: file
       description: file object
       type: object
