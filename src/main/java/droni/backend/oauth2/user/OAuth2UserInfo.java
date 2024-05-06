@@ -3,7 +3,7 @@ package droni.backend.oauth2.user;
 import java.util.Map;
 
 public interface OAuth2UserInfo {
-    OAuth2Provider getProvider();
+    ProviderType getProvider();
 
     String getAccessToken();
 
