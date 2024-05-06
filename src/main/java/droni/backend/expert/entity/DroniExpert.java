@@ -20,6 +20,7 @@ public class DroniExpert {
     @OneToOne
     @JoinColumn(name = "user_id", nullable = false)
     private DroniUser user;
+    @Builder.Default
     private Integer completeRequest = 0;
     private String introduction;
     @OneToOne
