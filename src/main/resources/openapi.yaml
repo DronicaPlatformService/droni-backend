@@ -12,10 +12,10 @@ info:
     url: https://www.apache.org/licenses/LICENSE-2.0
   version: '0.0.1'
 tags:
-  - name: homex
+  - name: home
     description: home API
 paths:
-  /home/banner:
+  /api/home/banner:
     get:
       tags:
         - home
@@ -35,6 +35,26 @@ paths:
           description: no banner images
         500:
           description: internal server error
+  /api/home/popular-pilot:
+    get:
+      tags:
+        - home
+      summary: get popular pilot api
+      description: get popular pilot user profile for home page
+      operationId: getPopularPilot
+      responses:
+        200:
+          description: ok
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PilotProfile'
+        404:
+          description: no pilot user exist
+        500:
+          description: internal server error
 components:
   schemas:
     DroniFile:
@@ -50,3 +70,18 @@ components:
           example: fileName
         path:
           type: string
+          example: http://filePathURL
+    PilotProfile:
+      title: pilot profile
+      description: pilot profile object
+      type: object
+      properties:
+        expertId:
+          type: string
+          format: int64
+        nickName:
+          type: string
+          example: user nickname
+        imageUrl:
+          type: string
+          example: http:/imageURL

@@ -1,8 +1,11 @@
-package droni.backend.oauth2.user;
+package droni.backend.oauth2.user.impl;
+
+import droni.backend.oauth2.user.OAuth2UserInfo;
+import droni.backend.oauth2.user.ProviderType;
 
 import java.util.Map;
 
-public class NaverOAuth2UserInfo implements OAuth2UserInfo{
+public class NaverOAuth2UserInfo implements OAuth2UserInfo {
     private final Map<String, Object> attributes;
     private final String accessToken;
     private final String id;
@@ -28,8 +31,8 @@ public class NaverOAuth2UserInfo implements OAuth2UserInfo{
 
 
     @Override
-    public OAuth2Provider getProvider() {
-        return OAuth2Provider.NAVER;
+    public ProviderType getProvider() {
+        return ProviderType.NAVER;
     }
 
     @Override
