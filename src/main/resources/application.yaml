@@ -64,10 +64,10 @@ spring:
   jpa:
     hibernate:
       ddl-auto: validate
-  droni:
-    postgresql:
-      ip: localhost
-      port: 5432
-      database: droni
+droni:
+  postgresql:
+    ip: localhost
+    port: 5432
+    database: droni
 server:
   port: 8086
