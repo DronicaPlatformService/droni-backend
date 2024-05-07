@@ -2,7 +2,7 @@ plugins {
     id 'java'
     id 'org.springframework.boot' version '3.2.4'
     id 'io.spring.dependency-management' version '1.1.3'
-    id 'org.hidetake.swagger.generator' version '2.19.2'
+    id "org.openapi.generator" version "7.5.0"
 }
 
 group = 'droni'
@@ -30,7 +30,9 @@ dependencies {
 
     // OpenAPI UI and codegen
     implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.3.0'
-    swaggerCodegen 'io.swagger.codegen.v3:swagger-codegen-cli:3.0.52'
+    implementation 'org.openapitools:openapi-generator:7.5.0'
+    implementation "org.openapitools:openapi-generator-gradle-plugin:7.5.0"
+    implementation 'org.openapitools:jackson-databind-nullable:0.2.6'
 
     // jpa 설정
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
@@ -57,34 +59,27 @@ dependencies {
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.3.1'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.3.1'
 }
-swaggerSources {
-    droni {
-        inputFile = file("$rootDir/src/main/resources/openapi.yaml")
-        code {
-            language = 'spring'
-            outputDir = file("$rootDir/.generated")
-            configFile = file("$rootDir/src/main/resources/codegenConfig.json")
-            components = ['models','apis']
-            jvmArgs = ['--add-opens=java.base/java.util=ALL-UNNAMED']
-            additionalProperties = [
-                    "interfaceOnly"          : true,
-                    "hideGenerationTimestamp": true,
-                    "jakarta"                : true,
-                    "useBeanValidation"      : true,
-                    "dateLibrary"            : "java8",
-                    "java21"                 : true
-            ]
-        }
-    }
 
+openApiGenerate {
+    generatorName.set("spring")
+    library.set("spring-boot")
+    inputSpec.set(project.file("$rootDir/src/main/resources/openapi.yaml").absolutePath)
+    outputDir.set(project.file("$buildDir/.swagger-generated").absolutePath)
+    apiPackage.set("backend.generated-api")
+    modelPackage.set("backend.generated-model")
+    configOptions.set([
+            interfaceOnly    : "true",
+            useBeanValidation: "true",
+            dateLibrary: "java8",
+            useSpringBoot3: "true",
+            useTags: "true"
+
+    ])
 }
-compileJava.dependsOn(swaggerSources.droni.code)
 sourceSets {
     main {
-        java.srcDir("${swaggerSources.droni.code.outputDir}/src/main/java")
+        java{
+            srcDir("$buildDir/.swagger-generated/src/main/java")
+        }
     }
-}
-
-clean.doFirst {
-    delete "${swaggerSources.droni.code.outputDir}"
 }
