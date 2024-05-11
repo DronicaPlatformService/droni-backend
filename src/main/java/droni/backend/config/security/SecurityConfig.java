@@ -3,6 +3,7 @@ package droni.backend.config.security;
 import droni.backend.oauth2.DroniCookieAuthorizationRequestRepository;
 import droni.backend.oauth2.handler.DroniOAuth2AuthFailureHandler;
 import droni.backend.oauth2.handler.DroniOAuth2AuthSuccessHandler;
+import droni.backend.oauth2.jwt.JwtAuthEntryPoint;
 import droni.backend.oauth2.jwt.TokenAuthenticationFilter;
 import droni.backend.oauth2.service.DroniOAuthUserService;
 import lombok.RequiredArgsConstructor;
@@ -26,6 +27,7 @@ public class SecurityConfig {
     private final DroniCookieAuthorizationRequestRepository droniCookieAuthorizationRequestRepository;
     private final DroniOAuth2AuthSuccessHandler successHandler;
     private final DroniOAuth2AuthFailureHandler failureHandler;
+    private final JwtAuthEntryPoint jwtAuthEntryPoint;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -39,6 +41,7 @@ public class SecurityConfig {
                         .requestMatchers(antMatcher("/swagger-ui/**")).permitAll()
                         .requestMatchers(antMatcher("/v3/api-docs/**")).permitAll()
                         .anyRequest().authenticated())
+                .exceptionHandling((exceptionConfig) -> exceptionConfig.authenticationEntryPoint(jwtAuthEntryPoint))
                 .oauth2Login(
                         conigurer -> conigurer.userInfoEndpoint(config -> config.userService(droniOAuthUserService))
                                 .authorizationEndpoint(config -> config.authorizationRequestRepository(droniCookieAuthorizationRequestRepository))
@@ -48,4 +51,5 @@ public class SecurityConfig {
         http.addFilterBefore(tokenAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
+
 }
