@@ -78,7 +78,7 @@ public class DroniOAuth2AuthSuccessHandler extends SimpleUrlAuthenticationSucces
             log.info("accessToken = " + accessToken.getToken());
         }
         long refreshTokenExpiry = now.getTime() + authProperties.getAuth().getRefreshTokenExpiry();
-        AuthToken refreshToken = tokenProvider.createAuthToken(authProperties.getAuth().getTokenSecret(), new Date(refreshTokenExpiry));
+        AuthToken refreshToken = tokenProvider.createAuthToken(oAuth2UserPrincipal.getOAuth2Id() + authProperties.getAuth().getTokenSecret(), new Date(refreshTokenExpiry));
 
         this.authenticateOrRegisterUser(oAuth2UserPrincipal, refreshToken);
 
