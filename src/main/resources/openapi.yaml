@@ -1,7 +1,7 @@
 openapi: 3.1.0
 servers:
-    - description: localhost
-      url: http://localhost:8080
+  - description: localhost
+    url: http://localhost:8080
 info:
   title: droni-api
   description: |
@@ -14,8 +14,12 @@ info:
 tags:
   - name: home
     description: home API
+  - name: test
+    description: test API
+security:
+  - bearer-key: []
 paths:
-  /api/home/banner:
+  /home/banner:
     get:
       tags:
         - home
@@ -35,7 +39,7 @@ paths:
           description: no banner images
         500:
           description: internal server error
-  /api/home/popular-pilot:
+  /home/popular-pilot:
     get:
       tags:
         - home
@@ -55,6 +59,30 @@ paths:
           description: no pilot user exist
         500:
           description: internal server error
+  /test:
+    get:
+      tags:
+        - test
+      description: test api
+      responses:
+        200:
+          description: ok
+          content:
+            application/json:
+              schema:
+                type: string
+  /test2:
+    get:
+      tags:
+        - test
+      description: test api
+      responses:
+        200:
+          description: ok
+          content:
+            application/json:
+              schema:
+                type: string
 components:
   schemas:
     DroniFile:
@@ -85,3 +113,9 @@ components:
         imageUrl:
           type: string
           example: http:/imageURL
+  securitySchemes:
+    bearer-key:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+

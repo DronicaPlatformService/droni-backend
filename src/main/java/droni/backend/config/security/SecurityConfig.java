@@ -34,6 +34,10 @@ public class SecurityConfig {
                 .httpBasic(AbstractHttpConfigurer::disable)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests((request) -> request
+                        .requestMatchers("/test2").permitAll()
+                        .requestMatchers("/favicon.ico").permitAll()
+                        .requestMatchers(antMatcher("/swagger-ui/**")).permitAll()
+                        .requestMatchers(antMatcher("/v3/api-docs/**")).permitAll()
                         .anyRequest().authenticated())
                 .oauth2Login(
                         conigurer -> conigurer.userInfoEndpoint(config -> config.userService(droniOAuthUserService))

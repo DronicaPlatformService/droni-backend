@@ -13,7 +13,7 @@ public class DroniCookieAuthorizationRequestRepository implements AuthorizationR
     public static final String OAUTH2_AUTHORIZATION_REQUEST_COOKIE_NAME = "oauth2_auth_request";
     public static final String REDIRECT_URI_PARAM_COOKIE_NAME = "redirect_uri";
     public final static String REFRESH_TOKEN = "refresh_token";
-    private final static int cookieExpireSeconds = 180;
+    public final static int cookieExpireSeconds = 180;
 
     public final String MODE_PARAM_COOKIE_NAME = "mode";
 

@@ -15,28 +15,32 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.io.IOException;
-import java.net.URI;
 import java.util.Date;
 import java.util.Objects;
 import java.util.Optional;
 
+import static droni.backend.oauth2.DroniCookieAuthorizationRequestRepository.REDIRECT_URI_PARAM_COOKIE_NAME;
 import static droni.backend.oauth2.DroniCookieAuthorizationRequestRepository.REFRESH_TOKEN;
 
 @Slf4j
 @Component
 @RequiredArgsConstructor
 public class DroniOAuth2AuthSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
+    @Value("${spring.profiles.active}")
+    private String activeProfile;
     private final DroniCookieAuthorizationRequestRepository cookieAuthorizationRequestRepository;
     private final AppAuthProperties authProperties;
     private final AuthTokenProvider tokenProvider;
     private final DroniUserRepository userRepository;
-    private final String defaultTargetUrl = "/";
+    //fixme : default target id 변경
+    private final String defaultTargetUrl = "/test2";
 
     /**
      * 유저가 oauth2 인증에 성공했을 때 -> access token 발급해서 요청했던 페이지에 실어서 redirect
@@ -58,7 +62,7 @@ public class DroniOAuth2AuthSuccessHandler extends SimpleUrlAuthenticationSucces
      * 로그인 시에 토큰 발급 후에 redirect uri를 반환하는 메소드
      */
     protected String determineTargetUrl(HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
-        String redirectUrlString = DroniCookieUtils.getCookie(request, "redirect_url")
+        String redirectUrlString = DroniCookieUtils.getCookie(request, REDIRECT_URI_PARAM_COOKIE_NAME)
                 .map(Cookie::getValue)
                 .orElse(defaultTargetUrl);
         OAuth2UserPrincipal oAuth2UserPrincipal = this.getOAuth2UserPrincipal(authentication);
@@ -69,8 +73,10 @@ public class DroniOAuth2AuthSuccessHandler extends SimpleUrlAuthenticationSucces
 
         Date now = new Date();
         long accessTokenExpiry = now.getTime() + authProperties.getAuth().getTokenExpiry();
-        AuthToken accessToken = tokenProvider.createAuthToken(oAuth2UserPrincipal.getName(), new Date(accessTokenExpiry));
-
+        AuthToken accessToken = tokenProvider.createAuthToken(oAuth2UserPrincipal.getOAuth2Id(), new Date(accessTokenExpiry));
+        if (activeProfile.equals("local")) {
+            log.info("accessToken = " + accessToken.getToken());
+        }
         long refreshTokenExpiry = now.getTime() + authProperties.getAuth().getRefreshTokenExpiry();
         AuthToken refreshToken = tokenProvider.createAuthToken(authProperties.getAuth().getTokenSecret(), new Date(refreshTokenExpiry));
 
@@ -82,10 +88,9 @@ public class DroniOAuth2AuthSuccessHandler extends SimpleUrlAuthenticationSucces
 
 
         return UriComponentsBuilder.fromUriString(redirectUrlString)
-                .queryParam("access_token", accessToken)
-                .queryParam("refresh_token", refreshToken)
+                .queryParam("access_token", accessToken.getToken())
+                .queryParam("refresh_token", refreshToken.getToken())
                 .build().toUriString();
-
 
 
     }
