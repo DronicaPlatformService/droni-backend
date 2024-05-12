@@ -1,5 +1,6 @@
 package droni.backend.oauth2.jwt;
 
+import droni.backend.oauth2.execption.JWTException;
 import droni.backend.oauth2.token.AuthToken;
 import droni.backend.oauth2.token.AuthTokenProvider;
 import jakarta.servlet.FilterChain;
@@ -14,6 +15,9 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.Arrays;
+
+import static droni.backend.config.security.SecurityConfig.ARROWED_APIS;
 
 @Component
 @RequiredArgsConstructor
@@ -23,10 +27,16 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         String token = this.resolveToken(request);
-        if (StringUtils.hasText(token) && tokenProvider.validateToken(token)) {
-            AuthToken authToken = tokenProvider.convertToAuthToken(token);
-            Authentication authentication = tokenProvider.getAuthentication(authToken.getToken());
-            SecurityContextHolder.getContext().setAuthentication(authentication);
+        try {
+            if (StringUtils.hasText(token) && tokenProvider.validateToken(token)) {
+                AuthToken authToken = tokenProvider.convertToAuthToken(token);
+                Authentication authentication = tokenProvider.getAuthentication(authToken.getToken());
+                SecurityContextHolder.getContext().setAuthentication(authentication);
+            }
+        } catch (JWTException e) {
+            if (isAuthenticatedRequest(request)) {
+                throw e;
+            }
         }
         filterChain.doFilter(request, response);
 
@@ -40,5 +50,10 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
             return token.substring(BEARER_PREFIX.length());
         }
         return null;
+    }
+
+    private boolean isAuthenticatedRequest(HttpServletRequest request) {
+        return Arrays.stream(ARROWED_APIS).parallel()
+                .noneMatch(antPathRequestMatcher -> antPathRequestMatcher.matches(request));
     }
 }

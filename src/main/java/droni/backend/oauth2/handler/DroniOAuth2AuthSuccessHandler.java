@@ -40,7 +40,7 @@ public class DroniOAuth2AuthSuccessHandler extends SimpleUrlAuthenticationSucces
     private final AuthTokenProvider tokenProvider;
     private final DroniUserRepository userRepository;
     //fixme : default target id 변경
-    private final String defaultTargetUrl = "/test2";
+    private final String defaultTargetUrl = "/test";
 
     /**
      * 유저가 oauth2 인증에 성공했을 때 -> access token 발급해서 요청했던 페이지에 실어서 redirect
@@ -71,18 +71,16 @@ public class DroniOAuth2AuthSuccessHandler extends SimpleUrlAuthenticationSucces
             return UriComponentsBuilder.fromUriString(redirectUrlString).queryParam("error", "Login failed").build().toUriString();
         }
 
-        Date now = new Date();
-        long accessTokenExpiry = now.getTime() + authProperties.getAuth().getTokenExpiry();
-        AuthToken accessToken = tokenProvider.createAuthToken(oAuth2UserPrincipal.getOAuth2Id(), new Date(accessTokenExpiry));
+
+        AuthToken accessToken = tokenProvider.createAccessAuthToken(oAuth2UserPrincipal.getOAuth2Id());
+        AuthToken refreshToken = tokenProvider.createRefreshToken();
         if (activeProfile.equals("local")) {
             log.info("accessToken = " + accessToken.getToken());
         }
-        long refreshTokenExpiry = now.getTime() + authProperties.getAuth().getRefreshTokenExpiry();
-        AuthToken refreshToken = tokenProvider.createAuthToken(oAuth2UserPrincipal.getOAuth2Id() + authProperties.getAuth().getTokenSecret(), new Date(refreshTokenExpiry));
 
         this.authenticateOrRegisterUser(oAuth2UserPrincipal, refreshToken);
 
-        int cookieMaxAge = (int) refreshTokenExpiry / 60;
+        int cookieMaxAge = (int) refreshToken.getExpiry().getTime() / 60;
         DroniCookieUtils.deleteCookie(request, response, REFRESH_TOKEN);
         DroniCookieUtils.addCookie(response, REFRESH_TOKEN, refreshToken.getToken(), cookieMaxAge);
 
