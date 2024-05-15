@@ -85,6 +85,25 @@ paths:
             application/json:
               schema:
                 type: string
+  /reissue:
+    post:
+      tags:
+        - auth
+      description: token reissue api
+      requestBody:
+        description: dashboard 구성한 값을 전달한다.
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TokenRefreshDto"
+      responses:
+        200:
+          description: reissue expired access token
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TokenRefreshDto"
+
 components:
   schemas:
     DroniFile:
