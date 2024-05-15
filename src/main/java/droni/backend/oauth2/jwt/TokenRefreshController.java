@@ -1,5 +1,6 @@
 package droni.backend.oauth2.jwt;
 
+import backend.generated_api.AuthApi;
 import backend.generated_model.TokenRefreshDto;
 import droni.backend.droniuser.entity.DroniUser;
 import droni.backend.droniuser.repository.DroniUserQuerydslRepository;
@@ -25,23 +26,14 @@ import java.util.Optional;
 
 @RestController
 @RequiredArgsConstructor
-public class TokenRefreshController {
+public class TokenRefreshController implements AuthApi {
     private final AuthTokenProvider tokenProvider;
 
     private final DroniUserQuerydslRepository userQuerydslRepository;
 
-    @Operation(
-        operationId = "reissuePost",
-        tags = { "auth" },
-        responses = {
-            @ApiResponse(responseCode = "200", description = "token reissued", content = {
-                @Content(mediaType = "application/json", schema = @Schema(implementation = TokenRefreshDto.class))
-            })
-        }
-    )
-    @PostMapping(value = "/reissue")
+    @Override
     @Transactional
-    public ResponseEntity<TokenRefreshDto> reissuePost(@Valid @RequestBody TokenRefreshDto prevToken, HttpServletResponse response) throws IOException {
+    public ResponseEntity<TokenRefreshDto> reissuePost(@Valid @RequestBody TokenRefreshDto prevToken) {
         if (tokenProvider.isExpiredToken(prevToken.getAccessToken())) {
             Optional<DroniUser> requestedUser = userQuerydslRepository.findRequestedUser(prevToken);
             if (requestedUser.isPresent()) {
@@ -54,18 +46,12 @@ public class TokenRefreshController {
                 tokenRefreshDto.setAccessToken(accessAuthToken.getToken());
                 return ResponseEntity.ok(tokenRefreshDto);
             } else {
-                response.sendRedirect(getLoginRedirectUri());
+                throw new JWTException("No match user with previous oauthId");
             }
         } else {
             throw new JWTException("not expired token request reissue");
         }
-        return null;
     }
-
-    private String getLoginRedirectUri() {
-        return UriComponentsBuilder.fromUriString("/login").build().toUriString();
-    }
-
 
 
 
