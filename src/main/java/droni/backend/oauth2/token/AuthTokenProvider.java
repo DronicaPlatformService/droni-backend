@@ -1,41 +1,48 @@
 package droni.backend.oauth2.token;
 
 
-import droni.backend.oauth2.execption.TokenValidFailedException;
+import droni.backend.config.properties.AppAuthProperties;
+import droni.backend.oauth2.execption.JWTException;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import io.jsonwebtoken.security.SignatureException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.security.Key;
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
-import java.util.stream.Collectors;
+import java.util.UUID;
+
 
 @Slf4j
+
 public class AuthTokenProvider {
     private final Key key;
-    private final String AUTHORITIES_KEY = "role";
-
-    public AuthTokenProvider(String secret) {
+    private final AppAuthProperties authProperties;
+    public AuthTokenProvider(String secret, AppAuthProperties authProperties) {
         this.key = Keys.hmacShaKeyFor(secret.getBytes());
+        this.authProperties = authProperties;
     }
 
-    public AuthToken createAuthToken(String id, Date expiry) {
-        return new AuthToken(id, expiry, key);
+    public AuthToken createAccessAuthToken(String id) {
+        Date now = new Date();
+        long accessTokenExpiry = now.getTime() + authProperties.getAuth().getTokenExpiry();
+        return new AuthToken(id, new Date(accessTokenExpiry), key);
     }
 
+    public AuthToken createRefreshToken() {
+        Date now = new Date();
+        long refreshTokenExpiry = now.getTime() + authProperties.getAuth().getRefreshTokenExpiry();
+        return new AuthToken(UUID.randomUUID().toString(), new Date(refreshTokenExpiry), key);
+    }
     public AuthToken convertToAuthToken(String token) {
         return new AuthToken(token, key);
     }
+
     public Authentication getAuthentication(String token) {
         Claims claims = Jwts.parserBuilder()
                 .setSigningKey(key)
@@ -47,28 +54,37 @@ public class AuthTokenProvider {
 
         return new UsernamePasswordAuthenticationToken(user, "", Collections.emptyList());
     }
-    public boolean validateToken(String token) {
 
+    public boolean validateToken(String token) {
         try {
             // jwt claim parsing 성공시 true 반환
             Jwts.parserBuilder()
                     .setSigningKey(key)
                     .build()
                     .parseClaimsJws(token);
-
             return true;
         } catch (UnsupportedJwtException | MalformedJwtException exception) {
-            log.error("JWT is not valid");
+            throw new JWTException("JWT is not valid");
         } catch (SignatureException exception) {
-            log.error("JWT signature validation fails");
-        } catch (ExpiredJwtException exception) {
-            log.error("JWT is expired");
+            throw new JWTException("JWT signature validation fails");
         } catch (IllegalArgumentException exception) {
-            log.error("JWT is null or empty or only whitespace");
+            throw new JWTException("JWT is null or empty or only whitespace");
+        } catch (ExpiredJwtException exception) {
+            throw new JWTException("JWT is expired");
         } catch (Exception exception) {
             log.error("JWT validation fails", exception);
+            throw new JWTException("JWT validation fails" + exception.getMessage());
         }
+    }
 
-        return false;
+    public boolean isExpiredToken(String token) {
+        try {
+            Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
+            return false;
+        } catch (ExpiredJwtException e) {
+            return true;
+        } catch (Exception e) {
+            throw e;
+        }
     }
 }

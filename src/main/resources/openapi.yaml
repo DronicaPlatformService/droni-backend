@@ -16,6 +16,8 @@ tags:
     description: home API
   - name: test
     description: test API
+  - name: auth
+    description: auth API
 security:
   - bearer-key: []
 paths:
@@ -105,7 +107,7 @@ components:
       type: object
       properties:
         expertId:
-          type: string
+          type: integer
           format: int64
         nickName:
           type: string
@@ -113,6 +115,16 @@ components:
         imageUrl:
           type: string
           example: http:/imageURL
+    TokenRefreshDto:
+      type: object
+      description: request for refreshing token
+      required: [accessToken, refreshToken]
+      properties:
+        accessToken:
+          type: string
+        refreshToken:
+          type: string
+
   securitySchemes:
     bearer-key:
       type: http
