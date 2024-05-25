@@ -5,34 +5,30 @@ import droni.backend.oauth2.user.ProviderType;
 
 import java.util.Map;
 
-public class NaverOAuth2UserInfo implements OAuth2UserInfo {
-    private final Map<String, Object> attributes;
+public class KakaoOAuth2UserInfo implements OAuth2UserInfo {
+    private final Map<String, Object> attribute;
     private final String accessToken;
-    private final String id;
+    private final Long id;
+    private final String nickname;
+    // todo : 현재는 kakao 인증이 없어서 email 을 테스트로 생성
     private final String email;
-    private final String name;
-    private final String firstName;
-    private final String lastName;
-    private final String nickName;
     private final String profileImageUrl;
 
+
+
     @SuppressWarnings("all")
-    public NaverOAuth2UserInfo(String accessToken, Map<String, Object> attributes) {
+    public KakaoOAuth2UserInfo(String accessToken, Map<String, Object> attribute) {
         this.accessToken = accessToken;
-        this.attributes = (Map<String, Object>) attributes.get("response");
-        this.id = (String) this.attributes.get("id");
-        this.email = (String) this.attributes.get("email");
-        this.name = (String) this.attributes.get("name");
-        this.firstName = null;
-        this.lastName = null;
-        this.nickName = (String) attributes.get("nickname");
-        this.profileImageUrl = (String) attributes.get("profile_image");
+        this.attribute = attribute;
+        this.id = (Long) attribute.get("id");
+        Map<String, Object> kakaoAccountMap = (Map<String, Object>) attribute.get("properties");
+        this.nickname = (String) kakaoAccountMap.get("nickname");
+        this.email = this.nickname + "test@kakao.com";
+        this.profileImageUrl = (String) kakaoAccountMap.get("profile_image");
     }
-
-
     @Override
     public ProviderType getProvider() {
-        return ProviderType.NAVER;
+        return ProviderType.KAKAO;
     }
 
     @Override
@@ -42,12 +38,12 @@ public class NaverOAuth2UserInfo implements OAuth2UserInfo {
 
     @Override
     public Map<String, Object> getAttributes() {
-        return this.attributes;
+        return this.attribute;
     }
 
     @Override
     public String getOauth2Id() {
-        return this.id;
+        return String.valueOf(this.id);
     }
 
     @Override
@@ -57,22 +53,22 @@ public class NaverOAuth2UserInfo implements OAuth2UserInfo {
 
     @Override
     public String getName() {
-        return this.name;
+        return null;
     }
 
     @Override
     public String getFirstName() {
-        return this.firstName;
+        return null;
     }
 
     @Override
     public String getLastName() {
-        return this.lastName;
+        return null;
     }
 
     @Override
     public String getNickname() {
-        return this.nickName;
+        return this.nickname;
     }
 
     @Override

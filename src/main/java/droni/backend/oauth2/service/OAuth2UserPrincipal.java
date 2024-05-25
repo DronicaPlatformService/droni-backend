@@ -61,7 +61,7 @@ public class OAuth2UserPrincipal implements OAuth2User, UserDetails {
     }
 
     public String getOAuth2Id() {
-        return this.userInfo.getId();
+        return this.userInfo.getOauth2Id();
     }
 
     public DroniUser newDroniUserFromPrincipal(String refreshToken) {

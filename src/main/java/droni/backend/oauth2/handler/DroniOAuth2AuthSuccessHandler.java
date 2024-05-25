@@ -22,7 +22,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.io.IOException;
-import java.util.Date;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -36,7 +35,6 @@ public class DroniOAuth2AuthSuccessHandler extends SimpleUrlAuthenticationSucces
     @Value("${spring.profiles.active}")
     private String activeProfile;
     private final DroniCookieAuthorizationRequestRepository cookieAuthorizationRequestRepository;
-    private final AppAuthProperties authProperties;
     private final AuthTokenProvider tokenProvider;
     private final DroniUserRepository userRepository;
     //fixme : default target id 변경
@@ -48,7 +46,7 @@ public class DroniOAuth2AuthSuccessHandler extends SimpleUrlAuthenticationSucces
     @Override
     @Transactional
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
-        String targetUrl = this.determineTargetUrl(request, response, authentication);
+        String targetUrl = this.makeRedirectUriWithToken(request, response, authentication);
         if (response.isCommitted()) {
             log.debug("Response has already been committed. Unable to redirect to " + targetUrl);
         }
@@ -61,7 +59,7 @@ public class DroniOAuth2AuthSuccessHandler extends SimpleUrlAuthenticationSucces
     /**
      * 로그인 시에 토큰 발급 후에 redirect uri를 반환하는 메소드
      */
-    protected String determineTargetUrl(HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
+    protected String makeRedirectUriWithToken(HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
         String redirectUrlString = DroniCookieUtils.getCookie(request, REDIRECT_URI_PARAM_COOKIE_NAME)
                 .map(Cookie::getValue)
                 .orElse(defaultTargetUrl);
@@ -119,7 +117,6 @@ public class DroniOAuth2AuthSuccessHandler extends SimpleUrlAuthenticationSucces
             DroniUser droniUser = userPrincipal.newDroniUserFromPrincipal(refreshToken.getToken());
             userRepository.save(droniUser);
         }
-
     }
 
 
