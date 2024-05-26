@@ -9,7 +9,7 @@ public interface OAuth2UserInfo {
 
     Map<String, Object> getAttributes();
 
-    String getId();
+    String getOauth2Id();
 
     String getEmail();
 

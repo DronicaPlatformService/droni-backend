@@ -1,6 +1,7 @@
 package droni.backend.oauth2.user;
 
 import droni.backend.oauth2.execption.OAuth2ProviderNotFoundException;
+import droni.backend.oauth2.user.impl.KakaoOAuth2UserInfo;
 import droni.backend.oauth2.user.impl.NaverOAuth2UserInfo;
 import org.springframework.http.HttpStatus;
 
@@ -12,6 +13,7 @@ public class OAuth2UserInfoFactory {
         ProviderType providerType = ProviderType.fromRegistrationId(registrationId);
         OAuth2UserInfo oAuth2UserInfo = switch (providerType) {
             case NAVER -> new NaverOAuth2UserInfo(accessToken, attributes);
+            case KAKAO -> new KakaoOAuth2UserInfo(accessToken, attributes);
             default -> throw new OAuth2ProviderNotFoundException(HttpStatus.INTERNAL_SERVER_ERROR, "Not Supported OAuth2 User");
         };
         return oAuth2UserInfo;
