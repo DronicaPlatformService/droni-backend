@@ -10,7 +10,7 @@ info:
   license:
     name: Apache License Version 2.0
     url: https://www.apache.org/licenses/LICENSE-2.0
-  version: '0.0.1'
+  version: '0.0.2'
 tags:
   - name: home
     description: home API
@@ -61,11 +61,11 @@ paths:
           description: no pilot user exist
         500:
           description: internal server error
-  /test:
+  /sucess-test:
     get:
       tags:
         - test
-      description: test api
+      description: authentication test api
       responses:
         200:
           description: ok
@@ -73,11 +73,11 @@ paths:
             application/json:
               schema:
                 type: string
-  /test2:
+  /expire-test:
     get:
       tags:
         - test
-      description: test api
+      description: token expired test api
       responses:
         200:
           description: ok

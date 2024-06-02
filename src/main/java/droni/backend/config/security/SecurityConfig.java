@@ -33,7 +33,6 @@ public class SecurityConfig {
     private final JwtAuthEntryPoint jwtAuthEntryPoint;
     public static final AntPathRequestMatcher[] ARROWED_APIS = new AntPathRequestMatcher[]{
             antMatcher("/reissue"),
-            antMatcher("/test2"),
             antMatcher("/favicon.ico"),
             antMatcher("/swagger-ui/**"),
             antMatcher("/v3/api-docs/**")

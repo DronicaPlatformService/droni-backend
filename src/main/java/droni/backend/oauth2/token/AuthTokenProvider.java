@@ -3,6 +3,7 @@ package droni.backend.oauth2.token;
 
 import droni.backend.config.properties.AppAuthProperties;
 import droni.backend.oauth2.execption.JWTException;
+import droni.backend.oauth2.execption.JwtExpiredException;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import io.jsonwebtoken.security.SignatureException;
@@ -70,7 +71,7 @@ public class AuthTokenProvider {
         } catch (IllegalArgumentException exception) {
             throw new JWTException("JWT is null or empty or only whitespace");
         } catch (ExpiredJwtException exception) {
-            throw new JWTException("JWT is expired");
+            throw new JwtExpiredException("JWT is expired");
         } catch (Exception exception) {
             log.error("JWT validation fails", exception);
             throw new JWTException("JWT validation fails" + exception.getMessage());
