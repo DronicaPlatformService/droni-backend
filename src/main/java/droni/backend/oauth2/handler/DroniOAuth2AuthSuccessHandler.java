@@ -1,8 +1,7 @@
 package droni.backend.oauth2.handler;
 
-import droni.backend.config.properties.AppAuthProperties;
-import droni.backend.droniuser.entity.DroniUser;
-import droni.backend.droniuser.repository.DroniUserRepository;
+import droni.backend.api.droniuser.entity.DroniUser;
+import droni.backend.api.droniuser.repository.DroniUserRepository;
 import droni.backend.oauth2.DroniCookieAuthorizationRequestRepository;
 import droni.backend.oauth2.service.OAuth2UserPrincipal;
 import droni.backend.oauth2.token.AuthToken;

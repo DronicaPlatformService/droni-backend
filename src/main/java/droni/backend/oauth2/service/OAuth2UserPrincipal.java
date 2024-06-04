@@ -1,6 +1,6 @@
 package droni.backend.oauth2.service;
 
-import droni.backend.droniuser.entity.DroniUser;
+import droni.backend.api.droniuser.entity.DroniUser;
 import droni.backend.oauth2.user.OAuth2UserInfo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;

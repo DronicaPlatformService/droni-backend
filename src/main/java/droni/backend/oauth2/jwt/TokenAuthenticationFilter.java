@@ -26,6 +26,7 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+        System.out.println("request.getRequestURI() = " + request.getRequestURI());
         String token = this.resolveToken(request);
         try {
             if (StringUtils.hasText(token) && tokenProvider.validateToken(token)) {
