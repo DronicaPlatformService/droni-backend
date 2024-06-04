@@ -16,6 +16,7 @@ import java.time.LocalDateTime;
 public class ExpertCareer {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(updatable = false)
     private Long careerId;
     @ManyToOne
     @JoinColumn(name = "expert_id", nullable = false)

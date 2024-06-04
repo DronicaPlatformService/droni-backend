@@ -16,12 +16,13 @@ import java.util.List;
 public class DroniExpert {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(updatable = false)
     private Long expertId;
     @OneToOne
     @JoinColumn(name = "user_id", nullable = false)
     private DroniUser user;
     @Builder.Default
-    private Integer completeRequest = 0;
+    private int completeRequest = 0;
     private String introduction;
     @OneToOne
     @JoinColumn(name = "license_id")

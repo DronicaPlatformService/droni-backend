@@ -19,15 +19,20 @@ import java.time.LocalDateTime;
 public class DroniUser {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(updatable = false)
     private int userId;
+    @Column(name = "phone_number", nullable = false, length = 15)
     private String phoneNumber;
+    @Column(name = "email", nullable = false)
     private String email;
+    @Column(length = 10)
     private String name;
     private String profileImage;
     @Column(unique = true, updatable = false)
     private String oauthId;
     @Enumerated(value = EnumType.STRING)
     private ProviderType provider;
+    @Column(length = 10)
     private String nickname;
     @Column(name = "zone_code")
     private String timeZone;
