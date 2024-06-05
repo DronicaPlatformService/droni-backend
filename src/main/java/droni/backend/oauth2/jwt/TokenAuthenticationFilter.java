@@ -33,9 +33,11 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
                 AuthToken authToken = tokenProvider.convertToAuthToken(token);
                 Authentication authentication = tokenProvider.getAuthentication(authToken.getToken());
                 SecurityContextHolder.getContext().setAuthentication(authentication);
+            } else {
+                throw new JWTException("Request to Secured api don't have token");
             }
         } catch (JWTException e) {
-            if (isAuthenticatedRequest(request)) {
+            if (isSecuredApi(request)) {
                 throw e;
             }
         }
@@ -53,7 +55,7 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
         return null;
     }
 
-    private boolean isAuthenticatedRequest(HttpServletRequest request) {
+    private boolean isSecuredApi(HttpServletRequest request) {
         return Arrays.stream(ARROWED_APIS).parallel()
                 .noneMatch(antPathRequestMatcher -> antPathRequestMatcher.matches(request));
     }
