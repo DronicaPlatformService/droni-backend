@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
 public class Land {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long landId;
+    private Integer landId;
     @ManyToOne
     @JoinColumn(name = "user_id")
     private DroniUser user;

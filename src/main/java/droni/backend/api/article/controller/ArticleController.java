@@ -1,4 +1,4 @@
-package droni.backend.api.article;
+package droni.backend.api.article.controller;
 
 import backend.generated_api.ArticleApi;
 import backend.generated_model.ArticleSummaryResponse;

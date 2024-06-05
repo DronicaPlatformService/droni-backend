@@ -19,14 +19,14 @@ import java.time.LocalDateTime;
 public class InsectControlRequest {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long insectRequestId;
+    private Integer insectRequestId;
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private DroniUser user;
     @ManyToOne
     @JoinColumn(name = "land_id", nullable = false)
     private Land land;
-    @Enumerated(value = EnumType.ORDINAL)
+    @Enumerated(value = EnumType.STRING)
     private InsectBidStatus status;
     @Column(nullable = false)
     private LocalDateTime requestDate;

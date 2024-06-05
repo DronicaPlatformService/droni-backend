@@ -19,18 +19,18 @@ import java.time.LocalDateTime;
 public class MessageGroup {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long messageGroupId;
+    private Integer messageGroupId;
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
-    private DroniUser user;
+    private DroniUser droniUser;
     @ManyToOne
     @JoinColumn(name = "expert_id", nullable = false)
     private DroniExpert expert;
-    @Column(nullable = false)
-    private Long serviceId;
-    @Enumerated(value = EnumType.ORDINAL)
-    private DroniServiceKind service;
-    private LocalDateTime lastConnection;
+    @Column(nullable = false, name = "service_request_id")
+    private Integer serviceId;
+    @Enumerated(value = EnumType.STRING)
+    private DroniServiceKind serviceType;
+    private LocalDateTime lastConnectionTime;
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
 }

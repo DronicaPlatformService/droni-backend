@@ -27,8 +27,6 @@ spring:
     properties:
       hibernate:
         format_sql: true
-        hbm2ddl:
-          auto: none
 server:
   port: 8080
 # OpenAPI sprigDOC configuration

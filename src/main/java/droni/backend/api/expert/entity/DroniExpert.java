@@ -16,7 +16,7 @@ import java.util.List;
 public class DroniExpert {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long expertId;
+    private Integer expertId;
     @OneToOne
     @JoinColumn(name = "user_id", nullable = false)
     private DroniUser user;
