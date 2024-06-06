@@ -29,7 +29,8 @@ public class Message {
     @ManyToOne
     @JoinColumn(name = "message_to", nullable = false)
     private DroniUser toUser;
-    @Column(name = "is_pinned") @Builder.Default
+    @Column(name = "is_pinned")
+    @Builder.Default
     private boolean pinned = false;
     @ManyToOne
     @JoinColumn(name = "reply_message_id", nullable = false)

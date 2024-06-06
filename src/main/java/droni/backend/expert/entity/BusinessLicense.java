@@ -12,6 +12,7 @@ import lombok.*;
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
 public class BusinessLicense {
     @Id
+    @Column(updatable = false)
     private Integer licenseId;
 
     @Column(nullable = false)
