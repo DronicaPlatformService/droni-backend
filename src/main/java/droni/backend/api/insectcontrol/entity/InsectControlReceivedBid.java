@@ -15,6 +15,7 @@ import java.time.LocalDateTime;
 public class InsectControlReceivedBid {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(updatable = false)
     private Long bidId;
     @ManyToOne
     @JoinColumn(name = "insect_request_id", nullable = false)
