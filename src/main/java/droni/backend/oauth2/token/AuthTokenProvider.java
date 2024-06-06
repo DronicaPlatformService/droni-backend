@@ -8,25 +8,30 @@ import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import io.jsonwebtoken.security.SignatureException;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.env.Environment;
+import org.springframework.security.authentication.TestingAuthenticationToken;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.security.Key;
-import java.util.Collections;
-import java.util.Date;
-import java.util.UUID;
+import java.security.Principal;
+import java.util.*;
 
 
 @Slf4j
-
 public class AuthTokenProvider {
     private final Key key;
+    private final Environment springEnv;
     private final AppAuthProperties authProperties;
-    public AuthTokenProvider(String secret, AppAuthProperties authProperties) {
+    private final Principal NULL_PRINCIPLE = null;
+    private final Object NULL_CREDENTIAL = null;
+
+    public AuthTokenProvider(String secret, AppAuthProperties authProperties, Environment env) {
         this.key = Keys.hmacShaKeyFor(secret.getBytes());
         this.authProperties = authProperties;
+        this.springEnv = env;
     }
 
     public AuthToken createAccessAuthToken(String id) {
@@ -40,11 +45,16 @@ public class AuthTokenProvider {
         long refreshTokenExpiry = now.getTime() + authProperties.getAuth().getRefreshTokenExpiry();
         return new AuthToken(UUID.randomUUID().toString(), new Date(refreshTokenExpiry), key);
     }
+
     public AuthToken convertToAuthToken(String token) {
         return new AuthToken(token, key);
     }
 
     public Authentication getAuthentication(String token) {
+        if (isLocalTestRequest(token)) {
+            return new TestingAuthenticationToken(NULL_PRINCIPLE, NULL_CREDENTIAL,Collections.emptyList());
+
+        }
         Claims claims = Jwts.parserBuilder()
                 .setSigningKey(key)
                 .build()
@@ -57,6 +67,9 @@ public class AuthTokenProvider {
     }
 
     public boolean validateToken(String token) {
+        if (isLocalTestRequest(token)) {
+            return true;
+        }
         try {
             // jwt claim parsing 성공시 true 반환
             Jwts.parserBuilder()
@@ -87,5 +100,10 @@ public class AuthTokenProvider {
         } catch (Exception e) {
             throw e;
         }
+    }
+
+    private boolean isLocalTestRequest(String token) {
+        List<String> activeProfiles = Arrays.asList(springEnv.getActiveProfiles());
+        return activeProfiles.contains("local") && !token.equalsIgnoreCase("no auth");
     }
 }

@@ -25,14 +25,14 @@ public class TokenExceptionFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         try {
-            doFilter(request, response, filterChain);
-
+            filterChain.doFilter(request, response);
         } catch (JWTException e) {
             this.setJWTErrorResponse(request, response, e);
         }
     }
 
     private void setJWTErrorResponse(HttpServletRequest req, HttpServletResponse res, Throwable ex) throws IOException {
+        res.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         res.setContentType(MediaType.APPLICATION_JSON_VALUE);
         Map<String, Object> body = new HashMap<>();
         body.put("status", HttpServletResponse.SC_UNAUTHORIZED);
@@ -40,6 +40,5 @@ public class TokenExceptionFilter extends OncePerRequestFilter {
         body.put("message", ex.getMessage());
         body.put("path", req.getServletPath());
         objectMapper.writeValue(res.getOutputStream(), body);
-        res.setStatus(HttpServletResponse.SC_OK);
     }
 }

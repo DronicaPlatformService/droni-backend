@@ -2,26 +2,18 @@ package droni.backend.oauth2.jwt;
 
 import backend.generated_api.AuthApi;
 import backend.generated_model.TokenRefreshDto;
-import droni.backend.droniuser.entity.DroniUser;
-import droni.backend.droniuser.repository.DroniUserQuerydslRepository;
+import droni.backend.api.droniuser.entity.DroniUser;
+import droni.backend.api.droniuser.repository.DroniUserQuerydslRepository;
 import droni.backend.oauth2.execption.JWTException;
 import droni.backend.oauth2.token.AuthToken;
 import droni.backend.oauth2.token.AuthTokenProvider;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import jakarta.servlet.http.HttpServletResponse;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.util.UriComponentsBuilder;
 
-import java.io.IOException;
 import java.util.Optional;
 
 @RestController
