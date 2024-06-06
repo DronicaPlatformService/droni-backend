@@ -61,6 +61,15 @@ paths:
       tags:
         - article
       summary: 메인화면에서 보여지는 활용백서 5개 반환 api
+      parameters:
+        - in: query
+          schema:
+            type: string
+            enum:
+              - ALL
+              - USER
+              - EXPERT
+          name: articleTarget
       responses:
         200:
           description: ok
