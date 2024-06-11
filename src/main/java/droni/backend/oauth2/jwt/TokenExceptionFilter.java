@@ -15,9 +15,6 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * JwtAuthenticationFilter앞에서 JWT exception을 잡아서 처리하는 로직
- */
 @Component
 @RequiredArgsConstructor
 public class TokenExceptionFilter extends OncePerRequestFilter {
@@ -26,18 +23,18 @@ public class TokenExceptionFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         try {
             filterChain.doFilter(request, response);
-        } catch (JWTException e) {
-            this.setJWTErrorResponse(request, response, e);
+        } catch (JWTException jwtException) {
+            this.setJWTErrorResponse(request, response, jwtException);
         }
     }
 
-    private void setJWTErrorResponse(HttpServletRequest req, HttpServletResponse res, Throwable ex) throws IOException {
-        res.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+    private void setJWTErrorResponse(HttpServletRequest req, HttpServletResponse res, JWTException jwtException) throws IOException {
+        res.setStatus(jwtException.getStatus());
         res.setContentType(MediaType.APPLICATION_JSON_VALUE);
         Map<String, Object> body = new HashMap<>();
         body.put("status", HttpServletResponse.SC_UNAUTHORIZED);
         body.put("error", "Unauthorized");
-        body.put("message", ex.getMessage());
+        body.put("message", jwtException.getMessage());
         body.put("path", req.getServletPath());
         objectMapper.writeValue(res.getOutputStream(), body);
     }

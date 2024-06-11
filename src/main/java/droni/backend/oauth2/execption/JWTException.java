@@ -6,4 +6,8 @@ public class JWTException extends AuthenticationException {
     public JWTException(String msg) {
         super(HttpStatus.FORBIDDEN, msg);
     }
+
+    public int getStatus() {
+        return HttpStatus.FORBIDDEN.value();
+    }
 }
