@@ -36,9 +36,7 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
                 throw new JWTException("Request to Secured api don't have token");
             }
         } catch (JWTException e) {
-            if (isSecuredApi(request)) {
-                throw e;
-            }
+            if (isSecuredApi(request)) throw e;
         }
         filterChain.doFilter(request, response);
 

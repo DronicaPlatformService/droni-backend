@@ -14,13 +14,15 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.env.Environment;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -31,8 +33,7 @@ import static droni.backend.oauth2.DroniCookieAuthorizationRequestRepository.REF
 @Component
 @RequiredArgsConstructor
 public class DroniOAuth2AuthSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
-    @Value("${spring.profiles.active}")
-    private String activeProfile;
+    private final Environment environment;
     private final DroniCookieAuthorizationRequestRepository cookieAuthorizationRequestRepository;
     private final AuthTokenProvider tokenProvider;
     private final DroniUserRepository userRepository;
@@ -71,7 +72,7 @@ public class DroniOAuth2AuthSuccessHandler extends SimpleUrlAuthenticationSucces
 
         AuthToken accessToken = tokenProvider.createAccessAuthToken(oAuth2UserPrincipal.getOAuth2Id());
         AuthToken refreshToken = tokenProvider.createRefreshToken();
-        if (activeProfile.equals("local")) {
+        if (this.isLocalTestRequest()) {
             log.info("accessToken = " + accessToken.getToken());
         }
 
@@ -116,6 +117,11 @@ public class DroniOAuth2AuthSuccessHandler extends SimpleUrlAuthenticationSucces
             DroniUser droniUser = userPrincipal.newDroniUserFromPrincipal(refreshToken.getToken());
             userRepository.save(droniUser);
         }
+    }
+
+    private boolean isLocalTestRequest() {
+        List<String> activeProfiles = Arrays.asList(environment.getActiveProfiles());
+        return activeProfiles.contains("local");
     }
 
 

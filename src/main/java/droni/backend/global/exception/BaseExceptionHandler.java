@@ -21,13 +21,13 @@ public class BaseExceptionHandler {
 
     @ExceptionHandler({BaseException.class})
     protected ResponseEntity<DrnErrorResponse> handleBaseException(BaseException e, HttpServletRequest request) {
-        log.error("Exception in Web Request", e);
+        log.warn("Exception in Web Request : {}", e.getMessage());
         return this.createErrorResponse(e, request, e.getHttpStatus());
     }
 
     @ExceptionHandler({RuntimeException.class, Exception.class})
     protected ResponseEntity<DrnErrorResponse> handleRuntimeException(Exception e, HttpServletRequest request) {
-        log.error("Exception in Web Request", e);
+        log.warn("Exception in Web Request {}", e.getMessage());
         return this.createErrorResponse(e, request, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 

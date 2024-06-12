@@ -62,12 +62,17 @@ dependencies {
     implementation group: 'io.jsonwebtoken', name: 'jjwt-api', version: '0.11.5'
     runtimeOnly group: 'io.jsonwebtoken', name: 'jjwt-impl', version: '0.11.5'
     runtimeOnly group: 'io.jsonwebtoken', name: 'jjwt-jackson', version: '0.11.5'
-
-    // test dependency
+    // test
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework:spring-webflux'
-    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.3.1'
-    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.3.1'
+    // junit5
+    testImplementation 'org.junit.jupiter:junit-jupiter-api'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
+    // assertj
+    testImplementation 'org.assertj:assertj-core'
+    // mockito
+    testImplementation 'org.mockito:mockito-core'
+    testImplementation 'org.mockito:mockito-junit-jupiter'
 }
 
 openApiGenerate {
@@ -92,4 +97,7 @@ sourceSets {
             srcDir("$buildDir/.swagger-generated/src/main/java")
         }
     }
+}
+test {
+    useJUnitPlatform()
 }

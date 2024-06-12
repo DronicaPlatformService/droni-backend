@@ -18,7 +18,7 @@ public class AuthToken {
     private final Key key;
 
 
-    AuthToken(String id, Date expiry, Key key) {
+    public AuthToken(String id, Date expiry, Key key) {
         this.key = key;
         this.token = createJWT(id, expiry);
     }
