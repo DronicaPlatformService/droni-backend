@@ -44,8 +44,4 @@ public class TokenRefreshController implements AuthApi {
             throw new JWTException("not expired token request reissue");
         }
     }
-
-
-
-
 }
