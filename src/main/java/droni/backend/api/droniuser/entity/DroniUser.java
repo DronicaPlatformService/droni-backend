@@ -28,7 +28,7 @@ public class DroniUser {
     @Column(length = 10)
     private String name;
     private String profileImage;
-    @Column(unique = true, updatable = false)
+    @Column(unique = true, updatable = false, nullable = false)
     private String oauthId;
     @Enumerated(value = EnumType.STRING)
     private ProviderType provider;

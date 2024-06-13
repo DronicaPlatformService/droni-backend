@@ -32,7 +32,7 @@ public class KakaoOAuth2UserInfo implements OAuth2UserInfo {
     }
 
     @Override
-    public String getAccessToken() {
+    public String getProviderAccessToken() {
         return this.accessToken;
     }
 

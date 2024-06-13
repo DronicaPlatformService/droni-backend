@@ -21,7 +21,7 @@ import org.springframework.util.StringUtils;
 public class DroniOAuthUserService extends DefaultOAuth2UserService {
     @Override
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
-        // DefaultService에서 accesstoken 을 사용해서 resource server에서 User를 받아온다.
+        // DefaultService에서 accesstoken 을 사용해서 provider의 resource server에서 User를 받아온다.
         OAuth2User OAuth2User = super.loadUser(userRequest);
         try {
             return this.processOAuth2User(userRequest, OAuth2User);
@@ -34,8 +34,8 @@ public class DroniOAuthUserService extends DefaultOAuth2UserService {
 
     private OAuth2User processOAuth2User(OAuth2UserRequest userRequest, OAuth2User oAuth2User) {
         String registrationId = userRequest.getClientRegistration().getRegistrationId();
-
         String accessToken = userRequest.getAccessToken().getTokenValue();
+
         OAuth2UserInfo OAuth2UserInfo = OAuth2UserInfoFactory.getOAuth2UserInfo(registrationId, accessToken, oAuth2User.getAttributes());
 
         if (!StringUtils.hasText(OAuth2UserInfo.getEmail())) {

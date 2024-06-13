@@ -12,7 +12,6 @@ import org.springframework.stereotype.Component;
 public class DroniCookieAuthorizationRequestRepository implements AuthorizationRequestRepository<OAuth2AuthorizationRequest> {
     public static final String OAUTH2_AUTHORIZATION_REQUEST_COOKIE_NAME = "oauth2_auth_request";
     public static final String REDIRECT_URI_PARAM_COOKIE_NAME = "redirect_uri";
-    public final static String REFRESH_TOKEN = "refresh_token";
     public final static int cookieExpireSeconds = 180;
 
     public final String MODE_PARAM_COOKIE_NAME = "mode";
@@ -29,7 +28,6 @@ public class DroniCookieAuthorizationRequestRepository implements AuthorizationR
         if (authorizationRequest == null) {
             DroniCookieUtils.deleteCookie(request, response, OAUTH2_AUTHORIZATION_REQUEST_COOKIE_NAME);
             DroniCookieUtils.deleteCookie(request, response, REDIRECT_URI_PARAM_COOKIE_NAME);
-            DroniCookieUtils.deleteCookie(request, response, REFRESH_TOKEN);
             return;
         }
 
@@ -49,6 +47,5 @@ public class DroniCookieAuthorizationRequestRepository implements AuthorizationR
         DroniCookieUtils.deleteCookie(request, response, OAUTH2_AUTHORIZATION_REQUEST_COOKIE_NAME);
         DroniCookieUtils.deleteCookie(request, response, REDIRECT_URI_PARAM_COOKIE_NAME);
         DroniCookieUtils.deleteCookie(request, response, MODE_PARAM_COOKIE_NAME);
-        DroniCookieUtils.deleteCookie(request, response, REFRESH_TOKEN);
     }
 }
