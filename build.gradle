@@ -44,7 +44,7 @@ dependencies {
 
     // postgres driver
     implementation group: 'org.postgresql', name: 'postgresql', version: '42.7.3'
-    implementation 'com.h2database:h2'
+
     // https://mvnrepository.com/artifact/org.hibernate/hibernate-validator
     implementation group: 'org.hibernate', name: 'hibernate-validator', version: '8.0.1.Final'
 
@@ -73,6 +73,8 @@ dependencies {
     // mockito
     testImplementation 'org.mockito:mockito-core'
     testImplementation 'org.mockito:mockito-junit-jupiter'
+
+    testImplementation 'com.h2database:h2'
 
 }
 
