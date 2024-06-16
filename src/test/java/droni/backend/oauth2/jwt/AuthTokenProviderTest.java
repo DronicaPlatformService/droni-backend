@@ -21,7 +21,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-public class TokenAuthTest {
+public class AuthTokenProviderTest {
     private final String testSecret = "sdfjof195jghg283jghsnvlk186j0135";
     private final Key key = Keys.hmacShaKeyFor(testSecret.getBytes());
     @Mock

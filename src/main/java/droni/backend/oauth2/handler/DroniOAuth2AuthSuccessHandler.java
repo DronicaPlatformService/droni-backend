@@ -1,5 +1,6 @@
 package droni.backend.oauth2.handler;
 
+import droni.backend.api.droniuser.exception.DroniLoginFailedException;
 import droni.backend.api.droniuser.exception.DroniUserException;
 import droni.backend.api.droniuser.repository.DroniUserQuerydslRepository;
 import droni.backend.oauth2.DroniCookieAuthorizationRequestRepository;
@@ -19,6 +20,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -33,6 +35,7 @@ import static droni.backend.oauth2.DroniCookieAuthorizationRequestRepository.RED
 @Component
 @RequiredArgsConstructor
 public class DroniOAuth2AuthSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
+    public static final String REFRESH_QUERY_PARAM = "refresh_token";
     private final Environment environment;
     private final DroniCookieAuthorizationRequestRepository cookieAuthorizationRequestRepository;
     private final AuthTokenProvider tokenProvider;
@@ -48,7 +51,8 @@ public class DroniOAuth2AuthSuccessHandler extends SimpleUrlAuthenticationSucces
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
         OAuth2UserPrincipal oAuth2UserPrincipal = this.getOAuth2UserPrincipal(authentication);
         UriComponents returnUri = this.makeRedirectUriWithToken(request, oAuth2UserPrincipal);
-        userRepository.upateWithPricipal(returnUri, oAuth2UserPrincipal);
+        String createdRefreshToken = this.getRefreshTokenFrom(returnUri);
+        userRepository.updateWithPrincipal(createdRefreshToken, oAuth2UserPrincipal);
         if (response.isCommitted()) {
             log.debug("Response has already been committed. Unable to redirect to " + returnUri.toUriString());
         }
@@ -58,9 +62,16 @@ public class DroniOAuth2AuthSuccessHandler extends SimpleUrlAuthenticationSucces
 
     }
 
-    /**
-     * 로그인 시에 토큰 발급 후에 redirect uri를 반환하는 메소드
-     */
+    private String getRefreshTokenFrom(UriComponents returnUri) {
+        MultiValueMap<String, String> queryParams = returnUri.getQueryParams();
+        if (queryParams.containsKey(REFRESH_QUERY_PARAM) || !queryParams.get(REFRESH_QUERY_PARAM).isEmpty()) {
+            return queryParams.get(REFRESH_QUERY_PARAM).get(0);
+        } else {
+            // 로그인 실패 exception 생성
+            log.error("Error in creating login response uri  : {}", returnUri.toUriString());
+            throw new DroniLoginFailedException(HttpStatus.INTERNAL_SERVER_ERROR, "Exception in creating Login response uri");
+        }
+    }
     protected UriComponents makeRedirectUriWithToken(HttpServletRequest request, OAuth2UserPrincipal oAuth2UserPrincipal) {
         String redirectUrlString = DroniCookieUtils.getCookie(request, REDIRECT_URI_PARAM_COOKIE_NAME)
                 .map(Cookie::getValue)
@@ -75,10 +86,8 @@ public class DroniOAuth2AuthSuccessHandler extends SimpleUrlAuthenticationSucces
         }
         return UriComponentsBuilder.fromUriString(redirectUrlString)
                 .queryParam("access_token", accessToken.getToken())
-                .queryParam("refresh_token", refreshToken.getToken())
+                .queryParam(REFRESH_QUERY_PARAM, refreshToken.getToken())
                 .build();
-
-
     }
 
     private OAuth2UserPrincipal getOAuth2UserPrincipal(Authentication authentication) {

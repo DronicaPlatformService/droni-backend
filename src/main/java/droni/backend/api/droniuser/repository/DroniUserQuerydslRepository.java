@@ -3,20 +3,25 @@ package droni.backend.api.droniuser.repository;
 import backend.generated_model.TokenRefreshDto;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import droni.backend.api.droniuser.entity.DroniUser;
-
 import droni.backend.api.droniuser.entity.QDroniUser;
+import droni.backend.api.droniuser.exception.DroniLoginFailedException;
 import droni.backend.oauth2.service.OAuth2UserPrincipal;
 import droni.backend.oauth2.token.AuthToken;
 import droni.backend.oauth2.token.AuthTokenProvider;
 import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.Authentication;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Repository;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.util.UriComponents;
 
 import java.util.Optional;
 
+import static droni.backend.oauth2.handler.DroniOAuth2AuthSuccessHandler.REFRESH_QUERY_PARAM;
+
 @Repository
+@Slf4j
 @RequiredArgsConstructor
 public class DroniUserQuerydslRepository {
     private final JPAQueryFactory jpaQueryFactory;
@@ -40,24 +45,21 @@ public class DroniUserQuerydslRepository {
                 ).fetchFirst());
     }
 
-    public DroniUser upateWithPricipal(UriComponents tokenUriComponents, OAuth2UserPrincipal userPrincipal) {
-        String refreshToken = tokenUriComponents.getQueryParams().get("refresh_token").toString();
+    public DroniUser updateWithPrincipal(String newRefreshToken, OAuth2UserPrincipal userPrincipal) {
+
         Optional<DroniUser> optinalUser = Optional.ofNullable(jpaQueryFactory.selectFrom(droniUser)
                 .where(droniUser.oauthId.eq(userPrincipal.getOAuth2Id()))
                 .fetchFirst()
         );
         if (optinalUser.isPresent()) {
             DroniUser existUser = optinalUser.get();
-            existUser.updateRefreshToken(refreshToken);
+            existUser.updateRefreshToken(newRefreshToken);
             return existUser;
         } else {
-            DroniUser newUser = userPrincipal.newDroniUserFromPrincipal(refreshToken);
+            DroniUser newUser = userPrincipal.newDroniUserFromPrincipal(newRefreshToken);
             em.persist(newUser);
             return newUser;
         }
 
     }
-
-
-
 }
