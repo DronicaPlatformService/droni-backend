@@ -21,7 +21,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-public class TokenAuthTest {
+public class AuthTokenProviderTest {
     private final String testSecret = "sdfjof195jghg283jghsnvlk186j0135";
     private final Key key = Keys.hmacShaKeyFor(testSecret.getBytes());
     @Mock
@@ -33,7 +33,6 @@ public class TokenAuthTest {
 
     @BeforeEach
     void setUp() {
-        when(environment.getActiveProfiles()).thenReturn(new String[]{"dev"});
         // Initialize tokenProvider with mocks
         tokenProvider = new AuthTokenProvider(testSecret, authProperties, environment);
     }
@@ -54,6 +53,7 @@ public class TokenAuthTest {
     @Test
     @DisplayName("정상토큰 validation 통과")
     void notLocalEnvValidation() {
+        when(environment.getActiveProfiles()).thenReturn(new String[]{"dev"});
         Date now = new Date();
         Date expiry = new Date(now.getTime() + 600000L);
         AuthToken authToken = new AuthToken("testTokenId", expiry, key);
@@ -64,9 +64,19 @@ public class TokenAuthTest {
     @Test
     @DisplayName("만료 토큰 jwtExpiredException ")
     void 만료된토큰테스트() {
+        when(environment.getActiveProfiles()).thenReturn(new String[]{"dev"});
         Date now = new Date();
         long passedDate = now.getTime() - 60000L;
         AuthToken expiredToken = new AuthToken("testTokenId", new Date(passedDate), key);
         assertThatThrownBy(() -> tokenProvider.validateToken(expiredToken.getToken())).isInstanceOf(JwtExpiredException.class);
+    }
+
+    @Test
+    @DisplayName("만료된 토큰인지 검사하는 메소드 ")
+    void isExpiredMethodTest() {
+        Date now = new Date();
+        long passedDate = now.getTime() - 60000L;
+        AuthToken expiredToken = new AuthToken("testTokenId", new Date(passedDate), key);
+        Assertions.assertTrue(() -> tokenProvider.isExpiredToken(expiredToken.getToken()));
     }
 }

@@ -73,6 +73,9 @@ dependencies {
     // mockito
     testImplementation 'org.mockito:mockito-core'
     testImplementation 'org.mockito:mockito-junit-jupiter'
+
+    testImplementation 'com.h2database:h2'
+
 }
 
 openApiGenerate {
