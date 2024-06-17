@@ -31,7 +31,7 @@ class ExpertRepositoryTest {
     @DisplayName("조종사를 리뷰 평점 순으로 5명을 가져온다.")
     void 인기조종사조회() {
         final int popularExpertResponseSize = 5;
-        List<DroniPopularExpert> popularExpertList = expertRepository.getPoupularExpert();
+        List<DroniPopularExpert> popularExpertList = expertRepository.getPopularExpertList();
         assertThat(popularExpertList.size()).isLessThanOrEqualTo(popularExpertResponseSize);
         for (int i = 1; i < popularExpertList.size(); i++) {
             DroniPopularExpert expert = popularExpertList.get(i);

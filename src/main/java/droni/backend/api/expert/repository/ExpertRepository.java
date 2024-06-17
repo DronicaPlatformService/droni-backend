@@ -10,6 +10,7 @@ import droni.backend.api.expert.entity.QExpertReview;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -22,7 +23,7 @@ public class ExpertRepository {
     private final QExpertReview qExpertReview = QExpertReview.expertReview;
 
 
-    public List<DroniPopularExpert> getPoupularExpert() {
+    public List<DroniPopularExpert> getPopularExpertList() {
         NumberPath<Double> avgScore = Expressions.numberPath(Double.class, "avg_score");
 
         List<Tuple> fetch = queryFactory
@@ -33,8 +34,9 @@ public class ExpertRepository {
                 .orderBy(avgScore.desc())
                 .limit(5)
                 .fetch();
-
-
+        if (fetch.isEmpty()) {
+            return new ArrayList<>();
+        }
         return fetch.stream().map(tuple -> DroniPopularExpert.builder()
                 .expertId(tuple.get(qDroniExpert.expertId))
                 .profileImage(tuple.get(qDroniExpert.user.profileImage))
