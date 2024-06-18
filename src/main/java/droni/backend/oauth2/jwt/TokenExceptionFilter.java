@@ -32,7 +32,7 @@ public class TokenExceptionFilter extends OncePerRequestFilter {
         res.setStatus(jwtException.getStatus());
         res.setContentType(MediaType.APPLICATION_JSON_VALUE);
         Map<String, Object> body = new HashMap<>();
-        body.put("status", HttpServletResponse.SC_UNAUTHORIZED);
+        body.put("status", jwtException.getStatus());
         body.put("error", "Unauthorized");
         body.put("message", jwtException.getMessage());
         body.put("path", req.getServletPath());
