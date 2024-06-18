@@ -1,10 +1,10 @@
 package droni.backend.api.expert.repository;
 
+import backend.generated_model.PopularExpert;
 import com.querydsl.core.Tuple;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.core.types.dsl.NumberPath;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import droni.backend.api.expert.dto.DroniPopularExpert;
 import droni.backend.api.expert.entity.QDroniExpert;
 import droni.backend.api.expert.entity.QExpertReview;
 import lombok.RequiredArgsConstructor;
@@ -23,7 +23,7 @@ public class ExpertRepository {
     private final QExpertReview qExpertReview = QExpertReview.expertReview;
 
 
-    public List<DroniPopularExpert> getPopularExpertList() {
+    public List<PopularExpert> getPopularExpertList() {
         NumberPath<Double> avgScore = Expressions.numberPath(Double.class, "avg_score");
 
         List<Tuple> fetch = queryFactory
@@ -37,9 +37,9 @@ public class ExpertRepository {
         if (fetch.isEmpty()) {
             return new ArrayList<>();
         }
-        return fetch.stream().map(tuple -> DroniPopularExpert.builder()
+        return fetch.stream().map(tuple -> new PopularExpert()
                 .expertId(tuple.get(qDroniExpert.expertId))
                 .profileImage(tuple.get(qDroniExpert.user.profileImage))
-                .score(Objects.isNull(tuple.get(avgScore))? 0.0 : tuple.get(avgScore)).build()).collect(Collectors.toList());
+                .score(Objects.isNull(tuple.get(avgScore)) ? 0.0f : tuple.get(avgScore.floatValue()))).collect(Collectors.toList());
     }
 }

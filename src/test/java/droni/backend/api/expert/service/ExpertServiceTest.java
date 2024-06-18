@@ -1,8 +1,7 @@
 package droni.backend.api.expert.service;
 
-import droni.backend.api.expert.dto.DroniPopularExpert;
+import backend.generated_model.PopularExpert;
 import droni.backend.api.expert.repository.ExpertRepository;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -34,7 +33,7 @@ class ExpertServiceTest {
         when(expertRepository.getPopularExpertList()).thenReturn(testRepositoryReturn());
 
         //then
-        List<DroniPopularExpert> popularExpert = expertService.getPopularExpert();
+        List<PopularExpert> popularExpert = expertService.getPopularExpert();
         assertThat(popularExpert.size()).isEqualTo(testSize);
         for (int i = 0; i < popularExpert.size(); i++) {
             assertThat(popularExpert.get(i).getScore()).isEqualTo(testSize - i);
@@ -43,10 +42,10 @@ class ExpertServiceTest {
 
     }
 
-    private List<DroniPopularExpert> testRepositoryReturn() {
-        List<DroniPopularExpert> result = new ArrayList<>();
+    private List<PopularExpert> testRepositoryReturn() {
+        List<PopularExpert> result = new ArrayList<>();
         for (int i = 0; i < testSize; i++) {
-            result.add(DroniPopularExpert.builder().expertId(i).score(testSize - i).profileImage(String.format("%d.jpg", i)).build());
+            result.add(new PopularExpert().expertId(i).score((float) (testSize - i)).profileImage(String.format("%d.jpg", i)));
         }
         return result;
 
