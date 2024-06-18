@@ -98,7 +98,7 @@ public class AuthTokenProvider {
         } catch (ExpiredJwtException e) {
             return true;
         } catch (Exception e) {
-            throw e;
+            throw new JWTException("Exception in checking request accessToken's expiry ->" + e.getClass().getSimpleName());
         }
     }
 

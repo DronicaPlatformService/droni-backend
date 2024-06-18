@@ -24,12 +24,12 @@ public class JwtAuthEntryPoint implements AuthenticationEntryPoint {
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         // 응답 객체 초기화
         body.put("status", HttpServletResponse.SC_UNAUTHORIZED);
-        body.put("error", "Unauthorized");
+        body.put("error", "JwtAuthFailed check EntryPoint");
         body.put("message", authException.getMessage());
         body.put("path", request.getServletPath());
 
         // response 객체에 응답 객체를 넣어줌
         objectMapper.writeValue(response.getOutputStream(), body);
-        response.setStatus(HttpServletResponse.SC_OK);
+        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
     }
 }
