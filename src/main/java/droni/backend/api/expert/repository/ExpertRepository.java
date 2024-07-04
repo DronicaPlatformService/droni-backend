@@ -30,7 +30,7 @@ public class ExpertRepository {
                 .select(qDroniExpert.expertId, qDroniExpert.user.profileImage, qExpertReview.score.avg().as(avgScore))
                 .from(qDroniExpert)
                 .leftJoin(qDroniExpert.reviews, qExpertReview)
-                .groupBy(qDroniExpert.expertId)
+                .groupBy(qDroniExpert.expertId, qDroniExpert.user.profileImage)
                 .orderBy(avgScore.desc())
                 .limit(5)
                 .fetch();

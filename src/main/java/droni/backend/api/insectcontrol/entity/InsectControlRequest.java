@@ -21,9 +21,6 @@ public class InsectControlRequest {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer insectRequestId;
     @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
-    private DroniUser user;
-    @ManyToOne
     @JoinColumn(name = "land_id", nullable = false)
     private Land land;
     @Enumerated(value = EnumType.STRING)
