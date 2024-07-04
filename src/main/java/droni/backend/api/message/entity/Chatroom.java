@@ -12,14 +12,14 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "message_group")
+@Table(name = "chatroom")
 @Builder
 @NoArgsConstructor(access =  AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
-public class MessageGroup {
+public class Chatroom {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer messageGroupId;
+    private Integer q;
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private DroniUser droniUser;

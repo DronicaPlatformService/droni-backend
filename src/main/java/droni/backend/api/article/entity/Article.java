@@ -20,6 +20,7 @@ public class Article {
     private String title;
     @Enumerated(value = EnumType.STRING)
     private ArticleKind kind;
+    @Column(name = "article_content")
     private String content;
     @Enumerated(value = EnumType.STRING)
     private ArticleTarget target;
