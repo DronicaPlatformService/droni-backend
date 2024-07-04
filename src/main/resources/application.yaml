@@ -29,8 +29,10 @@ server:
   port: 8080
 # OpenAPI sprigDOC configuration
 springdoc:
+  api-docs:
+    path: /openapi/doc
   swagger-ui:
-    path: /swagger-ui.html
+    path: /swagger-ui
     operations-sorter: alpha
     tags-sorter: alpha
     disable-swagger-default-url: true
@@ -68,3 +70,13 @@ droni:
     database: droni
 server:
   port: 8086
+---
+spring:
+  config:
+    activate:
+      on-profile: rel
+springdoc:
+  api-docs:
+    enabled: false
+  swagger-ui:
+    enabled: false

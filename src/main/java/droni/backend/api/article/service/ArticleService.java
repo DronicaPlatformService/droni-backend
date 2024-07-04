@@ -17,18 +17,19 @@ import java.util.stream.Collectors;
 public class ArticleService {
     private final ArticleRepository repository;
 
-    public List<ArticleSummaryResponse> getHowToUseArticleSummary(String target) {
+
+    public List<ArticleSummaryResponse> getHowToUseArticleSummary(String target, int main_view_count) {
         try {
             ArticleTarget articleTarget = ArticleTarget.valueOf(target);
-            List<Article> top5Article = repository.findMainArticleByTarget(articleTarget);
+            List<Article> top5Article = repository.findHowToUseSummary(articleTarget, main_view_count);
             return top5Article.stream().map(Article::toDto).collect(Collectors.toList());
         } catch (IllegalArgumentException e) {
             throw new DroniBadRequestException(HttpStatus.BAD_REQUEST, String.format("Query parameter target [%s] not supported [ALL, USER, EXPERT] expected", target));
         }
     }
 
-    public List<ArticleSummaryResponse> getDroneContent() {
-        List<Article> mainDroneContent = repository.findMainDroneContent();
+    public List<ArticleSummaryResponse> getDroneContentSummary(int main_view_count) {
+        List<Article> mainDroneContent = repository.findDroneContentSummary(main_view_count);
         return mainDroneContent.stream().map(Article::toDto).collect(Collectors.toList());
     }
 

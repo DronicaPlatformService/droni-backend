@@ -12,7 +12,7 @@ info:
   license:
     name: Apache License Version 2.0
     url: https://www.apache.org/licenses/LICENSE-2.0
-  version: '0.0.4'
+  version: '0.0.5'
 tags:
   - name: home
     description: home API
@@ -58,6 +58,26 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/PilotProfile'
+  /article/how-to-use/list:
+    get:
+      tags:
+        - article
+      summary: 드론백서 더보기 클릭시 반환 api
+      parameters:
+        - in: query
+          schema:
+            type: string
+            enum: [ALL, USER, EXPERT]
+          name: articleTarget
+      responses:
+        200:
+          description: ok
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ArticleSummaryResponse'
   /article/how-to-use/summary:
     get:
       tags:
@@ -72,6 +92,20 @@ paths:
               - USER
               - EXPERT
           name: articleTarget
+      responses:
+        200:
+          description: ok
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ArticleSummaryResponse'
+  /article/drone-content/list:
+    get:
+      tags:
+        - article
+      summary: 메인화면 드론 콘텐츠 더보기 클릭시 반환 api
       responses:
         200:
           description: ok

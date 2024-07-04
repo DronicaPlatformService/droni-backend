@@ -13,15 +13,32 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ArticleController implements ArticleApi {
     private final ArticleService articleService;
+    private final int main_view_count = 5;
+    private final int all_view_count = 5;
+
     @Override
-    public ResponseEntity<List<ArticleSummaryResponse>> articleDroneContentSummaryGet() {
-        List<ArticleSummaryResponse> droneContent = articleService.getDroneContent();
+    public ResponseEntity<List<ArticleSummaryResponse>> articleDroneContentListGet() {
+        List<ArticleSummaryResponse> droneContent = articleService.getDroneContentSummary(all_view_count);
         return ResponseEntity.ok(droneContent);
     }
 
     @Override
-    public ResponseEntity<List<ArticleSummaryResponse>> articleHowToUseSummaryGet(String articleTarget) {
-        List<ArticleSummaryResponse> howToUseArticleSummary = articleService.getHowToUseArticleSummary(articleTarget);
+    public ResponseEntity<List<ArticleSummaryResponse>> articleDroneContentSummaryGet() {
+        List<ArticleSummaryResponse> droneContent = articleService.getDroneContentSummary(main_view_count);
+        return ResponseEntity.ok(droneContent);
+    }
+
+    @Override
+    public ResponseEntity<List<ArticleSummaryResponse>> articleHowToUseListGet(String articleTarget) {
+        List<ArticleSummaryResponse> howToUseArticleSummary = articleService.getHowToUseArticleSummary(articleTarget, all_view_count);
         return ResponseEntity.ok(howToUseArticleSummary);
     }
+
+    @Override
+    public ResponseEntity<List<ArticleSummaryResponse>> articleHowToUseSummaryGet(String articleTarget) {
+        List<ArticleSummaryResponse> howToUseArticleSummary = articleService.getHowToUseArticleSummary(articleTarget, main_view_count);
+        return ResponseEntity.ok(howToUseArticleSummary);
+    }
+
+
 }

@@ -6,6 +6,9 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.util.SerializationUtils;
 
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.util.Arrays;
 import java.util.Base64;
 import java.util.Objects;
@@ -38,9 +41,17 @@ public class DroniCookieUtils {
     }
 
     public static <T> T deserialize(Cookie cookie, Class<T> cls) {
-        return cls.cast(SerializationUtils.deserialize(
-                Base64.getUrlDecoder().decode(cookie.getValue())));
+    try {
+        byte[] bytes = Base64.getUrlDecoder().decode(cookie.getValue());
+        try (ByteArrayInputStream bis = new ByteArrayInputStream(bytes);
+             ObjectInputStream ois = new ObjectInputStream(bis)) {
+            Object obj = ois.readObject();
+            return cls.cast(obj);
+        }
+    } catch (IOException | ClassNotFoundException e) {
+        throw new RuntimeException("Error deserializing cookie value", e);
     }
+}
 
     public static void addCookie(HttpServletResponse response, String name, String value, int maxAge) {
         Cookie cookie = new Cookie(name, value);

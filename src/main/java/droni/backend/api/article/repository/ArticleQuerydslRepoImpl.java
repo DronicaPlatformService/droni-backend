@@ -14,10 +14,10 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ArticleQuerydslRepoImpl implements ArticleQuerydslRepo {
     private final JPAQueryFactory queryFactory;
-    public final int NUMBER_MAIN_VIEW = 5;
     public static final QArticle qArticle = QArticle.article;
+
     @Override
-    public List<Article> findMainArticleByTarget(ArticleTarget target) {
+    public List<Article> findHowToUseSummary(ArticleTarget target, int NUMBER_MAIN_VIEW) {
         return queryFactory.selectFrom(qArticle)
                 .where(qArticle.target.eq(target)
                         .and(qArticle.kind.eq(ArticleKind.HOW_TO_USE)))
@@ -27,11 +27,12 @@ public class ArticleQuerydslRepoImpl implements ArticleQuerydslRepo {
     }
 
     @Override
-    public List<Article> findMainDroneContent() {
+    public List<Article> findDroneContentSummary(int NUMBER_MAIN_VIEW) {
         return queryFactory.selectFrom(qArticle)
                 .where(qArticle.kind.eq(ArticleKind.DRONE_CONTENT))
                 .orderBy(qArticle.createdAt.desc())
                 .limit(NUMBER_MAIN_VIEW)
                 .fetch();
     }
+
 }
