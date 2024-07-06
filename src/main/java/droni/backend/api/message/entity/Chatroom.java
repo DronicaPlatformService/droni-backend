@@ -19,7 +19,7 @@ import java.time.LocalDateTime;
 public class Chatroom {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer q;
+    private Integer chatroomId;
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private DroniUser droniUser;
