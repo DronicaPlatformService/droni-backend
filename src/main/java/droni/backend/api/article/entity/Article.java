@@ -19,7 +19,7 @@ public class Article {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long articleId;
-    @Column(nullable = false, length = 30)
+    @Column(nullable = false)
     private String title;
     @Enumerated(value = EnumType.STRING)
     private ArticleKind kind;

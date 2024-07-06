@@ -2,8 +2,7 @@ package droni.backend.api.expert.repository;
 
 import backend.generated_model.PopularExpert;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
+import droni.backend.api.config.JpaTestConfig;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -12,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
 
@@ -23,6 +23,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @ActiveProfiles("test")
 @ExtendWith(MockitoExtension.class)
 @Sql(scripts = "/testdata/test-expert.sql")
+@Import(JpaTestConfig.class)
 class ExpertRepositoryTest {
     @Autowired
     private ExpertRepository expertRepository;
@@ -41,18 +42,11 @@ class ExpertRepositoryTest {
     }
     @TestConfiguration
     static class TestQueryDslConfig {
-
-        @PersistenceContext
-        private EntityManager entityManager;
-
-        @Bean
-        public JPAQueryFactory jpaQueryFactory() {
-            return new JPAQueryFactory(entityManager);
-        }
-
+        @Autowired
+        JPAQueryFactory jpaQueryFactory;
         @Bean
         public ExpertRepository expertRepository() {
-            return new ExpertRepository(jpaQueryFactory());
+            return new ExpertRepository(jpaQueryFactory);
         }
     }
 

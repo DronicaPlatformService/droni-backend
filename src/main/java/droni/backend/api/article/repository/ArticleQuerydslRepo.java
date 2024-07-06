@@ -6,7 +6,7 @@ import droni.backend.api.article.entity.Article;
 import java.util.List;
 
 public interface ArticleQuerydslRepo {
-    List<Article> findHowToUseSummary(ArticleTarget target, int main_view_count);
+    List<Article> findHowToUseArticle(ArticleTarget target, int main_view_count);
 
-    List<Article> findDroneContentSummary(int main_view_count);
+    List<Article> findDroniContentArticle(int main_view_count);
 }
