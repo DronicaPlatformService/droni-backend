@@ -1,4 +1,5 @@
 HELP.md
+.DS_store
 .gradle
 .generated
 **/src/main/resources/application-auth.yaml
