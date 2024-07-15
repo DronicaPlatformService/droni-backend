@@ -12,7 +12,7 @@ info:
   license:
     name: Apache License Version 2.0
     url: https://www.apache.org/licenses/LICENSE-2.0
-  version: '0.0.5'
+  version: '0.0.6'
 tags:
   - name: home
     description: home API
@@ -21,6 +21,7 @@ tags:
   - name: auth
     description: auth API
   - name: article
+    description: article API
   - name: expert
     description: drone pilot API
 security:
@@ -45,8 +46,8 @@ paths:
   /home/popular-pilot:
     get:
       tags:
-        - home
-      summary: get popular pilot api
+        - expert
+      summary: 홈 화면 인기 조종사 api
       description: get popular pilot user profile for home page
       operationId: getPopularPilot
       responses:
@@ -129,20 +130,6 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/ArticleSummaryResponse'
-  /expert/popular:
-    get:
-      tags:
-        - expert
-      summary: 메인화면 인기 조종사 api
-      responses:
-        200:
-          description: request success
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/PopularExpert'
   /sucess-test:
     get:
       tags:
@@ -210,6 +197,9 @@ components:
         expertId:
           type: integer
           format: int64
+        score:
+          type: number
+          format: float
         nickName:
           type: string
           example: user nickname
@@ -232,17 +222,6 @@ components:
           type: string
         articleSubject:
           type: string
-    PopularExpert:
-      type: object
-      properties:
-        expertId:
-          type: integer
-        score:
-          type: number
-          format: float
-        profileImage:
-          type: string
-
 
   securitySchemes:
     bearer-key:

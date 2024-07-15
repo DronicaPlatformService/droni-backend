@@ -1,6 +1,6 @@
 package droni.backend.api.expert.service;
 
-import backend.generated_model.PopularExpert;
+import backend.generated_model.PilotProfile;
 import droni.backend.api.expert.repository.ExpertRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -33,7 +33,7 @@ class ExpertServiceTest {
         when(expertRepository.getPopularExpertList()).thenReturn(testRepositoryReturn());
 
         //then
-        List<PopularExpert> popularExpert = expertService.getPopularExpert();
+        List<PilotProfile> popularExpert = expertService.getPopularExpert();
         assertThat(popularExpert.size()).isEqualTo(testSize);
         for (int i = 0; i < popularExpert.size(); i++) {
             assertThat(popularExpert.get(i).getScore()).isEqualTo(testSize - i);
@@ -42,10 +42,10 @@ class ExpertServiceTest {
 
     }
 
-    private List<PopularExpert> testRepositoryReturn() {
-        List<PopularExpert> result = new ArrayList<>();
+    private List<PilotProfile> testRepositoryReturn() {
+        List<PilotProfile> result = new ArrayList<>();
         for (int i = 0; i < testSize; i++) {
-            result.add(new PopularExpert().expertId(i).score((float) (testSize - i)).profileImage(String.format("%d.jpg", i)));
+            result.add(new PilotProfile().expertId((long) i).score((float) (testSize - i)).imageUrl(String.format("%d.jpg", i)));
         }
         return result;
 

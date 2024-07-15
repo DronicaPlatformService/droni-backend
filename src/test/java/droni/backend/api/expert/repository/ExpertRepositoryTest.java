@@ -1,6 +1,6 @@
 package droni.backend.api.expert.repository;
 
-import backend.generated_model.PopularExpert;
+import backend.generated_model.PilotProfile;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import droni.backend.api.config.JpaTestConfig;
 import org.junit.jupiter.api.DisplayName;
@@ -32,11 +32,11 @@ class ExpertRepositoryTest {
     @DisplayName("조종사를 리뷰 평점 순으로 5명을 가져온다.")
     void 인기조종사조회() {
         final int popularExpertResponseSize = 5;
-        List<PopularExpert> popularExpertList = expertRepository.getPopularExpertList();
+        List<PilotProfile> popularExpertList = expertRepository.getPopularExpertList();
         assertThat(popularExpertList.size()).isLessThanOrEqualTo(popularExpertResponseSize);
         for (int i = 1; i < popularExpertList.size(); i++) {
-            PopularExpert expert = popularExpertList.get(i);
-            PopularExpert prevExpert = popularExpertList.get(i - 1);
+            PilotProfile expert = popularExpertList.get(i);
+            PilotProfile prevExpert = popularExpertList.get(i - 1);
             assertThat(prevExpert.getScore()).isGreaterThanOrEqualTo(expert.getScore());
         }
     }
