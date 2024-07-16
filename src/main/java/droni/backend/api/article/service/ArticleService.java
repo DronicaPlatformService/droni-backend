@@ -26,5 +26,9 @@ public class ArticleService {
         List<Article> mainDroneContent = repository.findDroniContentArticle(viewCount);
         return mainDroneContent.stream().map(Article::toDto).collect(Collectors.toList());
     }
+    // todo : find one article with below code
+//    void test() {
+//        repository.findById()
+//    }
 
 }

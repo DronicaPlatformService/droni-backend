@@ -102,6 +102,8 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/ArticleSummaryResponse'
+  /article/{articleId}:
+#    fixme: code here and use 'gradle openApiGenerator'
   /article/drone-content/list:
     get:
       tags:

@@ -40,5 +40,9 @@ public class ArticleController implements ArticleApi {
         return ResponseEntity.ok(howToUseArticleSummary);
     }
 
+    //TODO : implements code from gernerated source
+
+
+
 
 }
