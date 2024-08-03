@@ -4,21 +4,15 @@ import backend.generated_model.TokenRefreshDto;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import droni.backend.api.droniuser.entity.DroniUser;
 import droni.backend.api.droniuser.entity.QDroniUser;
-import droni.backend.api.droniuser.exception.DroniLoginFailedException;
 import droni.backend.oauth2.service.OAuth2UserPrincipal;
 import droni.backend.oauth2.token.AuthToken;
 import droni.backend.oauth2.token.AuthTokenProvider;
 import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Repository;
-import org.springframework.util.MultiValueMap;
-import org.springframework.web.util.UriComponents;
 
 import java.util.Optional;
-
-import static droni.backend.oauth2.handler.DroniOAuth2AuthSuccessHandler.REFRESH_QUERY_PARAM;
 
 @Repository
 @Slf4j
