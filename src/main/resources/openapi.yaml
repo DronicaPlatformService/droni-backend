@@ -24,6 +24,8 @@ tags:
     description: article API
   - name: expert
     description: drone pilot API
+  - name: chat
+    description: droni chat API
 security:
   - bearer-key: []
 paths:
@@ -172,6 +174,46 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/TokenRefreshDto"
+  /chat:
+    post:
+      tags:
+        - chat
+      description: 채팅방 생성 id
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateChatRequest'
+      responses:
+        200:
+          description: 채팅방 정상 생성
+          content:
+            application/json:
+              schema:
+                type: integer
+                format: int64
+  /chat/history/{chatroomId}:
+    get:
+      tags:
+        - chat
+      description: 이전 message 목록을 가져오는 api
+      parameters:
+        - in: path
+          required: true
+          name: chatroomId
+          schema:
+            type: integer
+            format: int64
+      responses:
+        200:
+          description: 이전 메세지 정상 반환
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ChatMessage'
+
 
 components:
   schemas:
@@ -222,6 +264,37 @@ components:
           type: string
         articleSubject:
           type: string
+    ChatMessage:
+      type: object
+      properties:
+        messageId:
+          type: integer
+          format: int64
+        chatroomId:
+          type: integer
+          format: int64
+        repliedMessageId:
+          type: integer
+          format: int64
+        content:
+          type: string
+        filePath:
+          type: string
+        timestamp:
+          type: string
+          format: date-times
+    CreateChatRequest:
+      type: object
+      required: [fromUserId, toUserId]
+      properties:
+        fromUserId:
+          type: integer
+          format: int64
+          example: 10
+        toUserId:
+          type: integer
+          format: int64
+          example: 20
 
   securitySchemes:
     bearer-key:
