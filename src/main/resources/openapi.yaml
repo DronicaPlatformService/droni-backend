@@ -174,6 +174,28 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/TokenRefreshDto"
+  /chat/chatroom/{userId}:
+    get:
+      tags:
+        - chat
+      description: 유저의 채팅방 목록을 가져오는 api 생성
+      parameters:
+        - in: path
+          required: true
+          name: userId
+          schema:
+            type: integer
+            format: int64
+      responses:
+        200:
+          description: 사용자의 채팅방 정상 반환
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/UserChatroom"
+
   /chat:
     post:
       tags:
@@ -295,7 +317,23 @@ components:
           type: integer
           format: int64
           example: 20
-
+    UserChatroom:
+      type: object
+      properties:
+        expertId:
+          type: integer
+          format: int64
+        expertName:
+          type: string
+        expertScore:
+          type: number
+          format: float
+        expertAddr:
+          type: string
+        lastMessage:
+          type: string
+        lastTimestamp:
+          type: string
   securitySchemes:
     bearer-key:
       type: http
