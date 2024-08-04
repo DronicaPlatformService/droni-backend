@@ -19,7 +19,7 @@ import java.time.LocalDateTime;
 public class InsectControlRequest {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer insectRequestId;
+    private long insectRequestId;
     @ManyToOne
     @JoinColumn(name = "land_id", nullable = false)
     private Land land;

@@ -20,7 +20,7 @@ public class DroniUser {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(updatable = false)
-    private int userId;
+    private long userId;
     @Column(name = "phone_number", nullable = false, length = 15)
     private String phoneNumber;
     @Column(name = "email", nullable = false)

@@ -20,7 +20,7 @@ public class Message {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long messageId;
     @ManyToOne
-    @JoinColumn(name = "message_group_id", nullable = false)
+    @JoinColumn(name = "chatroom_id", nullable = false)
     private Chatroom group;
     @Column(name = "is_pinned")
     @Builder.Default

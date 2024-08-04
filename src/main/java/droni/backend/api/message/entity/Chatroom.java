@@ -19,7 +19,7 @@ import java.time.LocalDateTime;
 public class Chatroom {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer chatroomId;
+    private long chatroomId;
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private DroniUser droniUser;
@@ -27,7 +27,7 @@ public class Chatroom {
     @JoinColumn(name = "expert_id", nullable = false)
     private DroniExpert expert;
     @Column(nullable = false, name = "service_request_id")
-    private Integer serviceId;
+    private Long serviceId;
     @Enumerated(value = EnumType.STRING)
     private DroniServiceKind serviceType;
     private LocalDateTime lastConnectionTime;
