@@ -20,8 +20,6 @@ tags:
     description: test API
   - name: auth
     description: auth API
-  - name: article
-    description: article API
   - name: expert
     description: drone pilot API
   - name: chat
@@ -61,77 +59,6 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/PilotProfile'
-  /article/how-to-use/list:
-    get:
-      tags:
-        - article
-      summary: 드론백서 더보기 클릭시 반환 api
-      parameters:
-        - in: query
-          schema:
-            type: string
-            enum: [ALL, USER, EXPERT]
-          name: articleTarget
-      responses:
-        200:
-          description: ok
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/ArticleSummaryResponse'
-  /article/how-to-use/summary:
-    get:
-      tags:
-        - article
-      summary: 메인화면에서 보여지는 활용백서 5개 반환 api
-      parameters:
-        - in: query
-          schema:
-            type: string
-            enum:
-              - ALL
-              - USER
-              - EXPERT
-          name: articleTarget
-      responses:
-        200:
-          description: ok
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/ArticleSummaryResponse'
-  /article/drone-content/list:
-    get:
-      tags:
-        - article
-      summary: 메인화면 드론 콘텐츠 더보기 클릭시 반환 api
-      responses:
-        200:
-          description: ok
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/ArticleSummaryResponse'
-  /article/drone-content/summary:
-    get:
-      tags:
-        - article
-      summary: 메인화면 드론 콘텐츠 5개 반환 api
-      responses:
-        200:
-          description: ok
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/ArticleSummaryResponse'
   /sucess-test:
     get:
       tags:
@@ -278,13 +205,6 @@ components:
         accessToken:
           type: string
         refreshToken:
-          type: string
-    ArticleSummaryResponse:
-      type: object
-      properties:
-        articleImageUri:
-          type: string
-        articleSubject:
           type: string
     ChatMessage:
       type: object

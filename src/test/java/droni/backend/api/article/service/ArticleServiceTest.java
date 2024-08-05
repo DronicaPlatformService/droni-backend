@@ -1,6 +1,6 @@
 package droni.backend.api.article.service;
 
-import backend.generated_model.ArticleSummaryResponse;
+import droni.backend.api.article.dto.ArticleSummaryResponse;
 import droni.backend.api.article.controller.ArticleController;
 import droni.backend.api.article.dto.ArticleKind;
 import droni.backend.api.article.dto.ArticleTarget;
@@ -50,7 +50,7 @@ class ArticleServiceTest {
         //when
         when(articleRepository.findHowToUseArticle(ArticleTarget.USER, ArticleController.HOME_VIEW)).thenReturn(howToUseSummary);
         List<ArticleSummaryResponse> expectedResults = howToUseSummary.stream().map(Article::toDto).collect(Collectors.toList());
-        List<ArticleSummaryResponse> returnedResults = articleService.getHowToUseArticleSummary("USER", ArticleController.HOME_VIEW);
+        List<ArticleSummaryResponse> returnedResults = articleService.getHowToUseArticleSummary(ArticleTarget.USER, ArticleController.HOME_VIEW);
         //then
         Assertions.assertThat(expectedResults.containsAll(returnedResults)).isTrue();
     }
