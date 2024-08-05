@@ -1,7 +1,7 @@
 package droni.backend.api.expert.service;
 
-import backend.generated_model.PilotProfile;
 import droni.backend.api.expert.repository.ExpertRepository;
+import droni.backend.api.expert.dto.PilotProfile;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -45,7 +45,7 @@ class ExpertServiceTest {
     private List<PilotProfile> testRepositoryReturn() {
         List<PilotProfile> result = new ArrayList<>();
         for (int i = 0; i < testSize; i++) {
-            result.add(new PilotProfile().expertId((long) i).score((float) (testSize - i)).imageUrl(String.format("%d.jpg", i)));
+            result.add(PilotProfile.builder().expertId((long) i).score((float) (testSize - i)).imageUrl(String.format("%d.jpg", i)).build());
         }
         return result;
 

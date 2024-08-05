@@ -20,8 +20,6 @@ tags:
     description: test API
   - name: auth
     description: auth API
-  - name: expert
-    description: drone pilot API
   - name: chat
     description: droni chat API
 security:
@@ -43,22 +41,6 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/DroniFile'
-  /home/popular-pilot:
-    get:
-      tags:
-        - expert
-      summary: 홈 화면 인기 조종사 api
-      description: get popular pilot user profile for home page
-      operationId: getPopularPilot
-      responses:
-        200:
-          description: ok
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/PilotProfile'
   /sucess-test:
     get:
       tags:
@@ -180,23 +162,6 @@ components:
         path:
           type: string
           example: http://filePathURL
-    PilotProfile:
-      title: pilot profile
-      description: pilot profile object
-      type: object
-      properties:
-        expertId:
-          type: integer
-          format: int64
-        score:
-          type: number
-          format: float
-        nickName:
-          type: string
-          example: user nickname
-        imageUrl:
-          type: string
-          example: http:/imageURL
     TokenRefreshDto:
       type: object
       description: request for refreshing token
