@@ -1,6 +1,6 @@
 package droni.backend.api.expert.service;
 
-import backend.generated_model.PilotProfile;
+import droni.backend.api.expert.dto.PilotProfile;
 import droni.backend.api.expert.repository.ExpertRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

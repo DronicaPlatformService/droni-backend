@@ -1,6 +1,6 @@
 package droni.backend.api.article.entity;
 
-import backend.generated_model.ArticleSummaryResponse;
+import droni.backend.api.article.dto.ArticleSummaryResponse;
 import droni.backend.api.article.dto.ArticleKind;
 import droni.backend.api.article.dto.ArticleTarget;
 import droni.backend.api.attacthfile.entity.DroniFile;
@@ -44,9 +44,9 @@ public class Article {
     }
 
     public ArticleSummaryResponse toDto() {
-        ArticleSummaryResponse dto = new ArticleSummaryResponse();
-        dto.setArticleImageUri(this.displayImage.getPath());
-        dto.setArticleSubject(this.title);
-        return dto;
+        return ArticleSummaryResponse.builder()
+                .articleImageUri(this.displayImage.getPath())
+                .articleSubject(this.title)
+                .build();
     }
 }

@@ -2,7 +2,6 @@ plugins {
     id 'java'
     id 'org.springframework.boot' version '3.2.4'
     id 'io.spring.dependency-management' version '1.1.3'
-    id "org.openapi.generator" version "7.5.0"
 }
 
 group = 'droni'
@@ -15,9 +14,6 @@ java {
 configurations {
     compileOnly {
         extendsFrom annotationProcessor
-    }
-    all {
-        exclude group: 'org.slf4j', module: 'slf4j-simple'
     }
 }
 
@@ -33,13 +29,6 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-logging'
     // OpenAPI UI and codegen
     implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.3.0'
-    // https://mvnrepository.com/artifact/javax.xml.bind/jaxb-api
-    implementation group: 'javax.xml.bind', name: 'jaxb-api', version: '2.3.1'
-
-    implementation('org.openapitools:openapi-generator:7.5.0')
-    implementation "org.openapitools:openapi-generator-gradle-plugin:7.5.0"
-    implementation 'org.openapitools:jackson-databind-nullable:0.2.6'
-
     // jpa 설정
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 
@@ -68,30 +57,6 @@ dependencies {
     testImplementation 'org.springframework:spring-webflux'
     testImplementation 'com.h2database:h2'
 
-}
-
-openApiGenerate {
-    generatorName.set("spring")
-    library.set("spring-boot")
-    inputSpec.set(project.file("$rootDir/src/main/resources/openapi.yaml").absolutePath)
-    outputDir.set(project.file("$buildDir/.swagger-generated").absolutePath)
-    apiPackage.set("backend.generated-api")
-    modelPackage.set("backend.generated-model")
-    configOptions.set([
-            interfaceOnly    : "true",
-            useBeanValidation: "true",
-            dateLibrary      : "java8",
-            useSpringBoot3   : "true",
-            useTags          : "true"
-
-    ])
-}
-sourceSets {
-    main {
-        java {
-            srcDir("$buildDir/.swagger-generated/src/main/java")
-        }
-    }
 }
 test {
     useJUnitPlatform()

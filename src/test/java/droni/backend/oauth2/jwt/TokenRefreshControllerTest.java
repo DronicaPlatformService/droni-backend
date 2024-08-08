@@ -1,6 +1,5 @@
 package droni.backend.oauth2.jwt;
 
-import backend.generated_model.TokenRefreshDto;
 import com.nimbusds.jose.shaded.gson.Gson;
 import droni.backend.api.droniuser.entity.DroniUser;
 import droni.backend.api.droniuser.repository.DroniUserQuerydslRepository;
@@ -47,9 +46,7 @@ class TokenRefreshControllerTest {
     void reissueSucceclearss() throws Exception {
 
         //given
-        TokenRefreshDto prevToken = new TokenRefreshDto();
-        prevToken.setAccessToken("expiredToken");
-        prevToken.setRefreshToken("refreshToken");
+        TokenRefreshDto prevToken = TokenRefreshDto.builder().accessToken("expiredToken").refreshToken("refreshToken").build();
         DroniUser mockUser = DroniUser.builder().oauthId("userOauthId").build();
         AuthToken newAccessToken = new AuthToken("newAccessToken", null);
         AuthToken newRefreshToken = new AuthToken("newRefreshToken", null);

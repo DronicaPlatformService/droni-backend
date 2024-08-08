@@ -1,6 +1,6 @@
 package droni.backend.api.article.service;
 
-import backend.generated_model.ArticleSummaryResponse;
+import droni.backend.api.article.dto.ArticleSummaryResponse;
 import droni.backend.api.article.dto.ArticleTarget;
 import droni.backend.api.article.entity.Article;
 import droni.backend.api.article.repository.ArticleRepository;
@@ -16,9 +16,8 @@ public class ArticleService {
     private final ArticleRepository repository;
 
 
-    public List<ArticleSummaryResponse> getHowToUseArticleSummary(String target, int viewCount) {
-        ArticleTarget articleTarget = ArticleTarget.fromString(target);
-        List<Article> top5Article = repository.findHowToUseArticle(articleTarget, viewCount);
+    public List<ArticleSummaryResponse> getHowToUseArticleSummary(ArticleTarget target, int viewCount) {
+        List<Article> top5Article = repository.findHowToUseArticle(target, viewCount);
         return top5Article.stream().map(Article::toDto).collect(Collectors.toList());
     }
 

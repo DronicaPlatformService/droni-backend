@@ -1,7 +1,7 @@
 package droni.backend.api.expert.repository;
 
-import backend.generated_model.PilotProfile;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import droni.backend.api.expert.dto.PilotProfile;
 import droni.backend.api.config.JpaTestConfig;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

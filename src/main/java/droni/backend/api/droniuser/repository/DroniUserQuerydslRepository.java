@@ -1,9 +1,9 @@
 package droni.backend.api.droniuser.repository;
 
-import backend.generated_model.TokenRefreshDto;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import droni.backend.api.droniuser.entity.DroniUser;
 import droni.backend.api.droniuser.entity.QDroniUser;
+import droni.backend.oauth2.jwt.TokenRefreshDto;
 import droni.backend.oauth2.service.OAuth2UserPrincipal;
 import droni.backend.oauth2.token.AuthToken;
 import droni.backend.oauth2.token.AuthTokenProvider;
