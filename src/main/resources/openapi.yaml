@@ -18,8 +18,6 @@ tags:
     description: home API
   - name: test
     description: test API
-  - name: chat
-    description: droni chat API
 security:
   - bearer-key: []
 paths:
@@ -63,68 +61,6 @@ paths:
             application/json:
               schema:
                 type: string
-  /chat/chatroom/{userId}:
-    get:
-      tags:
-        - chat
-      description: 유저의 채팅방 목록을 가져오는 api 생성
-      parameters:
-        - in: path
-          required: true
-          name: userId
-          schema:
-            type: integer
-            format: int64
-      responses:
-        200:
-          description: 사용자의 채팅방 정상 반환
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: "#/components/schemas/UserChatroom"
-
-  /chat:
-    post:
-      tags:
-        - chat
-      description: 채팅방 생성 id
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/CreateChatRequest'
-      responses:
-        200:
-          description: 채팅방 정상 생성
-          content:
-            application/json:
-              schema:
-                type: integer
-                format: int64
-  /chat/history/{chatroomId}:
-    get:
-      tags:
-        - chat
-      description: 이전 message 목록을 가져오는 api
-      parameters:
-        - in: path
-          required: true
-          name: chatroomId
-          schema:
-            type: integer
-            format: int64
-      responses:
-        200:
-          description: 이전 메세지 정상 반환
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/ChatMessage'
-
 
 components:
   schemas:
@@ -142,54 +78,6 @@ components:
         path:
           type: string
           example: http://filePathURL
-    ChatMessage:
-      type: object
-      properties:
-        messageId:
-          type: integer
-          format: int64
-        chatroomId:
-          type: integer
-          format: int64
-        repliedMessageId:
-          type: integer
-          format: int64
-        content:
-          type: string
-        filePath:
-          type: string
-        timestamp:
-          type: string
-          format: date-times
-    CreateChatRequest:
-      type: object
-      required: [fromUserId, toUserId]
-      properties:
-        fromUserId:
-          type: integer
-          format: int64
-          example: 10
-        toUserId:
-          type: integer
-          format: int64
-          example: 20
-    UserChatroom:
-      type: object
-      properties:
-        expertId:
-          type: integer
-          format: int64
-        expertName:
-          type: string
-        expertScore:
-          type: number
-          format: float
-        expertAddr:
-          type: string
-        lastMessage:
-          type: string
-        lastTimestamp:
-          type: string
   securitySchemes:
     bearer-key:
       type: http
