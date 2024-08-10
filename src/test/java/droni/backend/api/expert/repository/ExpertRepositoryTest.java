@@ -1,29 +1,24 @@
 package droni.backend.api.expert.repository;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import droni.backend.api.config.DroniJpaTest;
 import droni.backend.api.expert.dto.PilotProfile;
-import droni.backend.api.config.JpaTestConfig;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Import;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
 
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@DataJpaTest
-@ActiveProfiles("test")
 @ExtendWith(MockitoExtension.class)
 @Sql(scripts = "/testdata/test-expert.sql")
-@Import(JpaTestConfig.class)
+@DroniJpaTest
 class ExpertRepositoryTest {
     @Autowired
     private ExpertRepository expertRepository;

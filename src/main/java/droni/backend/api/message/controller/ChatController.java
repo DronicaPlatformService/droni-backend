@@ -2,9 +2,11 @@ package droni.backend.api.message.controller;
 
 import droni.backend.api.message.dto.ChatMessage;
 import droni.backend.api.message.dto.CreateChatRequest;
-import droni.backend.api.message.dto.UserChatroom;
+import droni.backend.api.message.dto.UserChatroomResponse;
+import droni.backend.api.message.service.DroniChatService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -12,12 +14,16 @@ import java.util.List;
 
 @RestController
 @RequestMapping(value = "/chat")
+@RequiredArgsConstructor
 @Tag(name = "chat", description = "드로니 채팅 API")
-public class ChatController  {
+public class ChatController {
+
+    private final DroniChatService droniChatService;
+
     @GetMapping("/chatroom/{userId}")
     @Operation(summary = "유저의 채팅방 목록을 가져오는 api")
-    public List<UserChatroom> chatChatroomUserIdGet(@PathVariable("userId")  Long userId) {
-        return null;
+    public List<UserChatroomResponse> chatChatroomUserIdGet(@PathVariable("userId") Long userId) {
+        return droniChatService.getChatroomByUserId(userId);
     }
 
     @GetMapping("/history/{chatroomId}")

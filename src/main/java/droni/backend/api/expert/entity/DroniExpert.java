@@ -6,6 +6,7 @@ import lombok.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.OptionalDouble;
 
 @Entity
 @Builder
@@ -34,5 +35,11 @@ public class DroniExpert {
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
     private LocalDateTime deletedAt;
+
+
+    public Double getExpertScore() {
+        OptionalDouble average = this.reviews.stream().mapToInt(ExpertReview::getScore).average();
+        return average.isPresent() ? average.getAsDouble() : null;
+    }
 
 }

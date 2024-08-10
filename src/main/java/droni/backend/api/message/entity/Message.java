@@ -2,10 +2,7 @@ package droni.backend.api.message.entity;
 
 import droni.backend.api.attacthfile.entity.DroniFile;
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
@@ -17,13 +14,14 @@ import java.time.LocalDateTime;
 @NoArgsConstructor(access =  AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
 @EntityListeners(AuditingEntityListener.class)
+@Getter
 public class Message {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long messageId;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "chatroom_id", nullable = false)
-    private Chatroom group;
+    private Chatroom chatroom;
     @Column(name = "is_pinned")
     @Builder.Default
     private boolean pinned = false;

@@ -3,6 +3,7 @@ package droni.backend.api.message.entity;
 import droni.backend.api.droniuser.entity.DroniUser;
 import droni.backend.api.expert.entity.DroniExpert;
 import droni.backend.api.message.dto.DroniServiceKind;
+import droni.backend.api.message.dto.UserChatroomResponse;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -10,6 +11,8 @@ import lombok.Builder;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "chatroom")
@@ -33,4 +36,24 @@ public class Chatroom {
     private LocalDateTime lastConnectionTime;
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
+
+    @OneToMany(mappedBy = "chatroom", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    @OrderBy("createdAt DESC")
+    private List<Message> messages = new ArrayList<>();
+
+    public UserChatroomResponse toUserChatroom() {
+        Message lastMessage = this.getLastMessage();
+        return UserChatroomResponse.builder()
+                .expert(this.expert)
+                .lastMessage(lastMessage)
+                .build();
+    }
+
+    private Message getLastMessage() {
+        if (messages.isEmpty()) {
+            return null;
+        } else {
+            return messages.getFirst();
+        }
+    }
 }
