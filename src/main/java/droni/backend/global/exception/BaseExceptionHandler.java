@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.HandlerMapping;
@@ -31,6 +32,12 @@ public class BaseExceptionHandler {
         return this.createErrorResponse(e, request, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    protected ResponseEntity<DrnErrorResponse> handleMethodArgumentNotValidException(MethodArgumentNotValidException e,HttpServletRequest request) {
+        return this.createErrorResponse(e, request, HttpStatus.BAD_REQUEST);
+    }
+
+
     protected ResponseEntity<DrnErrorResponse> createErrorResponse(Throwable e, HttpServletRequest request, HttpStatus httpStatus) {
         Map pathVariables = (Map) request.getAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE);
         DrnErrorResponse responseBody = DrnErrorResponse.builder()
@@ -43,6 +50,6 @@ public class BaseExceptionHandler {
                 .parameterMap(request.getParameterMap())
                 .build();
 
-        return new ResponseEntity(responseBody, responseBody.getHttpStatus());
+        return new ResponseEntity<>(responseBody, responseBody.getHttpStatus());
     }
 }

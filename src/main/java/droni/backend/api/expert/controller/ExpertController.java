@@ -1,6 +1,6 @@
 package droni.backend.api.expert.controller;
 
-import droni.backend.api.expert.dto.PilotProfile;
+import droni.backend.api.expert.dto.ExpertProfile;
 import droni.backend.api.expert.service.ExpertService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -21,7 +21,7 @@ public class ExpertController  {
 
     @GetMapping("/home/popular-expert")
     @Operation(summary = "홈 화면 인기 조종사 api")
-    public List<PilotProfile> getPopularPilot() {
+    public List<ExpertProfile> getPopularPilot() {
         return expertService.getPopularExpert();
     }
 }

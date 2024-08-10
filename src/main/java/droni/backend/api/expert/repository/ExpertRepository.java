@@ -1,17 +1,14 @@
 package droni.backend.api.expert.repository;
 
-import com.querydsl.core.Tuple;
-import com.querydsl.core.types.dsl.Expressions;
-import com.querydsl.core.types.dsl.NumberPath;
+import com.querydsl.core.types.dsl.CaseBuilder;
+import com.querydsl.core.types.dsl.NumberExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import droni.backend.api.expert.dto.PilotProfile;
+import droni.backend.api.expert.dto.ExpertProfile;
+import droni.backend.api.expert.dto.QExpertProfile;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
-import java.util.stream.Collectors;
 
 import static droni.backend.api.expert.entity.QDroniExpert.droniExpert;
 import static droni.backend.api.expert.entity.QExpertReview.expertReview;
@@ -20,28 +17,19 @@ import static droni.backend.api.expert.entity.QExpertReview.expertReview;
 @RequiredArgsConstructor
 public class ExpertRepository {
     private final JPAQueryFactory queryFactory;
+    public List<ExpertProfile> getPopularExpertList() {
+        NumberExpression<Float> avgScore = new CaseBuilder()
+            .when(expertReview.score.count().gt(0))
+            .then(expertReview.score.avg().floatValue())
+            .otherwise((Float) null);
 
-
-    public List<PilotProfile> getPopularExpertList() {
-        NumberPath<Double> avgScore = Expressions.numberPath(Double.class, "avg_score");
-
-        List<Tuple> fetch = queryFactory
-                .select(droniExpert.expertId, droniExpert.user.profileImage, expertReview.score.avg().as(avgScore))
+        return queryFactory
+                .select(new QExpertProfile(droniExpert.expertId, avgScore, droniExpert.user.name, droniExpert.user.profileImage))
                 .from(droniExpert)
                 .leftJoin(droniExpert.reviews, expertReview)
-                .groupBy(droniExpert.expertId, droniExpert.user.profileImage)
-                .orderBy(avgScore.desc())
+                .groupBy(droniExpert.expertId)
+                .orderBy(avgScore.desc().nullsLast())
                 .limit(5)
                 .fetch();
-        if (fetch.isEmpty()) {
-            return new ArrayList<>();
-        }
-        return fetch.stream().map(tuple ->
-                        PilotProfile.builder()
-                                .expertId(Long.valueOf(tuple.get(droniExpert.expertId)))
-                                .imageUrl(tuple.get(droniExpert.user.profileImage))
-                                .score(Objects.isNull(tuple.get(avgScore)) ? 0.0f : tuple.get(avgScore.floatValue()))
-                                .build())
-                .collect(Collectors.toList());
     }
 }

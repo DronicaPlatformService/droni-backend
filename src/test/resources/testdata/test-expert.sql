@@ -10,7 +10,10 @@ VALUES ('1234567890', 'test1@example.com', 'Test User1', 'http://example.com/pro
         'oauth2'),
        ('1234567892', 'test3@example.com', 'Test User3', 'http://example.com/profile3.jpg', 'Tester3', '10003',
         '789 Test St', 'Apt 3', 'token3', true, false, '2023-03-01 12:00:00', '2023-03-01 12:00:00', NULL, 'KAKAO',
-        'oauth3');
+        'oauth3'),
+       ('1234567893', 'test4@example.com', 'Test User4', 'http://example.com/profile4.jpg', 'Tester4', '10004',
+        '789 Test St', 'Apt 3', 'token4', true, false, '2023-03-01 12:00:00', '2023-03-01 12:00:00', NULL, 'KAKAO',
+        'oauth4');
 
 INSERT INTO business_license (license_id, company_name, representative, company_address, company_address_detail)
 VALUES (101, 'DroneOps Inc.', 'John Doe', '123 Business St', 'Suite 101'),
@@ -24,4 +27,24 @@ VALUES ((SELECT user_id FROM users WHERE email = 'test1@example.com'), 0, 'Exper
        ((SELECT user_id FROM users WHERE email = 'test2@example.com'), 0,
         'Specialist in drone photography and videography.', 102, '2023-02-01 12:00:00', NULL),
        ((SELECT user_id FROM users WHERE email = 'test3@example.com'), 0,
-        'Experienced in drone maintenance and repair.', 103, '2023-03-01 12:00:00', NULL);
+        'Experienced in drone maintenance and repair.', 103, '2023-03-01 12:00:00', NULL),
+       ((SELECT user_id FROM users WHERE email = 'test4@example.com'), 0,
+        'Experienced in drone maintenance and repair.', null , '2023-03-01 12:00:00', NULL);
+
+-- Inserting reviews for expert_id 1 with an average score of 1
+INSERT INTO expert_review (expert_id, score, content, created_at)
+VALUES (1, 1, 'Terrible experience, very dissatisfied.', NOW()),
+       (1, 1, 'Awful service, not recommended.', NOW()),
+       (1, 1, 'Very poor, not worth the money.', NOW());
+
+-- Inserting reviews for expert_id 2 with an average score of 2
+INSERT INTO expert_review (expert_id, score, content, created_at)
+VALUES (2, 2, 'Below average experience.', NOW()),
+       (2, 2, 'Could be better, but not the worst.', NOW()),
+       (2, 2, 'Not great, but okay.', NOW());
+
+-- Inserting reviews for expert_id 3 with an average score of 3
+INSERT INTO expert_review (expert_id, score, content, created_at)
+VALUES (3, 3, 'Average service, nothing special.', NOW()),
+       (3, 3, 'It was okay, met expectations.', NOW()),
+       (3, 3, 'Decent experience, just average.', NOW());

@@ -39,6 +39,7 @@ public class Chatroom {
 
     @OneToMany(mappedBy = "chatroom", cascade = CascadeType.REMOVE, orphanRemoval = true)
     @OrderBy("createdAt DESC")
+    @Builder.Default
     private List<Message> messages = new ArrayList<>();
 
     public UserChatroomResponse toUserChatroom() {
