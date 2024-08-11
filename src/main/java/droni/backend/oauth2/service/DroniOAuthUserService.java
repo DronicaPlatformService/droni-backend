@@ -14,8 +14,7 @@ import org.springframework.util.StringUtils;
 
 /**
  * OAuth2LoginAuthenticationFilter 에서 해당 클래스의 load user가 호출된다.
- * access token 을 provider 로 부터 받았을 때 실행되는 클래스
- * access token 으로 resource server 에서 정보를 받고 가공하는 서비스
+ * oauth2 서버에서 받은 access token 으로 resource server 에서 정보를 받은 후 가공하는 서비스
  */
 @Service
 public class DroniOAuthUserService extends DefaultOAuth2UserService {

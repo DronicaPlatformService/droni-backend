@@ -5,17 +5,18 @@ import droni.backend.api.expert.entity.DroniExpert;
 import droni.backend.api.message.dto.DroniServiceKind;
 import droni.backend.api.message.dto.UserChatroomResponse;
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import org.hibernate.annotations.BatchSize;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "chatroom")
+@Getter
 @Builder
 @NoArgsConstructor(access =  AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
@@ -40,6 +41,7 @@ public class Chatroom {
     @OneToMany(mappedBy = "chatroom", cascade = CascadeType.REMOVE, orphanRemoval = true)
     @OrderBy("createdAt DESC")
     @Builder.Default
+    @BatchSize(size = 100)
     private List<Message> messages = new ArrayList<>();
 
     public UserChatroomResponse toUserChatroom() {
@@ -56,5 +58,14 @@ public class Chatroom {
         } else {
             return messages.getFirst();
         }
+    }
+
+    public List<Message> loadMessage(Long loadedMessageId) {
+        int returnCount = Objects.isNull(loadedMessageId) ? 20 : 10;
+        return this.messages.stream()
+                .filter(message -> Objects.isNull(loadedMessageId) || message.getMessageId() < loadedMessageId)
+                .limit(returnCount)
+                .collect(Collectors.toList());
+
     }
 }

@@ -10,6 +10,9 @@ import droni.backend.oauth2.token.AuthTokenProvider;
 import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
@@ -27,6 +30,12 @@ public class DroniUserQuerydslRepository {
 
     public Optional<DroniUser> findDroniUserByOauthId(String oauth2Id) {
         return Optional.ofNullable(jpaQueryFactory.selectFrom(droniUser).where(droniUser.oauthId.eq(oauth2Id)).fetchFirst());
+    }
+
+    public Optional<DroniUser> findDroniUserByOauthId() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+        return Optional.ofNullable(jpaQueryFactory.selectFrom(droniUser).where(droniUser.oauthId.eq(userDetails.getUsername())).fetchFirst());
     }
 
     public Optional<DroniUser> findRequestedUser(TokenRefreshDto prevToken) {

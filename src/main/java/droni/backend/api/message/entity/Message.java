@@ -1,12 +1,14 @@
 package droni.backend.api.message.entity;
 
 import droni.backend.api.attacthfile.entity.DroniFile;
+import droni.backend.api.message.dto.ChatMessage;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 @Entity
 @Table(name = "message")
@@ -36,4 +38,23 @@ public class Message {
     @Column(nullable = false, updatable = false)
     @CreatedDate
     private LocalDateTime createdAt;
+
+    public ChatMessage toChatMessage() {
+        return ChatMessage.builder()
+                .messageId(this.messageId)
+                .chatroomId(this.chatroom.getChatroomId())
+                .repliedMessageId(getRepliedMessageId())
+                .content(this.content)
+                .filePath(getFilePath())
+                .timestamp(this.createdAt)
+                .build();
+    }
+
+    private Long getRepliedMessageId() {
+        return Objects.nonNull(this.reply) ? this.reply.getMessageId() : null;
+    }
+
+    private String getFilePath() {
+        return Objects.nonNull(this.file) ? this.file.getPath() : null;
+    }
 }
