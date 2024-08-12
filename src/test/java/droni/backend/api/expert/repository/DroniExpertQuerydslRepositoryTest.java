@@ -17,15 +17,15 @@ import static org.assertj.core.api.Assertions.assertThat;
 @ExtendWith(MockitoExtension.class)
 @Sql(scripts = "/testdata/test-expert.sql")
 @DroniJpaTest
-@Import(ExpertRepository.class)
-class ExpertRepositoryTest {
+@Import(DroniExpertQuerydslRepository.class)
+class DroniExpertQuerydslRepositoryTest {
     @Autowired
-    private ExpertRepository expertRepository;
+    private DroniExpertQuerydslRepository droniExpertQuerydslRepository;
 
     @Test
     @DisplayName("조종사를 리뷰 평점 순으로 5명을 가져온다. 리뷰가 없는 조종사는 null 로 가져온다.")
-    void 인기조종사조회() {
-        List<ExpertProfile> popularExpertList = expertRepository.getPopularExpertList();
+    void getPopularExpert() {
+        List<ExpertProfile> popularExpertList = droniExpertQuerydslRepository.getPopularExpertList();
         assertThat(popularExpertList).extracting(ExpertProfile::getScore).containsExactly(3.0f, 2.0f, 1.0f, null);
     }
 

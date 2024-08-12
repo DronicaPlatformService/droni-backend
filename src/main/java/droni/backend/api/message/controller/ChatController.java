@@ -6,6 +6,7 @@ import droni.backend.api.message.dto.UserChatroomResponse;
 import droni.backend.api.message.service.DroniChatService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -35,7 +36,7 @@ public class ChatController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     @Operation(summary = "채탱방을 생성하는 api")
-    public Long chatPost(CreateChatRequest createChatRequest) {
+    public Long chatPost(@Valid CreateChatRequest createChatRequest) {
         return droniChatService.createChatroom(createChatRequest);
     }
 }

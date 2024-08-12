@@ -2,7 +2,7 @@ package droni.backend.oauth2.jwt;
 
 import com.nimbusds.jose.shaded.gson.Gson;
 import droni.backend.api.droniuser.entity.DroniUser;
-import droni.backend.api.droniuser.repository.DroniUserQuerydslRepository;
+import droni.backend.api.droniuser.repository.DroniUserRepository;
 import droni.backend.oauth2.token.AuthToken;
 import droni.backend.oauth2.token.AuthTokenProvider;
 import org.assertj.core.api.Assertions;
@@ -33,7 +33,7 @@ class TokenRefreshControllerTest {
     @Mock
     private AuthTokenProvider tokenProvider;
     @Mock
-    private DroniUserQuerydslRepository userQuerydslRepository;
+    private DroniUserRepository userQuerydslRepository;
     private MockMvc mockMvc;
 
     @BeforeEach

@@ -7,6 +7,8 @@ import droni.backend.api.message.dto.UserChatroomResponse;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.BatchSize;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -17,9 +19,9 @@ import java.util.stream.Collectors;
 @Entity
 @Table(name = "chatroom")
 @Getter
-@Builder
 @NoArgsConstructor(access =  AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
+@EntityListeners(AuditingEntityListener.class)
 public class Chatroom {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -36,13 +38,22 @@ public class Chatroom {
     private DroniServiceKind serviceType;
     private LocalDateTime lastConnectionTime;
     @Column(nullable = false, updatable = false)
+    @CreatedDate
     private LocalDateTime createdAt;
 
     @OneToMany(mappedBy = "chatroom", cascade = CascadeType.REMOVE, orphanRemoval = true)
     @OrderBy("createdAt DESC")
-    @Builder.Default
     @BatchSize(size = 100)
     private List<Message> messages = new ArrayList<>();
+
+
+    @Builder
+    public Chatroom(DroniUser fromUser, DroniExpert expert, Long serviceId, DroniServiceKind serviceType) {
+        this.droniUser = fromUser;
+        this.expert = expert;
+        this.serviceId = serviceId;
+        this.serviceType = serviceType;
+    }
 
     public UserChatroomResponse toUserChatroom() {
         Message lastMessage = this.getLastMessage();

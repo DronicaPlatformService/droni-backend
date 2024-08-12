@@ -1,8 +1,9 @@
 package droni.backend.api.message.service;
 
 import droni.backend.api.droniuser.entity.DroniUser;
-import droni.backend.api.droniuser.exception.DroniUserException;
-import droni.backend.api.droniuser.repository.DroniUserQuerydslRepository;
+import droni.backend.api.droniuser.repository.DroniUserRepository;
+import droni.backend.api.expert.entity.DroniExpert;
+import droni.backend.api.expert.repository.DroniExpertQuerydslRepository;
 import droni.backend.api.message.dto.ChatMessage;
 import droni.backend.api.message.dto.CreateChatRequest;
 import droni.backend.api.message.dto.UserChatroomResponse;
@@ -23,21 +24,31 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class DroniChatService {
     private final ChatroomRepository chatroomRepository;
-    private final DroniUserQuerydslRepository userQuerydslRepository;
+    private final DroniUserRepository droniUserRepository;
+    private final DroniExpertQuerydslRepository droniExpertQuerydslRepository;
+
     public List<UserChatroomResponse> getChatroomByUserId(Long userId) {
         List<Chatroom> userChatroomList = chatroomRepository.findByUserId(userId);
         return userChatroomList.stream().map(Chatroom::toUserChatroom).collect(Collectors.toList());
     }
 
     public Long createChatroom(CreateChatRequest createChatRequest) {
-        return null;
+        DroniUser loginUser = droniUserRepository.findRequestUserFromContext();
+        DroniExpert chatExpert = droniExpertQuerydslRepository.findById(createChatRequest.getToExpertId());
+        Chatroom newChatroom = Chatroom.builder()
+                .serviceId(createChatRequest.getServiceId())
+                .serviceType(createChatRequest.getServiceKind())
+                .fromUser(loginUser)
+                .expert(chatExpert)
+                .build();
+        return chatroomRepository.save(newChatroom).getChatroomId();
     }
-
+    
     public List<ChatMessage> getMessageByChatroom(Long chatroomId, Long fromMessageId) {
-        DroniUser user = userQuerydslRepository.findDroniUserByOauthId().orElseThrow(() -> new DroniUserException(HttpStatus.BAD_REQUEST, "Login user not found"));
+        DroniUser loginUser = droniUserRepository.findRequestUserFromContext();
         Chatroom chatroom = chatroomRepository.findById(chatroomId).orElseThrow(() -> new DroniBadRequestException(HttpStatus.BAD_REQUEST, "Chatroom not found"));
-        if (chatroom.getDroniUser() != user) {
-            throw new DroniBadRequestException(HttpStatus.BAD_REQUEST, "chatroom does not belong to user");
+        if (chatroom.getDroniUser() != loginUser) {
+            throw new DroniBadRequestException(HttpStatus.BAD_REQUEST, "chatroom does not belong to loginUser");
         }
         List<Message> messages = chatroom.loadMessage(fromMessageId);
         return messages.stream().map(Message::toChatMessage).collect(Collectors.toList());

@@ -1,6 +1,6 @@
 package droni.backend.api.expert.service;
 
-import droni.backend.api.expert.repository.ExpertRepository;
+import droni.backend.api.expert.repository.DroniExpertQuerydslRepository;
 import droni.backend.api.expert.dto.ExpertProfile;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -18,7 +18,7 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 class ExpertServiceTest {
     @Mock
-    private ExpertRepository expertRepository;
+    private DroniExpertQuerydslRepository droniExpertQuerydslRepository;
 
     @InjectMocks
     private ExpertService expertService;
@@ -30,7 +30,7 @@ class ExpertServiceTest {
     @DisplayName("Repo에서 반환된 popular expert 반환")
     void getPopularExpert() {
         //when
-        when(expertRepository.getPopularExpertList()).thenReturn(testRepositoryReturn());
+        when(droniExpertQuerydslRepository.getPopularExpertList()).thenReturn(testRepositoryReturn());
         //then
         List<ExpertProfile> popularExpert = expertService.getPopularExpert();
         assertThat(popularExpert.size()).isEqualTo(testSize);
