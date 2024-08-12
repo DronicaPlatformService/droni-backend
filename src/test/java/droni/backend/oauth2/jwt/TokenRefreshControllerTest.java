@@ -2,7 +2,7 @@ package droni.backend.oauth2.jwt;
 
 import com.nimbusds.jose.shaded.gson.Gson;
 import droni.backend.api.droniuser.entity.DroniUser;
-import droni.backend.api.droniuser.repository.DroniUserQuerydslRepository;
+import droni.backend.api.droniuser.repository.DroniUserRepository;
 import droni.backend.oauth2.token.AuthToken;
 import droni.backend.oauth2.token.AuthTokenProvider;
 import org.assertj.core.api.Assertions;
@@ -33,7 +33,7 @@ class TokenRefreshControllerTest {
     @Mock
     private AuthTokenProvider tokenProvider;
     @Mock
-    private DroniUserQuerydslRepository userQuerydslRepository;
+    private DroniUserRepository userQuerydslRepository;
     private MockMvc mockMvc;
 
     @BeforeEach
@@ -53,7 +53,7 @@ class TokenRefreshControllerTest {
 
         //when
         when(tokenProvider.isExpiredToken(prevToken.getAccessToken())).thenReturn(true);
-        when(userQuerydslRepository.findRequestedUser(prevToken)).thenReturn(Optional.of(mockUser));
+        when(userQuerydslRepository.findReissueUser("expiredToken", "refreshToken")).thenReturn(Optional.of(mockUser));
         when(tokenProvider.createAccessAuthToken(mockUser.getOauthId())).thenReturn(newAccessToken);
         when(tokenProvider.createRefreshToken()).thenReturn(newRefreshToken);
         ResultActions result = mockMvc.perform(

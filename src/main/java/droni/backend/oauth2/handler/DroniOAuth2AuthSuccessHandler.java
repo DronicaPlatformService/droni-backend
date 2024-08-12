@@ -2,7 +2,7 @@ package droni.backend.oauth2.handler;
 
 import droni.backend.api.droniuser.exception.DroniLoginFailedException;
 import droni.backend.api.droniuser.exception.DroniUserException;
-import droni.backend.api.droniuser.repository.DroniUserQuerydslRepository;
+import droni.backend.api.droniuser.repository.DroniUserRepository;
 import droni.backend.oauth2.DroniCookieAuthorizationRequestRepository;
 import droni.backend.oauth2.service.OAuth2UserPrincipal;
 import droni.backend.oauth2.token.AuthToken;
@@ -39,7 +39,7 @@ public class DroniOAuth2AuthSuccessHandler extends SimpleUrlAuthenticationSucces
     private final Environment environment;
     private final DroniCookieAuthorizationRequestRepository cookieAuthorizationRequestRepository;
     private final AuthTokenProvider tokenProvider;
-    private final DroniUserQuerydslRepository userRepository;
+    private final DroniUserRepository userRepository;
     //fixme : default target id 변경
     private final String defaultTargetUrl = "/test";
 

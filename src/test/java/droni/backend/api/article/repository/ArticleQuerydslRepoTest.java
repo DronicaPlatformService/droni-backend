@@ -3,26 +3,19 @@ package droni.backend.api.article.repository;
 import droni.backend.api.article.controller.ArticleController;
 import droni.backend.api.article.dto.ArticleTarget;
 import droni.backend.api.article.entity.Article;
-import droni.backend.api.config.JpaTestConfig;
+import droni.backend.api.config.DroniJpaTest;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.context.annotation.Import;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
 
 import java.util.List;
 
-@DataJpaTest
-@ActiveProfiles("test")
-@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
+@DroniJpaTest
 @ExtendWith(MockitoExtension.class)
-@Import(JpaTestConfig.class)
 @Sql(scripts = "/testdata/test-article.sql")
 class ArticleQuerydslRepoTest {
     @Autowired

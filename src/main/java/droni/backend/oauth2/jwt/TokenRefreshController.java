@@ -1,7 +1,7 @@
 package droni.backend.oauth2.jwt;
 
 import droni.backend.api.droniuser.entity.DroniUser;
-import droni.backend.api.droniuser.repository.DroniUserQuerydslRepository;
+import droni.backend.api.droniuser.repository.DroniUserRepository;
 import droni.backend.oauth2.execption.JWTException;
 import droni.backend.oauth2.token.AuthToken;
 import droni.backend.oauth2.token.AuthTokenProvider;
@@ -22,15 +22,14 @@ import java.util.Optional;
 @Tag(name = "auth", description = "드로니 인증 API")
 public class TokenRefreshController {
     private final AuthTokenProvider tokenProvider;
-
-    private final DroniUserQuerydslRepository userQuerydslRepository;
+    private final DroniUserRepository droniUserRepository;
 
     @Transactional
     @PostMapping(value = "/reissue", produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "기존 토근이 만료되었을 때 다시 발생해주는 API")
     public TokenRefreshDto reissuePost(@Valid @RequestBody TokenRefreshDto prevToken) {
         if (tokenProvider.isExpiredToken(prevToken.getAccessToken())) {
-            Optional<DroniUser> requestedUser = userQuerydslRepository.findRequestedUser(prevToken);
+            Optional<DroniUser> requestedUser = droniUserRepository.findReissueUser(prevToken.getAccessToken(), prevToken.getRefreshToken());
             if (requestedUser.isPresent()) {
                 DroniUser droniUser = requestedUser.get();
                 AuthToken accessAuthToken = tokenProvider.createAccessAuthToken(droniUser.getOauthId());

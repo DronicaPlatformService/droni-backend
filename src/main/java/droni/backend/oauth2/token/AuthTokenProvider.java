@@ -104,6 +104,6 @@ public class AuthTokenProvider {
 
     private boolean isLocalTestRequest(String token) {
         List<String> activeProfiles = Arrays.asList(springEnv.getActiveProfiles());
-        return activeProfiles.contains("local") && !token.equalsIgnoreCase("no auth");
+        return activeProfiles.contains("local") && token.equalsIgnoreCase("test");
     }
 }

@@ -1,7 +1,7 @@
 package droni.backend.api.expert.service;
 
-import droni.backend.api.expert.repository.ExpertRepository;
-import droni.backend.api.expert.dto.PilotProfile;
+import droni.backend.api.expert.repository.DroniExpertQuerydslRepository;
+import droni.backend.api.expert.dto.ExpertProfile;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -18,7 +18,7 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 class ExpertServiceTest {
     @Mock
-    private ExpertRepository expertRepository;
+    private DroniExpertQuerydslRepository droniExpertQuerydslRepository;
 
     @InjectMocks
     private ExpertService expertService;
@@ -30,10 +30,9 @@ class ExpertServiceTest {
     @DisplayName("Repo에서 반환된 popular expert 반환")
     void getPopularExpert() {
         //when
-        when(expertRepository.getPopularExpertList()).thenReturn(testRepositoryReturn());
-
+        when(droniExpertQuerydslRepository.getPopularExpertList()).thenReturn(testRepositoryReturn());
         //then
-        List<PilotProfile> popularExpert = expertService.getPopularExpert();
+        List<ExpertProfile> popularExpert = expertService.getPopularExpert();
         assertThat(popularExpert.size()).isEqualTo(testSize);
         for (int i = 0; i < popularExpert.size(); i++) {
             assertThat(popularExpert.get(i).getScore()).isEqualTo(testSize - i);
@@ -42,10 +41,10 @@ class ExpertServiceTest {
 
     }
 
-    private List<PilotProfile> testRepositoryReturn() {
-        List<PilotProfile> result = new ArrayList<>();
+    private List<ExpertProfile> testRepositoryReturn() {
+        List<ExpertProfile> result = new ArrayList<>();
         for (int i = 0; i < testSize; i++) {
-            result.add(PilotProfile.builder().expertId((long) i).score((float) (testSize - i)).imageUrl(String.format("%d.jpg", i)).build());
+            result.add(ExpertProfile.builder().expertId(i).score((float) (testSize - i)).imageUrl(String.format("%d.jpg", i)).build());
         }
         return result;
 
