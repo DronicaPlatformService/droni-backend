@@ -16,6 +16,7 @@ import droni.backend.global.exception.DroniBadRequestException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -30,8 +31,9 @@ public class DroniChatService {
     private final DroniExpertQuerydslRepository droniExpertQuerydslRepository;
     private final DroniServiceStrategy droniServiceStrategy;
 
-    public List<UserChatroomResponse> getChatroomByUserId(Long userId) {
-        List<Chatroom> userChatroomList = chatroomRepository.findByUserId(userId);
+    public List<UserChatroomResponse> getChatroomByUserId() {
+        DroniUser loginUser = droniUserRepository.findRequestUserFromContext();
+        List<Chatroom> userChatroomList = chatroomRepository.findByUserId(loginUser.getUserId());
         return userChatroomList.stream().map(Chatroom::toUserChatroom).collect(Collectors.toList());
     }
 

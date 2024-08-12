@@ -21,10 +21,10 @@ public class ChatController {
 
     private final DroniChatService droniChatService;
 
-    @GetMapping("/chatroom/{userId}")
+    @GetMapping("/chatroom")
     @Operation(summary = "유저의 채팅방 목록을 가져오는 api")
-    public List<UserChatroomResponse> chatChatroomUserIdGet(@PathVariable("userId") Long userId) {
-        return droniChatService.getChatroomByUserId(userId);
+    public List<UserChatroomResponse> chatChatroomUserIdGet() {
+        return droniChatService.getChatroomByUserId();
     }
 
     @GetMapping("/history/{chatroomId}")
