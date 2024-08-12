@@ -1,4 +1,4 @@
-package droni.backend.api.message.dto;
+package droni.backend.api.common;
 
 import lombok.Getter;
 

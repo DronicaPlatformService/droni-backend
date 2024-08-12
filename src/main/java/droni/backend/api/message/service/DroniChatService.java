@@ -1,5 +1,7 @@
 package droni.backend.api.message.service;
 
+import droni.backend.api.common.DroniServiceDto;
+import droni.backend.api.common.DroniServiceStrategy;
 import droni.backend.api.droniuser.entity.DroniUser;
 import droni.backend.api.droniuser.repository.DroniUserRepository;
 import droni.backend.api.expert.entity.DroniExpert;
@@ -26,6 +28,7 @@ public class DroniChatService {
     private final ChatroomRepository chatroomRepository;
     private final DroniUserRepository droniUserRepository;
     private final DroniExpertQuerydslRepository droniExpertQuerydslRepository;
+    private final DroniServiceStrategy droniServiceStrategy;
 
     public List<UserChatroomResponse> getChatroomByUserId(Long userId) {
         List<Chatroom> userChatroomList = chatroomRepository.findByUserId(userId);
@@ -35,9 +38,10 @@ public class DroniChatService {
     public Long createChatroom(CreateChatRequest createChatRequest) {
         DroniUser loginUser = droniUserRepository.findRequestUserFromContext();
         DroniExpert chatExpert = droniExpertQuerydslRepository.findById(createChatRequest.getToExpertId());
+        DroniServiceDto droniServiceInfo = droniServiceStrategy.getDroniServiceInfo(createChatRequest.getServiceId(), createChatRequest.getServiceKind());
         Chatroom newChatroom = Chatroom.builder()
-                .serviceId(createChatRequest.getServiceId())
-                .serviceType(createChatRequest.getServiceKind())
+                .serviceId(droniServiceInfo.getServiceId())
+                .serviceType(droniServiceInfo.getServiceKind())
                 .fromUser(loginUser)
                 .expert(chatExpert)
                 .build();
@@ -47,7 +51,7 @@ public class DroniChatService {
     public List<ChatMessage> getMessageByChatroom(Long chatroomId, Long fromMessageId) {
         DroniUser loginUser = droniUserRepository.findRequestUserFromContext();
         Chatroom chatroom = chatroomRepository.findById(chatroomId).orElseThrow(() -> new DroniBadRequestException(HttpStatus.BAD_REQUEST, "Chatroom not found"));
-        if (chatroom.getDroniUser() != loginUser) {
+        if (chatroom.getDroniUser().getUserId() != loginUser.getUserId()) {
             throw new DroniBadRequestException(HttpStatus.BAD_REQUEST, "chatroom does not belong to loginUser");
         }
         List<Message> messages = chatroom.loadMessage(fromMessageId);

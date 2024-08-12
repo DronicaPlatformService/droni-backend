@@ -27,7 +27,7 @@ import static org.mockito.Mockito.when;
 @DataJpaTest
 @Sql(scripts = "/testdata/test-user-set.sql")
 @ExtendWith(MockitoExtension.class)
-class DroniUserQuerydslRepositoryImplTest {
+class DroniUserRepositoryTest {
     @Autowired
     private DroniUserRepository userRepository;
 

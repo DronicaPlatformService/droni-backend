@@ -2,7 +2,7 @@ package droni.backend.api.message.entity;
 
 import droni.backend.api.droniuser.entity.DroniUser;
 import droni.backend.api.expert.entity.DroniExpert;
-import droni.backend.api.message.dto.DroniServiceKind;
+import droni.backend.api.common.DroniServiceKind;
 import droni.backend.api.message.dto.UserChatroomResponse;
 import jakarta.persistence.*;
 import lombok.*;

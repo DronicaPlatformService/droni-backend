@@ -1,5 +1,6 @@
 package droni.backend.api.message.dto;
 
+import droni.backend.api.common.DroniServiceKind;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import lombok.Builder;

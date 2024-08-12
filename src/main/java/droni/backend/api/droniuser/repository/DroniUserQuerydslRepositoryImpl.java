@@ -1,5 +1,6 @@
 package droni.backend.api.droniuser.repository;
 
+import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import droni.backend.api.droniuser.entity.DroniUser;
 import droni.backend.api.droniuser.entity.QDroniUser;
@@ -31,31 +32,40 @@ public class DroniUserQuerydslRepositoryImpl implements DroniUserQuerydslReposit
 
     @Override
     public Optional<DroniUser> findByUserOauth2Id(String oauth2Id) {
-        return Optional.ofNullable(jpaQueryFactory.selectFrom(droniUser).where(droniUser.oauthId.eq(oauth2Id)).fetchFirst());
+        return Optional.ofNullable(jpaQueryFactory.selectFrom(droniUser).where(oauth2IdEq(oauth2Id)).fetchFirst());
     }
 
     @Override
     public DroniUser findRequestUserFromContext() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null) {
+            throw new DroniUserException(HttpStatus.UNAUTHORIZED, "Authentication required");
+        }
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-        Optional<DroniUser> droniUser1 = Optional.ofNullable(jpaQueryFactory.selectFrom(droniUser).where(droniUser.oauthId.eq(userDetails.getUsername())).fetchFirst());
+        Optional<DroniUser> droniUser1 = Optional.ofNullable(jpaQueryFactory.selectFrom(droniUser).where(oauth2IdEq(userDetails.getUsername())).fetchFirst());
         return droniUser1.orElseThrow(() -> new DroniUserException(HttpStatus.BAD_REQUEST, "Login user not found"));
     }
 
     @Override
     public Optional<DroniUser> findReissueUser(String expiredAccessToken, String refreshToken) {
         return  Optional.ofNullable(jpaQueryFactory.selectFrom(droniUser)
-                .where(
-                        droniUser.oauthId.eq(expiredAccessToken)
-                                .and(droniUser.refreshToken.eq(refreshToken))
-                ).fetchFirst());
+                .where(oauth2IdEq(expiredAccessToken), refreshTokenEq(refreshToken))
+                .fetchFirst());
+    }
+
+    private BooleanExpression refreshTokenEq(String refreshToken) {
+        return droniUser.refreshToken.eq(refreshToken);
+    }
+
+    private BooleanExpression oauth2IdEq(String expiredAccessToken) {
+        return droniUser.oauthId.eq(expiredAccessToken);
     }
 
     @Override
     public DroniUser updateWithPrincipal(String newRefreshToken, OAuth2UserPrincipal userPrincipal) {
 
         Optional<DroniUser> optinalUser = Optional.ofNullable(jpaQueryFactory.selectFrom(droniUser)
-                .where(droniUser.oauthId.eq(userPrincipal.getOAuth2Id()))
+                .where(oauth2IdEq(userPrincipal.getOAuth2Id()))
                 .fetchFirst()
         );
         if (optinalUser.isPresent()) {
