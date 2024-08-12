@@ -7,7 +7,7 @@ spring:
       "prod": "default,auth,prod"
 ---
 droni:
-  openapi-version: 0.0.7
+  openapi-version: 0.0.8
 spring:
   config:
     activate:
