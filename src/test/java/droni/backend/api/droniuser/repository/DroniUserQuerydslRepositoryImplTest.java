@@ -93,7 +93,7 @@ class DroniUserQuerydslRepositoryImplTest {
 
         @Bean
         public DroniUserQuerydslRepositoryImpl droniUserQuerydslRepository() {
-            return new DroniUserQuerydslRepositoryImpl(jpaQueryFactory(), null, entityManager);
+            return new DroniUserQuerydslRepositoryImpl(jpaQueryFactory(), entityManager);
         }
 
     }

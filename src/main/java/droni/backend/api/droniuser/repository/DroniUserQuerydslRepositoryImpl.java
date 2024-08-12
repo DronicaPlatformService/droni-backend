@@ -24,7 +24,6 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class DroniUserQuerydslRepositoryImpl implements DroniUserQuerydslRepository{
     private final JPAQueryFactory jpaQueryFactory;
-    private final AuthTokenProvider tokenProvider;
     private final EntityManager em;
 
 
@@ -44,13 +43,11 @@ public class DroniUserQuerydslRepositoryImpl implements DroniUserQuerydslReposit
     }
 
     @Override
-    public Optional<DroniUser> findRequestedUser(TokenRefreshDto prevToken) {
-        AuthToken requestAccessToken = tokenProvider.convertToAuthToken(prevToken.getAccessToken());
-        AuthToken requestRefreshToken = tokenProvider.convertToAuthToken(prevToken.getRefreshToken());
+    public Optional<DroniUser> findReissueUser(String expiredAccessToken, String refreshToken) {
         return  Optional.ofNullable(jpaQueryFactory.selectFrom(droniUser)
                 .where(
-                        droniUser.oauthId.eq(requestAccessToken.getSubjectFromExpiredJwt())
-                                .and(droniUser.refreshToken.eq(requestRefreshToken.getToken()))
+                        droniUser.oauthId.eq(expiredAccessToken)
+                                .and(droniUser.refreshToken.eq(refreshToken))
                 ).fetchFirst());
     }
 

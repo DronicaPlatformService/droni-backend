@@ -53,7 +53,7 @@ class TokenRefreshControllerTest {
 
         //when
         when(tokenProvider.isExpiredToken(prevToken.getAccessToken())).thenReturn(true);
-        when(userQuerydslRepository.findRequestedUser(prevToken)).thenReturn(Optional.of(mockUser));
+        when(userQuerydslRepository.findReissueUser("expiredToken", "refreshToken")).thenReturn(Optional.of(mockUser));
         when(tokenProvider.createAccessAuthToken(mockUser.getOauthId())).thenReturn(newAccessToken);
         when(tokenProvider.createRefreshToken()).thenReturn(newRefreshToken);
         ResultActions result = mockMvc.perform(

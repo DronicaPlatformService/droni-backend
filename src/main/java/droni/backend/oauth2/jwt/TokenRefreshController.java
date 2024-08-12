@@ -29,7 +29,7 @@ public class TokenRefreshController {
     @Operation(summary = "기존 토근이 만료되었을 때 다시 발생해주는 API")
     public TokenRefreshDto reissuePost(@Valid @RequestBody TokenRefreshDto prevToken) {
         if (tokenProvider.isExpiredToken(prevToken.getAccessToken())) {
-            Optional<DroniUser> requestedUser = droniUserRepository.findRequestedUser(prevToken);
+            Optional<DroniUser> requestedUser = droniUserRepository.findReissueUser(prevToken.getAccessToken(), prevToken.getRefreshToken());
             if (requestedUser.isPresent()) {
                 DroniUser droniUser = requestedUser.get();
                 AuthToken accessAuthToken = tokenProvider.createAccessAuthToken(droniUser.getOauthId());
