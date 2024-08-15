@@ -3,6 +3,7 @@ package droni.backend.api.message.entity;
 import droni.backend.api.droniuser.entity.DroniUser;
 import droni.backend.api.expert.entity.DroniExpert;
 import droni.backend.api.common.DroniServiceKind;
+import droni.backend.api.message.dto.SocketMessage;
 import droni.backend.api.message.dto.UserChatroomResponse;
 import jakarta.persistence.*;
 import lombok.*;
@@ -77,6 +78,13 @@ public class Chatroom {
                 .filter(message -> Objects.isNull(loadedMessageId) || message.getMessageId() < loadedMessageId)
                 .limit(returnCount)
                 .collect(Collectors.toList());
+    }
 
+    public boolean isValidMessage(Long senderId, boolean isExpert) {
+        if (isExpert) {
+            return this.expert.getExpertId() == senderId.intValue();
+        } else {
+            return this.droniUser.getUserId() == senderId;
+        }
     }
 }

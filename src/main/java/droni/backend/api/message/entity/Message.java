@@ -21,23 +21,27 @@ public class Message {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long messageId;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "chatroom_id", nullable = false)
     private Chatroom chatroom;
-    @Column(name = "is_pinned")
-    @Builder.Default
-    private boolean pinned = false;
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "reply_message_id")
-    private Message reply;
-    @Column(name = "message_content")
+
+    @Column(name = "sender_id", nullable = false)
+    private Long senderId;
+
+    @Column(name = "message_text", nullable = false)
     private String content;
-    @ManyToOne
-    @JoinColumn(name = "file_id")
-    private DroniFile file;
-    @Column(nullable = false, updatable = false)
+
+    @Column(name = "message_time", nullable = false)
     @CreatedDate
-    private LocalDateTime createdAt;
+    private LocalDateTime messageTime;
+
+    @Column(name = "is_expert", nullable = false)
+    private boolean isExpert;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "reply_to")
+    private Message reply;
 
     public ChatMessage toChatMessage() {
         return ChatMessage.builder()
@@ -45,16 +49,11 @@ public class Message {
                 .chatroomId(this.chatroom.getChatroomId())
                 .repliedMessageId(getRepliedMessageId())
                 .content(this.content)
-                .filePath(getFilePath())
-                .timestamp(this.createdAt)
+                .timestamp(this.messageTime)
                 .build();
     }
 
     private Long getRepliedMessageId() {
         return Objects.nonNull(this.reply) ? this.reply.getMessageId() : null;
-    }
-
-    private String getFilePath() {
-        return Objects.nonNull(this.file) ? this.file.getPath() : null;
     }
 }

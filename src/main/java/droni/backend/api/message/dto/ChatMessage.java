@@ -12,6 +12,5 @@ public class ChatMessage {
     private long chatroomId;
     private Long repliedMessageId;
     private String content;
-    private String filePath;
     private LocalDateTime timestamp;
 }

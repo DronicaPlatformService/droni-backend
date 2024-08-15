@@ -47,6 +47,12 @@ public class DroniExpertQuerydslRepository {
                 ).orElseThrow(() -> new DroniNotFoundException(HttpStatus.NOT_FOUND, "Requested expert not found"));
     }
 
+    public boolean isExistExpert(Integer id) {
+        return queryFactory.selectFrom(droniExpert)
+                .where(expertIdEq(id))
+                .fetchFirst() != null;
+    }
+
     private BooleanExpression expertIdEq(Integer id) {
         return droniExpert.expertId.eq(id);
     }
