@@ -5,7 +5,6 @@ import droni.backend.api.message.entity.Message;
 import lombok.Data;
 
 import java.time.LocalDateTime;
-import java.util.Objects;
 
 @Data
 public class UserChatroomResponse {
@@ -51,16 +50,12 @@ public class UserChatroomResponse {
                 return this;
             }
             this.lastMessage = getMessageContentFrom(lastMessage);
-            this.lastTimestamp = lastMessage.getCreatedAt();
+            this.lastTimestamp = lastMessage.getMessageTime();
             return this;
         }
 
         private String getMessageContentFrom(Message message) {
-            if (Objects.nonNull(message.getFile())) {
-                return "get Image";
-            } else {
-                return message.getContent();
-            }
+            return message.getContent();
         }
 
         public UserChatroomResponse build() {
