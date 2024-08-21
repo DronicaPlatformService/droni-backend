@@ -13,6 +13,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -43,7 +44,7 @@ public class Chatroom {
     private LocalDateTime createdAt;
 
     @OneToMany(mappedBy = "chatroom", cascade = CascadeType.REMOVE, orphanRemoval = true)
-    @OrderBy("createdAt DESC")
+    @OrderBy("messageTime DESC")
     @BatchSize(size = 100)
     private List<Message> messages = new ArrayList<>();
 
@@ -74,7 +75,8 @@ public class Chatroom {
 
     public List<Message> loadMessage(Long loadedMessageId) {
         int returnCount = Objects.isNull(loadedMessageId) ? 20 : 10;
-        return this.messages.stream()
+        List<Message> messages1 = this.messages;
+        return messages1.stream()
                 .filter(message -> Objects.isNull(loadedMessageId) || message.getMessageId() < loadedMessageId)
                 .limit(returnCount)
                 .collect(Collectors.toList());
