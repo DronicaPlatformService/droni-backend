@@ -9,14 +9,14 @@ import lombok.Data;
 public class ExpertProfile {
     private Integer expertId;
     private Float score;
-    private String nickName;
+    private String name;
     private String imageUrl;
 
     @QueryProjection
-    public ExpertProfile(Integer expertId, Float score, String nickName, String imageUrl) {
+    public ExpertProfile(Integer expertId, Float score, String name, String imageUrl) {
         this.expertId = expertId;
         this.score = score;
-        this.nickName = nickName;
+        this.name = name;
         this.imageUrl = imageUrl;
     }
 }

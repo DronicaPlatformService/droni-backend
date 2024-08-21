@@ -33,7 +33,7 @@ public class DroniExpertQuerydslRepository {
                 .select(new QExpertProfile(droniExpert.expertId, avgScore, droniExpert.user.name, droniExpert.user.profileImage))
                 .from(droniExpert)
                 .leftJoin(droniExpert.reviews, expertReview)
-                .groupBy(droniExpert.expertId)
+                .groupBy(droniExpert.expertId, droniExpert.user.name, droniExpert.user.profileImage)
                 .orderBy(avgScore.desc().nullsLast())
                 .limit(5)
                 .fetch();
