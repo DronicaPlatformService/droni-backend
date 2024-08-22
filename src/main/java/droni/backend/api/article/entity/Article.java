@@ -49,4 +49,12 @@ public class Article {
                 .articleSubject(this.title)
                 .build();
     }
+
+    public String getDisplayImagePath() {
+        if (this.displayImage != null) {
+            return this.displayImage.getPath();
+        } else {
+            return null;
+        }
+    }
 }

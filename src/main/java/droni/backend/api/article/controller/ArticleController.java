@@ -1,5 +1,6 @@
 package droni.backend.api.article.controller;
 
+import droni.backend.api.article.dto.ArticleDetailResponse;
 import droni.backend.api.article.dto.ArticleSummaryResponse;
 import droni.backend.api.article.dto.ArticleTarget;
 import droni.backend.api.article.service.ArticleService;
@@ -8,6 +9,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -46,9 +48,10 @@ public class ArticleController {
         return articleService.getHowToUseArticleSummary(articleTarget, HOME_VIEW);
     }
 
-    //TODO : implements code from gernerated source
-
-
-
+    @GetMapping("/{articleId}")
+    @Operation(summary = "아티클 상세보기")
+    public ArticleDetailResponse getArticleSummary(@PathVariable Long articleId) {
+        return articleService.getArticleDetail(articleId);
+    }
 
 }
