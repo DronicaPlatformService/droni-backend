@@ -24,7 +24,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         registry.setErrorHandler(droniStompErrorHandler).addEndpoint("/ws").setAllowedOriginPatterns("*");
-        registry.setErrorHandler(droniStompErrorHandler).addEndpoint("/ws-sockjs").setAllowedOriginPatterns("http://*", "https://*").withSockJS();
+        registry.setErrorHandler(droniStompErrorHandler).addEndpoint("/ws-sockjs").setAllowedOriginPatterns("*").withSockJS();
     }
 
     @Override
