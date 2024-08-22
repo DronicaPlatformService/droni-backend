@@ -11,11 +11,9 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
 
 import java.util.Objects;
@@ -27,40 +25,38 @@ import static org.mockito.Mockito.when;
 
 
 @DataJpaTest
-@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-@ActiveProfiles("test")
 @Sql(scripts = "/testdata/test-user-set.sql")
 @ExtendWith(MockitoExtension.class)
-class DroniUserQuerydslRepositoryTest {
+class DroniUserRepositoryTest {
     @Autowired
-    private DroniUserQuerydslRepository userQuerydslRepository;
+    private DroniUserRepository userRepository;
 
     @Test
     @DisplayName("유저 조회 정상 작동 테스트")
-    void findDroniUserByOauthId() {
+    void findRequestUserFromContext() {
         //given
-        DroniUser droniUser = userQuerydslRepository.findDroniUserByOauthId("3497839913").orElse(null);
+        DroniUser droniUser = userRepository.findByUserOauth2Id("3497839913").orElse(null);
         //then
         org.junit.jupiter.api.Assertions.assertTrue(Objects.nonNull(droniUser));
         assertThat(droniUser.getUserId()).isEqualTo(4);
     }
 
     @Test
-    @DisplayName("Principal 유저 업데이트 테스트")
-    void 사용자인증으로유저업데이트생성테스트() {
+    @DisplayName("사용자 인증시 Principal 유저 업데이트 테스트")
+    void updateUserPrinciple() {
         final String TEST_TOKEN = "testRefreshToken";
         //given
         OAuth2UserPrincipal mockPrincipal = mock(OAuth2UserPrincipal.class);
         //when
         when(mockPrincipal.getOAuth2Id()).thenReturn("3497839913");
-        DroniUser updatedUser = userQuerydslRepository.updateWithPrincipal(TEST_TOKEN, mockPrincipal);
+        DroniUser updatedUser = userRepository.updateWithPrincipal(TEST_TOKEN, mockPrincipal);
         //then
         assertThat(updatedUser.getRefreshToken()).isEqualTo(TEST_TOKEN);
     }
 
     @Test
     @DisplayName("로그인 시 새로운 유저 생성 테스트")
-    void 첫로그인시에사용자생성테스트() {
+    void saveUserWhenLoginFirst() {
         //given
         final String NEW_USER_REFRESH_TOKEN = "newTestRefreshToken";
         final String NEW_USER_OAUTH_ID = "newTestUser";
@@ -75,8 +71,8 @@ class DroniUserQuerydslRepositoryTest {
                         .refreshToken(NEW_USER_REFRESH_TOKEN)
                         .build()
                 );
-        Optional<DroniUser> droniUserByOauthId = userQuerydslRepository.findDroniUserByOauthId(NEW_USER_OAUTH_ID);
-        DroniUser newUser = userQuerydslRepository.updateWithPrincipal(NEW_USER_REFRESH_TOKEN, mockPrincipal);
+        Optional<DroniUser> droniUserByOauthId = userRepository.findByUserOauth2Id(NEW_USER_OAUTH_ID);
+        DroniUser newUser = userRepository.updateWithPrincipal(NEW_USER_REFRESH_TOKEN, mockPrincipal);
         // then
         Assertions.assertTrue(droniUserByOauthId.isEmpty());
         assertThat(newUser.getRefreshToken()).isEqualTo(NEW_USER_REFRESH_TOKEN);
@@ -96,8 +92,8 @@ class DroniUserQuerydslRepositoryTest {
         }
 
         @Bean
-        public DroniUserQuerydslRepository droniUserQuerydslRepository() {
-            return new DroniUserQuerydslRepository(jpaQueryFactory(), null, entityManager);
+        public DroniUserQuerydslRepositoryImpl droniUserQuerydslRepository() {
+            return new DroniUserQuerydslRepositoryImpl(jpaQueryFactory(), entityManager);
         }
 
     }

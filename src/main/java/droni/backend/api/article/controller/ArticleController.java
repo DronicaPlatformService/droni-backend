@@ -1,43 +1,49 @@
 package droni.backend.api.article.controller;
 
-import backend.generated_api.ArticleApi;
-import backend.generated_model.ArticleSummaryResponse;
+import droni.backend.api.article.dto.ArticleSummaryResponse;
+import droni.backend.api.article.dto.ArticleTarget;
 import droni.backend.api.article.service.ArticleService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-public class ArticleController implements ArticleApi {
+@Tag(name = "article", description = "드로니 활용백서, 관련 기사 API")
+@RequestMapping(value = "/article", produces = MediaType.APPLICATION_JSON_VALUE)
+public class ArticleController {
     private final ArticleService articleService;
     public static final int HOME_VIEW = 5;
     public static final int ALL_VIEW = -1;
 
-    @Override
-    public ResponseEntity<List<ArticleSummaryResponse>> articleDroneContentListGet() {
-        List<ArticleSummaryResponse> droneContent = articleService.getDroneContentSummary(ALL_VIEW);
-        return ResponseEntity.ok(droneContent);
+    @GetMapping("/drone-content/list")
+    @Operation(summary = "메인화면 드론 콘텐츠 더보기 클릭시 반환 api")
+    public List<ArticleSummaryResponse> getDroniContentFullList() {
+        return articleService.getDroneContentSummary(ALL_VIEW);
     }
 
-    @Override
-    public ResponseEntity<List<ArticleSummaryResponse>> articleDroneContentSummaryGet() {
-        List<ArticleSummaryResponse> droneContent = articleService.getDroneContentSummary(HOME_VIEW);
-        return ResponseEntity.ok(droneContent);
+    @GetMapping("/drone-content/summary")
+    @Operation(summary = "메인화면 드론 콘텐츠 5개 반환 api")
+    public List<ArticleSummaryResponse> getDroniContentSummary() {
+        return articleService.getDroneContentSummary(HOME_VIEW);
     }
 
-    @Override
-    public ResponseEntity<List<ArticleSummaryResponse>> articleHowToUseListGet(String articleTarget) {
-        List<ArticleSummaryResponse> howToUseArticleSummary = articleService.getHowToUseArticleSummary(articleTarget, ALL_VIEW);
-        return ResponseEntity.ok(howToUseArticleSummary);
+    @GetMapping("/how-to-use/list")
+    @Operation(summary = "드론백서 더보기 클릭시 반환 api")
+    public List<ArticleSummaryResponse> getHowToUseFullList(ArticleTarget articleTarget) {
+        return articleService.getHowToUseArticleSummary(articleTarget, ALL_VIEW);
     }
 
-    @Override
-    public ResponseEntity<List<ArticleSummaryResponse>> articleHowToUseSummaryGet(String articleTarget) {
-        List<ArticleSummaryResponse> howToUseArticleSummary = articleService.getHowToUseArticleSummary(articleTarget, HOME_VIEW);
-        return ResponseEntity.ok(howToUseArticleSummary);
+    @GetMapping("/how-to-use/summary")
+    @Operation(summary = "메인화면에서 보여지는 활용백서 5개 반환 api")
+    public List<ArticleSummaryResponse> getHowToUseSummary(ArticleTarget articleTarget) {
+        return articleService.getHowToUseArticleSummary(articleTarget, HOME_VIEW);
     }
 
     //TODO : implements code from gernerated source

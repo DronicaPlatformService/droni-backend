@@ -1,16 +1,17 @@
 package droni.backend.oauth2.jwt;
 
-import backend.generated_api.AuthApi;
-import backend.generated_model.TokenRefreshDto;
 import droni.backend.api.droniuser.entity.DroniUser;
-import droni.backend.api.droniuser.repository.DroniUserQuerydslRepository;
+import droni.backend.api.droniuser.repository.DroniUserRepository;
 import droni.backend.oauth2.execption.JWTException;
 import droni.backend.oauth2.token.AuthToken;
 import droni.backend.oauth2.token.AuthTokenProvider;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -18,25 +19,26 @@ import java.util.Optional;
 
 @RestController
 @RequiredArgsConstructor
-public class TokenRefreshController implements AuthApi {
+@Tag(name = "auth", description = "드로니 인증 API")
+public class TokenRefreshController {
     private final AuthTokenProvider tokenProvider;
+    private final DroniUserRepository droniUserRepository;
 
-    private final DroniUserQuerydslRepository userQuerydslRepository;
-
-    @Override
     @Transactional
-    public ResponseEntity<TokenRefreshDto> reissuePost(@Valid @RequestBody TokenRefreshDto prevToken) {
+    @PostMapping(value = "/reissue", produces = MediaType.APPLICATION_JSON_VALUE)
+    @Operation(summary = "기존 토근이 만료되었을 때 다시 발생해주는 API")
+    public TokenRefreshDto reissuePost(@Valid @RequestBody TokenRefreshDto prevToken) {
         if (tokenProvider.isExpiredToken(prevToken.getAccessToken())) {
-            Optional<DroniUser> requestedUser = userQuerydslRepository.findRequestedUser(prevToken);
+            Optional<DroniUser> requestedUser = droniUserRepository.findReissueUser(prevToken.getAccessToken(), prevToken.getRefreshToken());
             if (requestedUser.isPresent()) {
                 DroniUser droniUser = requestedUser.get();
                 AuthToken accessAuthToken = tokenProvider.createAccessAuthToken(droniUser.getOauthId());
                 AuthToken refreshToken = tokenProvider.createRefreshToken();
                 droniUser.updateRefreshToken(refreshToken.getToken());
-                TokenRefreshDto tokenRefreshDto = new TokenRefreshDto();
-                tokenRefreshDto.setRefreshToken(refreshToken.getToken());
-                tokenRefreshDto.setAccessToken(accessAuthToken.getToken());
-                return ResponseEntity.ok(tokenRefreshDto);
+                return TokenRefreshDto.builder()
+                        .refreshToken(refreshToken.getToken())
+                        .accessToken(accessAuthToken.getToken())
+                        .build();
             } else {
                 throw new JWTException("No match user with previous oauthId");
             }

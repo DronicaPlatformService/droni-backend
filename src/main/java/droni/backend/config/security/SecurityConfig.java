@@ -35,7 +35,9 @@ public class SecurityConfig {
             antMatcher("/reissue"),
             antMatcher("/favicon.ico"),
             antMatcher("/swagger-ui/**"),
-            antMatcher("/openapi/doc/**")
+            antMatcher("/openapi/doc/**"),
+            antMatcher("/ws/**"),
+            antMatcher("/ws-sockjs/**")
     };
 
     @Bean

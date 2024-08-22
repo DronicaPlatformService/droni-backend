@@ -34,7 +34,7 @@ class ExpertControllerTest {
     @DisplayName("인기 조종사 반환 성공")
     void expertPopularGet() throws Exception {
         //then
-        ResultActions perform = mockMvc.perform(MockMvcRequestBuilders.get("/expert/popular").contentType(MediaType.APPLICATION_JSON));
+        ResultActions perform = mockMvc.perform(MockMvcRequestBuilders.get("/expert/home/popular-expert").contentType(MediaType.APPLICATION_JSON));
         perform.andExpect(status().isOk());
     }
 }

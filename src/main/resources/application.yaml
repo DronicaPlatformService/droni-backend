@@ -6,6 +6,8 @@ spring:
       "rel": "default,auth,rel"
       "prod": "default,auth,prod"
 ---
+droni:
+  openapi-version: 0.0.9
 spring:
   config:
     activate:
@@ -39,7 +41,7 @@ springdoc:
     display-request-duration: true
   default-consumes-media-type: application/json
   default-produces-media-type: application/json
-
+  packages-to-scan: droni.backend
 ---
 spring:
   config:

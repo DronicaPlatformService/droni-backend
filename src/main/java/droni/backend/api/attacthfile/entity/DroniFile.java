@@ -12,7 +12,7 @@ import lombok.*;
 public class DroniFile {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer fileId;
+    private long fileId;
     private String path;
     private String name;
     private String type;
