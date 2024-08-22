@@ -1,4 +1,4 @@
-package droni.backend.api.message.interceptor;
+package droni.backend.config.websocket;
 
 import droni.backend.global.exception.DroniServerException;
 import droni.backend.oauth2.execption.JWTException;

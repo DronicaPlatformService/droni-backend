@@ -5,10 +5,7 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import droni.backend.api.droniuser.entity.DroniUser;
 import droni.backend.api.droniuser.entity.QDroniUser;
 import droni.backend.api.droniuser.exception.DroniUserException;
-import droni.backend.oauth2.jwt.TokenRefreshDto;
 import droni.backend.oauth2.service.OAuth2UserPrincipal;
-import droni.backend.oauth2.token.AuthToken;
-import droni.backend.oauth2.token.AuthTokenProvider;
 import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -42,8 +39,8 @@ public class DroniUserQuerydslRepositoryImpl implements DroniUserQuerydslReposit
             throw new DroniUserException(HttpStatus.UNAUTHORIZED, "Authentication required");
         }
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-        Optional<DroniUser> droniUser1 = Optional.ofNullable(jpaQueryFactory.selectFrom(droniUser).where(oauth2IdEq(userDetails.getUsername())).fetchFirst());
-        return droniUser1.orElseThrow(() -> new DroniUserException(HttpStatus.BAD_REQUEST, "Login user not found"));
+        Optional<DroniUser> findDroniUser = Optional.ofNullable(jpaQueryFactory.selectFrom(droniUser).where(oauth2IdEq(userDetails.getUsername())).fetchFirst());
+        return findDroniUser.orElseThrow(() -> new DroniUserException(HttpStatus.BAD_REQUEST, "Login user not found"));
     }
 
     @Override
