@@ -1,6 +1,5 @@
 package droni.backend.config.websocket;
 
-import droni.backend.api.message.interceptor.JwtChannelInterceptor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.simp.config.ChannelRegistration;
@@ -14,6 +13,7 @@ import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerCo
 @EnableWebSocketMessageBroker
 public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     private final JwtChannelInterceptor jwtChannelInterceptor;
+    private final DroniStompErrorHandler droniStompErrorHandler;
 
     @Override
     public void configureMessageBroker(MessageBrokerRegistry config) {
@@ -23,8 +23,8 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
-        registry.addEndpoint("/ws").setAllowedOriginPatterns("*");
-        registry.addEndpoint("/ws-sockjs").setAllowedOriginPatterns("*").withSockJS();
+        registry.setErrorHandler(droniStompErrorHandler).addEndpoint("/ws").setAllowedOriginPatterns("*");
+        registry.setErrorHandler(droniStompErrorHandler).addEndpoint("/ws-sockjs").setAllowedOriginPatterns("*").withSockJS();
     }
 
     @Override

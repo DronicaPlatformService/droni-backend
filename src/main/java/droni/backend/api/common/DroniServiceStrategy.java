@@ -4,6 +4,7 @@ import droni.backend.api.insectcontrol.entity.InsectControlRequest;
 import droni.backend.api.insectcontrol.repository.InsectControlRepository;
 import droni.backend.global.exception.DroniNotFoundException;
 import droni.backend.global.exception.DroniServerException;
+import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.http.HttpStatus;
@@ -29,7 +30,7 @@ public class DroniServiceStrategy implements InitializingBean {
 
     }
 
-    public DroniServiceDto getDroniServiceInfo(Long id, DroniServiceKind serviceKind) {
+    public DroniServiceDto getDroniServiceInfo(@NotNull Long id,@NotNull DroniServiceKind serviceKind) {
         DroniServiceSupplier droniServiceDtoSupplier = strategyMap.get(serviceKind);
         return droniServiceDtoSupplier.getDroniServiceDto(id);
     }
