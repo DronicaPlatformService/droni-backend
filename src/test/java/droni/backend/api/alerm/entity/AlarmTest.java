@@ -3,13 +3,12 @@ package droni.backend.api.alerm.entity;
 import droni.backend.api.alerm.enums.AlarmType;
 import droni.backend.api.common.DroniService;
 import droni.backend.api.common.DroniServiceKind;
+import droni.backend.global.exception.DroniServerException;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
 
 
 class AlarmTest {
@@ -34,6 +33,7 @@ class AlarmTest {
         Alarm bidCompletedAlarm = Alarm.builder().type(AlarmType.BID_TIME_COMPLETED).droniService(droniService).title("test").build();
         Alarm bidReceivedAlarm = Alarm.builder().type(AlarmType.BID_RECEIVED).droniService(droniService).title("test").build();
         Alarm messageReceivedAlarm = Alarm.builder().type(AlarmType.MESSAGE_RECEIVED).droniService(droniService).title("test").build();
+
         //when
         String bidCompletedUrl = bidCompletedAlarm.getRedirectUrl(1L);
         String bidReceivedUrl = bidReceivedAlarm.getRedirectUrl(1L);
@@ -42,6 +42,7 @@ class AlarmTest {
         assertEquals("/room/1", bidReceivedUrl);
         assertEquals("/room/1", messageReceivedUrl);
         assertEquals(droniService.getRedirectUrl(), bidCompletedUrl);
+        assertThrows(DroniServerException.class, () -> messageReceivedAlarm.getRedirectUrl(null));
     }
 
 }

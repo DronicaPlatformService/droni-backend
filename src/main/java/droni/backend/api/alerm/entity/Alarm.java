@@ -42,14 +42,14 @@ public class Alarm {
         this.title = title;
     }
 
-    public String getRedirectUrl(Long roomId) {
-        if (type != AlarmType.BID_TIME_COMPLETED && Objects.isNull(roomId)) {
+    public String getRedirectUrl(Long chatroomId) {
+        if (type != AlarmType.BID_TIME_COMPLETED && Objects.isNull(chatroomId)) {
             throw new DroniServerException(HttpStatus.INTERNAL_SERVER_ERROR, "room id is required for this alarm type");
         }
         return switch (type) {
             case BID_TIME_COMPLETED -> droniService.getRedirectUrl();
             // websocket subscription url
-            case BID_RECEIVED, MESSAGE_RECEIVED -> "/room/" + roomId;
+            case BID_RECEIVED, MESSAGE_RECEIVED -> "/room/" + chatroomId;
         };
     }
 }
