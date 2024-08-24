@@ -8,7 +8,7 @@ import java.util.Optional;
 public interface DroniUserQuerydslRepository {
     Optional<DroniUser> findByUserOauth2Id(String oauth2Id);
 
-    DroniUser findRequestUserFromContext();
+    DroniUser findUserFromContextHolder();
 
     Optional<DroniUser> findReissueUser(String expiredAccessToken, String refreshToken);
 

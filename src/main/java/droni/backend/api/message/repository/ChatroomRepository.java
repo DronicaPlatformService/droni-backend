@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface ChatroomRepository extends JpaRepository<Chatroom, Long> {
     @Query("select ch from Chatroom  ch where ch.droniUser.userId = :userId")
@@ -15,5 +16,5 @@ public interface ChatroomRepository extends JpaRepository<Chatroom, Long> {
     List<Chatroom> findByUserId(@Param("userId") Long userId);
 
     @Query("select ch from Chatroom ch where ch.droniService = :droniService")
-    Chatroom findByDroniService(@Param("droniService") DroniService droniService);
+    Optional<Chatroom> findByDroniService(@Param("droniService") DroniService droniService);
 }

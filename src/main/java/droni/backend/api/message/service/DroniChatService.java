@@ -31,14 +31,14 @@ public class DroniChatService {
     private final DroniServiceStrategy droniServiceStrategy;
 
     public List<UserChatroomResponse> getChatroomByUserId() {
-        DroniUser loginUser = droniUserRepository.findRequestUserFromContext();
+        DroniUser loginUser = droniUserRepository.findUserFromContextHolder();
         List<Chatroom> userChatroomList = chatroomRepository.findByUserId(loginUser.getUserId());
         return userChatroomList.stream().map(Chatroom::toUserChatroom).collect(Collectors.toList());
     }
 
 
     public Long createChatroom(CreateChatRequest createChatRequest) {
-        DroniUser loginUser = droniUserRepository.findRequestUserFromContext();
+        DroniUser loginUser = droniUserRepository.findUserFromContextHolder();
         DroniExpert chatExpert = droniExpertQuerydslRepository.findById(createChatRequest.getToExpertId());
         DroniService droniService = droniServiceStrategy.getDroniServiceInfo(createChatRequest.getServiceId(), createChatRequest.getServiceKind());
         Chatroom newChatroom = Chatroom.builder()
@@ -50,7 +50,7 @@ public class DroniChatService {
     }
     
     public List<ChatMessage> getMessageByChatroom(Long chatroomId, Long fromMessageId) {
-        DroniUser loginUser = droniUserRepository.findRequestUserFromContext();
+        DroniUser loginUser = droniUserRepository.findUserFromContextHolder();
         Chatroom chatroom = chatroomRepository.findById(chatroomId).orElseThrow(() -> new DroniBadRequestException(HttpStatus.BAD_REQUEST, "Chatroom not found"));
         if (chatroom.getDroniUser().getUserId() != loginUser.getUserId()) {
             throw new DroniBadRequestException(HttpStatus.BAD_REQUEST, "chatroom does not belong to loginUser");
