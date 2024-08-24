@@ -30,17 +30,14 @@ public class DroniServiceStrategy implements InitializingBean {
 
     }
 
-    public DroniServiceDto getDroniServiceInfo(@NotNull Long id,@NotNull DroniServiceKind serviceKind) {
+    public DroniService getDroniServiceInfo(@NotNull Long id,@NotNull DroniServiceKind serviceKind) {
         DroniServiceSupplier droniServiceDtoSupplier = strategyMap.get(serviceKind);
         return droniServiceDtoSupplier.getDroniServiceDto(id);
     }
 
-    private DroniServiceDto fromInsectControl(Long id) {
+    private DroniService fromInsectControl(Long id) {
         InsectControlRequest insectControlRequest = insectControlRepository.findById(id)
                 .orElseThrow(() -> new DroniNotFoundException(HttpStatus.NOT_FOUND, "insect control service not found"));
-        return DroniServiceDto.builder()
-                .serviceId(insectControlRequest.getInsectRequestId())
-                .serviceKind(DroniServiceKind.INSECT_CONTROL)
-                .build();
+        return new DroniService(insectControlRequest.getInsectRequestId(), DroniServiceKind.INSECT_CONTROL);
     }
 }

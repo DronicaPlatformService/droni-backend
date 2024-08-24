@@ -1,6 +1,6 @@
 package droni.backend.api.message.service;
 
-import droni.backend.api.common.DroniServiceDto;
+import droni.backend.api.common.DroniService;
 import droni.backend.api.common.DroniServiceStrategy;
 import droni.backend.api.droniuser.entity.DroniUser;
 import droni.backend.api.droniuser.repository.DroniUserRepository;
@@ -36,15 +36,15 @@ public class DroniChatService {
         return userChatroomList.stream().map(Chatroom::toUserChatroom).collect(Collectors.toList());
     }
 
+
     public Long createChatroom(CreateChatRequest createChatRequest) {
         DroniUser loginUser = droniUserRepository.findRequestUserFromContext();
         DroniExpert chatExpert = droniExpertQuerydslRepository.findById(createChatRequest.getToExpertId());
-        DroniServiceDto droniServiceInfo = droniServiceStrategy.getDroniServiceInfo(createChatRequest.getServiceId(), createChatRequest.getServiceKind());
+        DroniService droniService = droniServiceStrategy.getDroniServiceInfo(createChatRequest.getServiceId(), createChatRequest.getServiceKind());
         Chatroom newChatroom = Chatroom.builder()
-                .serviceId(droniServiceInfo.getServiceId())
-                .serviceType(droniServiceInfo.getServiceKind())
                 .fromUser(loginUser)
                 .expert(chatExpert)
+                .droniService(droniService)
                 .build();
         return chatroomRepository.save(newChatroom).getChatroomId();
     }
