@@ -2,12 +2,10 @@ package droni.backend.api.alerm.entity;
 
 import droni.backend.api.alerm.enums.AlarmType;
 import droni.backend.api.common.DroniService;
+import droni.backend.api.droniuser.entity.DroniUser;
 import droni.backend.global.exception.DroniServerException;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.NoArgsConstructor;
-import lombok.NonNull;
+import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.springframework.http.HttpStatus;
@@ -17,6 +15,7 @@ import java.util.Objects;
 
 @Entity
 @Table(name = "alarms")
+@Getter
 @NoArgsConstructor
 @AllArgsConstructor
 @EntityListeners(AuditingEntityListener.class)
@@ -28,6 +27,9 @@ public class Alarm {
     @Enumerated(EnumType.STRING)
     @Column(name = "alarm_type", nullable = false)
     private AlarmType type;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    private DroniUser user;
     @CreatedDate
     private LocalDateTime createdAt;
     @Embedded

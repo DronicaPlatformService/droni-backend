@@ -60,7 +60,7 @@ class DroniChatServiceTest {
         DroniUser mockUser = mock(DroniUser.class);
 
         //when
-        doReturn(mockUser).when(droniUserRepository).findRequestUserFromContext();
+        doReturn(mockUser).when(droniUserRepository).findUserFromContextHolder();
         when(expertRepository.findById(expertId)).thenReturn(mockExpert);
 
         //then
@@ -76,7 +76,7 @@ class DroniChatServiceTest {
         Chatroom mockChatroom = mock(Chatroom.class);
         DroniUser mockChatroomOwner = mock(DroniUser.class);
         //when
-        doReturn(mockUser).when(droniUserRepository).findRequestUserFromContext();
+        doReturn(mockUser).when(droniUserRepository).findUserFromContextHolder();
         doReturn(Optional.of(mockChatroom)).when(chatroomRepository).findById(chatroomId);
         when(mockChatroom.getDroniUser()).thenReturn(mockChatroomOwner);
         when(mockChatroomOwner.getUserId()).thenReturn(11L);

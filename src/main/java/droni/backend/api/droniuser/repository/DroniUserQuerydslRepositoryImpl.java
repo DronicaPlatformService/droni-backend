@@ -11,10 +11,12 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Repository;
 
+import java.util.Objects;
 import java.util.Optional;
 
 @Repository
@@ -33,10 +35,12 @@ public class DroniUserQuerydslRepositoryImpl implements DroniUserQuerydslReposit
     }
 
     @Override
-    public DroniUser findRequestUserFromContext() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication == null) {
-            throw new DroniUserException(HttpStatus.UNAUTHORIZED, "Authentication required");
+    public DroniUser findUserFromContextHolder() {
+
+        SecurityContext context = SecurityContextHolder.getContext();
+        Authentication authentication = context.getAuthentication();
+        if (authentication == null || !authentication.isAuthenticated() || Objects.isNull(authentication.getPrincipal())) {
+            throw new DroniUserException(HttpStatus.UNAUTHORIZED, "Authentication required or token for testing given");
         }
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
         Optional<DroniUser> findDroniUser = Optional.ofNullable(jpaQueryFactory.selectFrom(droniUser).where(oauth2IdEq(userDetails.getUsername())).fetchFirst());
