@@ -7,7 +7,4 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("api/region")
 public class RegionController {
 
-
-
-
 }
