@@ -27,7 +27,7 @@ public class Article {
     private String content;
     @Enumerated(value = EnumType.STRING)
     private ArticleTarget target;
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "display_image", referencedColumnName = "fileId")
     private DroniFile displayImage;
     @OneToMany(mappedBy = "article", cascade = {CascadeType.PERSIST, CascadeType.REMOVE}, orphanRemoval = true)

@@ -16,7 +16,7 @@ public class ExpertReview {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(updatable = false)
     private Long reviewId;
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "expert_id", nullable = false)
     private DroniExpert expert;
     @Column(nullable = false)

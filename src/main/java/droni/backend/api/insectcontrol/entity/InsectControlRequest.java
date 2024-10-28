@@ -20,7 +20,7 @@ public class InsectControlRequest {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long insectRequestId;
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "land_id", nullable = false)
     private Land land;
     @Enumerated(value = EnumType.STRING)

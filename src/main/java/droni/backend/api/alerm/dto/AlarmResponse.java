@@ -21,15 +21,13 @@ public class AlarmResponse {
     private String message;
     private int afterCreated;
     private DroniServiceKind serviceKind;
-    private String requestUrl;
 
-    public static AlarmResponse fromEntity(Alarm alarm, Long chatroomId) {
+    public static AlarmResponse fromEntity(Alarm alarm) {
         return AlarmResponse.builder()
                 .type(alarm.getType())
                 .message(alarm.getTitle())
                 .afterCreated((int) ChronoUnit.DAYS.between(alarm.getCreatedAt(), LocalDateTime.now(Clock.systemUTC())))
                 .serviceKind(alarm.getDroniService().getServiceType())
-                .requestUrl(alarm.getRedirectUrl(chatroomId))
                 .build();
     }
 }

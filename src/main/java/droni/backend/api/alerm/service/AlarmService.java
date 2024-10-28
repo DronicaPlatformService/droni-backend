@@ -26,10 +26,15 @@ public class AlarmService {
     public List<AlarmResponse> getUserAlarmList() {
         DroniUser user = droniUserRepository.findUserFromContextHolder();
         List<Alarm> byUserId = alarmRepository.findByUser_UserId(user.getUserId());
-        return byUserId.stream().map(alarm -> {
-            Long chatroomId = chatroomRepository.findByDroniService(alarm.getDroniService())
-                    .map(Chatroom::getChatroomId).orElse(null);
-            return AlarmResponse.fromEntity(alarm, chatroomId);
-        }).collect(Collectors.toList());
+        return byUserId.stream().map(AlarmResponse::fromEntity).collect(Collectors.toList());
+    }
+
+    public String getForwardUrl(Long alarmId) {
+        Alarm alarm = alarmRepository.findById(alarmId).orElseThrow();
+        Long chatroomId = chatroomRepository.findByDroniService(alarm.getDroniService())
+                .map(Chatroom::getChatroomId).orElse(null);
+        return alarm.getRedirectUrl(chatroomId);
+
+
     }
 }

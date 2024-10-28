@@ -17,10 +17,10 @@ public class InsectControlReceivedBid {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(updatable = false)
     private Long bidId;
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "insect_request_id", nullable = false)
     private InsectControlRequest request;
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "expert_id", nullable = false)
     private DroniExpert expert;
     private Long bidPrice;
