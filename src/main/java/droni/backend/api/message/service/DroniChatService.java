@@ -5,7 +5,7 @@ import droni.backend.api.common.DroniServiceStrategy;
 import droni.backend.api.droniuser.entity.DroniUser;
 import droni.backend.api.droniuser.repository.DroniUserRepository;
 import droni.backend.api.expert.entity.DroniExpert;
-import droni.backend.api.expert.repository.DroniExpertQuerydslRepository;
+import droni.backend.api.expert.repository.DroniExpertRepository;
 import droni.backend.api.message.dto.ChatMessage;
 import droni.backend.api.message.dto.CreateChatRequest;
 import droni.backend.api.message.dto.UserChatroomResponse;
@@ -27,7 +27,7 @@ import java.util.stream.Collectors;
 public class DroniChatService {
     private final ChatroomRepository chatroomRepository;
     private final DroniUserRepository droniUserRepository;
-    private final DroniExpertQuerydslRepository droniExpertQuerydslRepository;
+    private final DroniExpertRepository droniExpertRepository;
     private final DroniServiceStrategy droniServiceStrategy;
 
     public List<UserChatroomResponse> getChatroomByUserId() {
@@ -39,7 +39,7 @@ public class DroniChatService {
 
     public Long createChatroom(CreateChatRequest createChatRequest) {
         DroniUser loginUser = droniUserRepository.findUserFromContextHolder();
-        DroniExpert chatExpert = droniExpertQuerydslRepository.findById(createChatRequest.getToExpertId());
+        DroniExpert chatExpert = droniExpertRepository.findById(createChatRequest.getToExpertId());
         DroniService droniService = droniServiceStrategy.getDroniServiceInfo(createChatRequest.getServiceId(), createChatRequest.getServiceKind());
         Chatroom newChatroom = Chatroom.builder()
                 .fromUser(loginUser)

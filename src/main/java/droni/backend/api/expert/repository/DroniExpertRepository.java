@@ -20,7 +20,7 @@ import static droni.backend.api.expert.entity.QExpertReview.expertReview;
 
 @Repository
 @RequiredArgsConstructor
-public class DroniExpertQuerydslRepository {
+public class DroniExpertRepository {
     private final JPAQueryFactory queryFactory;
 
     public List<ExpertProfile> getPopularExpertList() {
@@ -32,6 +32,7 @@ public class DroniExpertQuerydslRepository {
         return queryFactory
                 .select(new QExpertProfile(droniExpert.expertId, avgScore, droniExpert.user.name, droniExpert.user.profileImage))
                 .from(droniExpert)
+                .where(notDeletedExpert())
                 .leftJoin(droniExpert.reviews, expertReview)
                 .groupBy(droniExpert.expertId, droniExpert.user.name, droniExpert.user.profileImage)
                 .orderBy(avgScore.desc().nullsLast())
@@ -42,15 +43,18 @@ public class DroniExpertQuerydslRepository {
     public DroniExpert findById(Integer id) {
         return Optional.ofNullable(
                 queryFactory.selectFrom(droniExpert)
-                        .where(expertIdEq(id))
+                        .where(expertIdEq(id), notDeletedExpert())
                         .fetchOne()
                 ).orElseThrow(() -> new DroniNotFoundException(HttpStatus.NOT_FOUND, "Requested expert not found"));
     }
 
     public boolean isExistExpert(Integer id) {
         return queryFactory.selectFrom(droniExpert)
-                .where(expertIdEq(id))
+                .where(expertIdEq(id), notDeletedExpert())
                 .fetchFirst() != null;
+    }
+    public BooleanExpression notDeletedExpert() {
+        return droniExpert.deletedAt.isNull();
     }
 
     private BooleanExpression expertIdEq(Integer id) {

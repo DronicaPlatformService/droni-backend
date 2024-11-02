@@ -42,4 +42,8 @@ public class DroniExpert {
         return average.isPresent() ? average.getAsDouble() : null;
     }
 
+    public void delete() {
+        this.deletedAt = LocalDateTime.now();
+    }
+
 }
