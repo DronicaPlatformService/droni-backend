@@ -1,0 +1,64 @@
+name: API CI/CD Deploy
+
+on:
+  push:
+    branches:
+      - develop
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Checkout the repository
+      - name: Checkout repository
+        uses: actions/checkout@v3
+      # Inject API secret
+      - name: Inject API secret
+        run: echo "${{ secrets.DRONI_API_SECRET_YAML }}" | base64 --decode > ./src/main/resources/application-secret.yaml
+
+      # Set up JDK 21
+      - name: Set up JDK 21
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'adopt'
+          java-version: '21'
+
+      # Build the project
+      - name: Build Jar with Gradle
+        run: ./gradlew clean bootJar
+
+      # Log in to Docker Hub
+      - name: Log in Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+      # Set up Docker BuildX
+      - name: Set up Docker BuildX
+        uses: docker/setup-buildx-action@v2
+
+      # Build and push multi-arch image
+      - name: Build and push multi-arch image
+        run: |
+          docker buildx create --use
+          docker buildx build --platform linux/arm64 -t hc07car/droni:latest --push .
+
+      # Set up kubectl
+      - name: Set up kubectl
+        uses: azure/setup-kubectl@v3
+        with:
+          version: 'latest'
+
+      # configure kubectl
+      - name: Configure kubectl
+        run: |
+          echo "${{ secrets.KUBE_CONFIG }}" | base64 --decode > $HOME/.kube/config
+
+      # Rollout deployment
+      - name: Rollout deployment
+        run: kubectl set image deployment/droni-api-deployment droni-api=hc07car/droni:latest
+
+
+
+
