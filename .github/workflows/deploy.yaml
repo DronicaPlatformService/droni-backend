@@ -28,7 +28,7 @@ jobs:
       - name: Build Jar with Gradle
         uses: gradle/actions/setup-gradle@v3
         with:
-          arguments: clean bootJar
+          arguments: build
 
       # Log in to Docker Hub
       - name: Log in Docker Hub
@@ -55,13 +55,17 @@ jobs:
       uses: azure/setup-kubectl@v3
       with:
         version: 'latest'
+
+    - name: Setup kubeconfig
+      run: |
+        mkdir -p ~/.kube
+        echo "${{ secrets.KUBE_CONFIG }}" > ~/.kube/config
+        chmod 600 ~/.kube/config
+
     # Deploy to cluster
-    - name: Deploy to cluster
-      uses: myrotvorets/kubectl-action@2.0.0
-      with:
-        config: ${{ secrets.KUBE_CONFIG }}
-        version: latest
-        args: -n droni-dev set image deployment/droni-api-deployment droni-api=hc07car/droni:latest
+    - name: Rollout Update
+      run: |
+        kubectl -n droni-dev set image deployment/droni-api-deployment droni-api=hc07car/droni:latest
 
 
 
