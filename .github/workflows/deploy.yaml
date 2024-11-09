@@ -28,7 +28,7 @@ jobs:
       - name: Build Jar with Gradle
         uses: gradle/actions/setup-gradle@v3
         with:
-          arguments: build --debug --stacktrace
+          arguments: build
 
 
 
