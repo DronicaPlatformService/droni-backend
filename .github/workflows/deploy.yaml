@@ -55,17 +55,13 @@ jobs:
       uses: azure/setup-kubectl@v3
       with:
         version: 'latest'
-
-    # configure kubectl
-    - name: Configure kubectl
-      run: |
-        mkdir -p $HOME/.kube
-        echo "${{ secrets.KUBE_CONFIG }}" | base64 --decode > $HOME/.kube/config
-    - name: Verify kubectl connection
-      run: kubectl get nodes
-    # Rollout deployment
-    - name: Rollout deployment
-      run: kubectl -n droni-dev set image deployment/droni-api-deployment droni-api=hc07car/droni:latest
+    # Deploy to cluster
+    - name: Deploy to cluster
+      uses: myrotvorets/kubectl-action@2.0.0
+      with:
+        config: ${{ secrets.KUBE_CONFIG }}
+        version: latest
+        args: -n droni-dev set image deployment/droni-api-deployment droni-api=hc07car/droni:latest
 
 
 
