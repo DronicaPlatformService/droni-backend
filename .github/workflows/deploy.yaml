@@ -31,7 +31,10 @@ jobs:
           arguments: clean bootJar
   push-image:
     runs-on: ubuntu-latest
+    needs: build
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
       # Log in to Docker Hub
       - name: Log in Docker Hub
         uses: docker/login-action@v3
@@ -50,6 +53,7 @@ jobs:
 
   deploy:
     runs-on: ubuntu-latest
+    needs: push-image
     steps:
     # Set up kubectl
     - name: Set up kubectl
