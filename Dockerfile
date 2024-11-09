@@ -1,4 +1,4 @@
-FROM eclipse-temurin:21-jre-jammy-minimal
+FROM openjdk:21-slim
 
 # Set the Spring profile as an environment variable
 ENV SPRING_PROFILES_ACTIVE=dev
