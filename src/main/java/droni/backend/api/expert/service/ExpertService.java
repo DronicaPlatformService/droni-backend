@@ -16,4 +16,8 @@ public class ExpertService {
     public List<ExpertProfile> getPopularExpert() {
         return droniExpertRepository.getPopularExpertList();
     }
+
+    public List<ExpertProfile> searchExpert(boolean favorite, List<String> regions) {
+        return droniExpertRepository.searchExpert(favorite, regions);
+    }
 }

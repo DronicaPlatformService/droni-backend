@@ -4,19 +4,28 @@ import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.CaseBuilder;
 import com.querydsl.core.types.dsl.NumberExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import droni.backend.api.droniuser.exception.DroniUserException;
 import droni.backend.api.expert.dto.ExpertProfile;
 import droni.backend.api.expert.dto.QExpertProfile;
 import droni.backend.api.expert.entity.DroniExpert;
+import droni.backend.api.expert.entity.QFavoriteExpert;
 import droni.backend.global.exception.DroniNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Repository;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 import static droni.backend.api.expert.entity.QDroniExpert.droniExpert;
 import static droni.backend.api.expert.entity.QExpertReview.expertReview;
+import static droni.backend.api.expert.entity.QFavoriteExpert.favoriteExpert;
 
 @Repository
 @RequiredArgsConstructor
@@ -30,7 +39,7 @@ public class DroniExpertRepository {
                 .otherwise((Float) null);
 
         return queryFactory
-                .select(new QExpertProfile(droniExpert.expertId, avgScore, droniExpert.user.name, droniExpert.user.profileImage))
+                .select(new QExpertProfile(droniExpert.expertId, avgScore, droniExpert.user.name, droniExpert.user.profileImage, droniExpert.completeRequest))
                 .from(droniExpert)
                 .where(notDeletedExpert())
                 .leftJoin(droniExpert.reviews, expertReview)
@@ -53,7 +62,12 @@ public class DroniExpertRepository {
                 .where(expertIdEq(id), notDeletedExpert())
                 .fetchFirst() != null;
     }
-    public BooleanExpression notDeletedExpert() {
+
+    public List<ExpertProfile> searchExpert(boolean favorite, List<String> regions) {
+        return Collections.emptyList();
+    }
+
+    private BooleanExpression notDeletedExpert() {
         return droniExpert.deletedAt.isNull();
     }
 

@@ -11,12 +11,14 @@ public class ExpertProfile {
     private Float score;
     private String name;
     private String imageUrl;
+    private int completeRequest;
 
     @QueryProjection
-    public ExpertProfile(Integer expertId, Float score, String name, String imageUrl) {
+    public ExpertProfile(Integer expertId, Float score, String name, String imageUrl, int completeRequest) {
         this.expertId = expertId;
         this.score = score;
         this.name = name;
         this.imageUrl = imageUrl;
+        this.completeRequest = completeRequest;
     }
 }
