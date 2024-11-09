@@ -67,7 +67,7 @@ spring:
       ddl-auto: validate
 droni:
   postgresql:
-    ip: dronipg
+    ip: droni-pg-service
     port: 5432
     database: droni
 server:
