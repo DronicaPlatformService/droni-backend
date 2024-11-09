@@ -6,7 +6,7 @@ import droni.backend.api.config.DroniJpaTest;
 import droni.backend.api.droniuser.entity.DroniUser;
 import droni.backend.api.droniuser.repository.DroniUserRepository;
 import droni.backend.api.expert.entity.DroniExpert;
-import droni.backend.api.expert.repository.DroniExpertQuerydslRepository;
+import droni.backend.api.expert.repository.DroniExpertRepository;
 import droni.backend.api.message.dto.CreateChatRequest;
 import droni.backend.api.message.entity.Chatroom;
 import droni.backend.api.message.repository.ChatroomRepository;
@@ -27,7 +27,7 @@ import static org.mockito.Mockito.*;
 
 @DroniJpaTest
 @ExtendWith(MockitoExtension.class)
-@Import({DroniChatService.class, DroniExpertQuerydslRepository.class, DroniServiceStrategy.class})
+@Import({DroniChatService.class, DroniExpertRepository.class, DroniServiceStrategy.class})
 class DroniChatServiceTest {
     @Autowired
     private DroniChatService droniChatService;
@@ -36,7 +36,7 @@ class DroniChatServiceTest {
     @SpyBean
     private DroniUserRepository droniUserRepository;
     @MockBean
-    private DroniExpertQuerydslRepository expertRepository;
+    private DroniExpertRepository expertRepository;
     @Autowired
     private DroniServiceStrategy strategy;
 

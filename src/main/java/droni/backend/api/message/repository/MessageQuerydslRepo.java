@@ -3,7 +3,7 @@ package droni.backend.api.message.repository;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import droni.backend.api.droniuser.entity.DroniUser;
 import droni.backend.api.droniuser.repository.DroniUserRepository;
-import droni.backend.api.expert.repository.DroniExpertQuerydslRepository;
+import droni.backend.api.expert.repository.DroniExpertRepository;
 import droni.backend.api.message.dto.SocketMessage;
 import droni.backend.api.message.entity.Chatroom;
 import droni.backend.api.message.entity.Message;
@@ -24,7 +24,7 @@ import static droni.backend.api.message.entity.QChatroom.*;
 @RequiredArgsConstructor
 public class MessageQuerydslRepo {
     private final JPAQueryFactory queryFactory;
-    private final DroniExpertQuerydslRepository expertRepository;
+    private final DroniExpertRepository expertRepository;
     private final DroniUserRepository userRepository;
     @PersistenceContext
     private final EntityManager em;
