@@ -15,7 +15,7 @@ jobs:
         uses: actions/checkout@v3
       # Inject API secret
       - name: Inject API secret
-        run: echo "${{ secrets.DRONI_API_SECRET_YAML }}" | base64 --decode > ./src/main/resources/application-secret.yaml
+        run: echo "${{ secrets.DRONI_API_SECRET_YAML }}" | base64 --decode > ./src/main/resources/application-auth.yaml
 
       # Set up JDK 21
       - name: Set up JDK 21

@@ -58,22 +58,6 @@ dependencies {
     testImplementation 'com.h2database:h2'
 
 }
-tasks.test {
-    // Ensure test resources are properly processed
-    processTestResources {
-        from('src/test/resources') {
-            include '**/*.yaml'
-            include '**/*.yml'
-            include '**/*.properties'
-        }
-        from('src/main/resources') {
-            include '**/*.yaml'
-            include '**/*.yml'
-            include '**/*.properties'
-        }
-        duplicatesStrategy = DuplicatesStrategy.INCLUDE
-    }
-}
 test {
     useJUnitPlatform()
 }
