@@ -30,6 +30,12 @@ jobs:
         with:
           arguments: build
 
+      # Extract bulid.gradle version as env
+      - name: Extract version from build.gradle
+        id: extract_version
+        run: |
+          VERSION=$(grep 'version =' build.gradle | cut -d "'" -f 2)
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
       # Log in to Docker Hub
       - name: Log in Docker Hub
         uses: docker/login-action@v3
@@ -44,7 +50,7 @@ jobs:
       - name: Build and push multi-arch image
         run: |
           docker buildx create --use
-          docker buildx build --platform linux/arm64 -t hc07car/droni:latest --push .
+          docker buildx build --platform linux/arm64 -t hc07car/droni:${{ env.VERSION}} --push .
 # ras k8s 기동중지에 따른 주석
 #  deploy:
 #    runs-on: ubuntu-latest
