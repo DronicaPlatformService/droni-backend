@@ -48,9 +48,9 @@ public class DroniUserQuerydslRepositoryImpl implements DroniUserQuerydslReposit
     }
 
     @Override
-    public Optional<DroniUser> findReissueUser(String expiredAccessToken, String refreshToken) {
+    public Optional<DroniUser> findReissueUser(String oauth2Id, String refreshToken) {
         return  Optional.ofNullable(jpaQueryFactory.selectFrom(droniUser)
-                .where(oauth2IdEq(expiredAccessToken), refreshTokenEq(refreshToken))
+                .where(oauth2IdEq(oauth2Id), refreshTokenEq(refreshToken))
                 .fetchFirst());
     }
 

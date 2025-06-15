@@ -1,11 +1,14 @@
 package droni.backend.oauth2.jwt;
 
-import lombok.Builder;
-import lombok.Data;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import lombok.*;
 
 @Data
 @Builder
 public class TokenRefreshDto {
     private String accessToken;
-    private String refreshToken;
+    @JsonCreator
+    public TokenRefreshDto(String accessToken) {
+        this.accessToken = accessToken;
+    }
 }

@@ -22,4 +22,9 @@ public class AppAuthProperties {
         private long tokenExpiry;
         private long refreshTokenExpiry;
     }
+
+
+    public int getRefreshTokenExpiry(){
+        return (int) this.auth.refreshTokenExpiry;
+    }
 }

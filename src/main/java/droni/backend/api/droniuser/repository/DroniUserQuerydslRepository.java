@@ -10,7 +10,7 @@ public interface DroniUserQuerydslRepository {
 
     DroniUser findUserFromContextHolder();
 
-    Optional<DroniUser> findReissueUser(String expiredAccessToken, String refreshToken);
+    Optional<DroniUser> findReissueUser(String oauth2Id, String refreshToken);
 
     DroniUser updateWithPrincipal(String newRefreshToken, OAuth2UserPrincipal userPrincipal);
 }
