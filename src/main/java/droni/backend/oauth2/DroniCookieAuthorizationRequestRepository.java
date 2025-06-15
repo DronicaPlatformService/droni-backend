@@ -18,11 +18,11 @@ public class DroniCookieAuthorizationRequestRepository implements AuthorizationR
 
     @Override
     public OAuth2AuthorizationRequest loadAuthorizationRequest(HttpServletRequest request) {
-
         return DroniCookieUtils.getCookie(request, OAUTH2_AUTHORIZATION_REQUEST_COOKIE_NAME)
                 .map(cookie -> DroniCookieUtils.deserialize(cookie, OAuth2AuthorizationRequest.class)).orElse(null);
     }
 
+    // called before when user start oauth2 process.
     @Override
     public void saveAuthorizationRequest(OAuth2AuthorizationRequest authorizationRequest, HttpServletRequest request, HttpServletResponse response) {
         if (authorizationRequest == null) {
@@ -38,6 +38,8 @@ public class DroniCookieAuthorizationRequestRepository implements AuthorizationR
         }
     }
 
+
+    // Called when User success to login in social page (before successHandler called).
     @Override
     public OAuth2AuthorizationRequest removeAuthorizationRequest(HttpServletRequest request, HttpServletResponse response) {
         return this.loadAuthorizationRequest(request);

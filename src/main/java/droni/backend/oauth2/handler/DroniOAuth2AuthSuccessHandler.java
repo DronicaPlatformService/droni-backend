@@ -41,7 +41,7 @@ public class DroniOAuth2AuthSuccessHandler extends SimpleUrlAuthenticationSucces
     private final AuthTokenProvider tokenProvider;
     private final DroniUserRepository userRepository;
     //fixme : default target id 변경
-    private final String defaultTargetUrl = "/test";
+    private final String defaultTargetUrl = "/auth/callback";
 
     /**
      * 유저가 oauth2 인증에 성공했을 때 -> access token 발급해서 요청했던 페이지에 실어서 redirect
