@@ -66,7 +66,7 @@ public class DroniOAuth2AuthSuccessHandler extends SimpleUrlAuthenticationSucces
                 .build().toUriString();
     }
     private void setRefreshTokenCookie(HttpServletResponse response, AuthToken refreshToken) {
-        int refreshTokenExpiry = (int) authProperties.getAuth().getRefreshTokenExpiry();
+        int refreshTokenExpiry = authProperties.getRefreshTokenExpiry();
         DroniCookieUtils.addCookie(response, REFRESH_TOKEN_COOKIE_NAME, refreshToken.getToken(), refreshTokenExpiry);
     }
 

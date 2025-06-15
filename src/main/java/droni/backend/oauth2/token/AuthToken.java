@@ -30,16 +30,4 @@ public class AuthToken {
                 .setExpiration(expiry)
                 .compact();
     }
-    public String getSubjectFromExpiredJwt() {
-        try {
-            Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(this.token).getBody().getSubject();
-        } catch (ExpiredJwtException e) {
-            return e.getClaims().getSubject();
-        }
-        throw new JWTException("Can't get subject from expired jwt");
-    }
-
-    public Date getExpiry() {
-        return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(this.token).getBody().getExpiration();
-    }
 }

@@ -101,6 +101,16 @@ public class AuthTokenProvider {
             throw new JWTException("Exception in checking request accessToken's expiry ->" + e.getClass().getSimpleName());
         }
     }
+    public String getSubjectFromExpiredJwt(String token) {
+        try {
+            return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody().getSubject();
+        } catch (ExpiredJwtException e) {
+            return e.getClaims().getSubject();
+        } catch (Exception e) {
+            throw new JWTException("Can't get subject from expired jwt");
+        }
+    }
+
 
     private boolean isLocalTestRequest(String token) {
         List<String> activeProfiles = Arrays.asList(springEnv.getActiveProfiles());
