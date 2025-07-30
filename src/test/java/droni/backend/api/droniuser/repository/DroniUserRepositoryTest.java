@@ -69,6 +69,10 @@ class DroniUserRepositoryTest {
                         .phoneNumber("EMPTY_NUMBER")
                         .oauthId(NEW_USER_OAUTH_ID)
                         .refreshToken(NEW_USER_REFRESH_TOKEN)
+                        .appPushNotificationEnabled(true)
+                        .kakaoTalkNotificationEnabled(true)
+                        .chatNotificationEnabled(true)
+                        .estimateBidNotificationEnabled(true)
                         .build()
                 );
         Optional<DroniUser> droniUserByOauthId = userRepository.findByUserOauth2Id(NEW_USER_OAUTH_ID);
