@@ -1,18 +1,18 @@
 -- Create test users
 INSERT INTO users (phone_number, email, name, profile_image, nickname, zone_code, address, address_detail,
-                   refresh_token, notification_enabled, marketing_enabled, created_at, updated_at, deleted_at, provider,
+                   refresh_token, app_push_notification_enabled, kakao_talk_notification_enabled, chat_notification_enabled, estimate_bid_notification_enabled, created_at, updated_at, deleted_at, provider,
                    oauth_id)
 VALUES ('1234567890', 'test1@example.com', 'Test User1', 'http://example.com/profile1.jpg', 'Tester1', '10001',
-        '123 Test St', 'Apt 1', 'token1', true, false, '2023-01-01 12:00:00', '2023-01-01 12:00:00', NULL, 'GOOGLE',
+        '123 Test St', 'Apt 1', 'token1', true, true, true, true, '2023-01-01 12:00:00', '2023-01-01 12:00:00', NULL, 'GOOGLE',
         'oauth1'),
        ('1234567891', 'test2@example.com', 'Test User2', 'http://example.com/profile2.jpg', 'Tester2', '10002',
-        '456 Test St', 'Apt 2', 'token2', true, false, '2023-02-01 12:00:00', '2023-02-01 12:00:00', NULL, 'NAVER',
+        '456 Test St', 'Apt 2', 'token2', true, true, true, true, '2023-02-01 12:00:00', '2023-02-01 12:00:00', NULL, 'NAVER',
         'oauth2'),
        ('1234567892', 'test3@example.com', 'Test User3', 'http://example.com/profile3.jpg', 'Tester3', '10003',
-        '789 Test St', 'Apt 3', 'token3', true, false, '2023-03-01 12:00:00', '2023-03-01 12:00:00', NULL, 'KAKAO',
+        '789 Test St', 'Apt 3', 'token3', true, true, true, true, '2023-03-01 12:00:00', '2023-03-01 12:00:00', NULL, 'KAKAO',
         'oauth3'),
        ('1234567893', 'test4@example.com', 'Test User4', 'http://example.com/profile4.jpg', 'Tester4', '10004',
-        '789 Test St', 'Apt 3', 'token4', true, false, '2023-03-01 12:00:00', '2023-03-01 12:00:00', NULL, 'KAKAO',
+        '789 Test St', 'Apt 3', 'token4', true, true, true, true, '2023-03-01 12:00:00', '2023-03-01 12:00:00', NULL, 'KAKAO',
         'oauth4');
 
 INSERT INTO business_license (license_id, company_name, representative, company_address, company_address_detail)
