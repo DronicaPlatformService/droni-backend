@@ -40,8 +40,14 @@ public class DroniUser {
     private String addressDetail;
     @Column(unique = true)
     private String refreshToken;
-    private boolean notificationEnabled;
-    private boolean marketingEnabled;
+    @Column(nullable = false, columnDefinition = "boolean default false")
+    private boolean appPushNotificationEnabled;
+    @Column(nullable = false, columnDefinition = "boolean default false")
+    private boolean kakaoTalkNotificationEnabled;
+    @Column(nullable = false, columnDefinition = "boolean default false")
+    private boolean chatNotificationEnabled;
+    @Column(nullable = false, columnDefinition = "boolean default false")
+    private boolean estimateBidNotificationEnabled;
     @CreatedDate
     @Column(updatable = false, nullable = false)
     private LocalDateTime createdAt;
