@@ -6,6 +6,7 @@ import droni.backend.oauth2.service.OAuth2UserPrincipal;
 import java.util.Optional;
 
 public interface DroniUserQuerydslRepository {
+
     Optional<DroniUser> findByUserOauth2Id(String oauth2Id);
 
     DroniUser findUserFromContextHolder();
@@ -13,4 +14,6 @@ public interface DroniUserQuerydslRepository {
     Optional<DroniUser> findReissueUser(String oauth2Id, String refreshToken);
 
     DroniUser updateWithPrincipal(String newRefreshToken, OAuth2UserPrincipal userPrincipal);
+
+    Optional<DroniUser> findByOauthId(String oauthId);
 }
