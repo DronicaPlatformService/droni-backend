@@ -5,7 +5,9 @@ import droni.backend.api.address.entity.UserAddress;
 import droni.backend.api.address.repository.UserAddressRepository;
 import droni.backend.api.droniuser.entity.DroniUser;
 import droni.backend.api.droniuser.repository.DroniUserRepository;
+import droni.backend.global.exception.DroniNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,7 +23,7 @@ public class AddressService {
 
     public UserAddress saveAddress(Long userId, AddressSaveRequest request) {
         DroniUser user = droniUserRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new DroniNotFoundException(HttpStatus.NOT_FOUND, "유저를 찾을 수 없습니다."));
 
         List<UserAddress> existingAddresses = userAddressRepository.findByUser(user);
 
@@ -56,7 +58,7 @@ public class AddressService {
     @Transactional(readOnly = true)
     public List<UserAddress> getUserAddresses(Long userId) {
         DroniUser user = droniUserRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new DroniNotFoundException(HttpStatus.NOT_FOUND, "유저를 찾을 수 없습니다."));
         return userAddressRepository.findByUser(user);
     }
 }
