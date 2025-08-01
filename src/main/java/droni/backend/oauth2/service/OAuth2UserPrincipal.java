@@ -75,8 +75,10 @@ public class OAuth2UserPrincipal implements OAuth2User, UserDetails {
                 .nickname(userInfo.getNickname())
                 .timeZone("Asia/Seoul")
                 .refreshToken(refreshToken)
-                .notificationEnabled(true)
-                .marketingEnabled(true)
+                .appPushNotificationEnabled(true)
+                .kakaoTalkNotificationEnabled(true)
+                .chatNotificationEnabled(true)
+                .estimateBidNotificationEnabled(true)
                 .build();
     }
 }
