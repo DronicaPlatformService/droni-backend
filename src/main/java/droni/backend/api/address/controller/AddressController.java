@@ -7,7 +7,6 @@ import droni.backend.api.droniuser.entity.DroniUser;
 import droni.backend.api.droniuser.repository.DroniUserRepository;
 import droni.backend.oauth2.service.OAuth2UserPrincipal;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -25,7 +24,7 @@ public class AddressController {
     private final AddressService addressService;
     private final DroniUserRepository droniUserRepository;
 
-    @Operation(summary = "주소지 생성", security = @SecurityRequirement(name = "Authorization"))
+    @Operation(summary = "주소지 생성")
     @PostMapping
     public ResponseEntity<AddressResponse> saveAddress(
             @AuthenticationPrincipal OAuth2UserPrincipal userPrincipal,
@@ -36,7 +35,7 @@ public class AddressController {
                 .ok(AddressResponse.from(addressService.saveAddress(user.getUserId(), request)));
     }
 
-    @Operation(summary = "주소지 목록 조회", security = @SecurityRequirement(name = "Authorization"))
+    @Operation(summary = "주소지 목록 조회")
     @GetMapping
     public ResponseEntity<List<AddressResponse>> getUserAddresses(
             @AuthenticationPrincipal OAuth2UserPrincipal userPrincipal) {
