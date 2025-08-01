@@ -7,6 +7,7 @@ import lombok.Getter;
 import java.time.LocalDateTime;
 
 @Getter
+@Builder
 public class AddressResponse {
 
     private final Long addressId;
@@ -19,7 +20,6 @@ public class AddressResponse {
     private final LocalDateTime createdAt;
     private final LocalDateTime updatedAt;
 
-    @Builder
     public AddressResponse(Long addressId, String addressName, boolean isPrimary,
             String recipientName, String contactNumber, String address1, String address2,
             LocalDateTime createdAt, LocalDateTime updatedAt) {
