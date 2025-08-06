@@ -10,10 +10,12 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -35,155 +37,162 @@ class AddressServiceTest {
     private AddressService addressService;
 
     private DroniUser testUser;
+    private final Long userId = 1L;
 
     private AddressSaveRequest createSaveRequest(boolean isPrimary) {
         AddressSaveRequest request = new AddressSaveRequest();
+        // 실제 요청처럼 필드를 설정해주는 것이 더 명확할 수 있습니다.
+        // request.setAddressName("테스트 주소");
         request.setPrimary(isPrimary);
         return request;
     }
 
     @BeforeEach
     void setUp() {
-        testUser = DroniUser.builder().userId(1L).build();
+        testUser = DroniUser.builder().userId(userId).build();
     }
 
     @Test
-    @DisplayName("주소 저장 - 첫 주소는 항상 기본 주소로 설정된다")
-    void saveAddress_firstAddressIsPrimary() {
+    @DisplayName("SAVE-SUCCESS-001: 첫 주소 저장 시, 요청과 무관하게 기본 주소로 자동 설정")
+    void saveAddress_firstAddressShouldBePrimary() {
         // given
-        AddressSaveRequest saveRequest = createSaveRequest(false); // Request says not primary
-        when(droniUserRepository.findById(1L)).thenReturn(Optional.of(testUser));
-        when(userAddressRepository.findByUser(testUser)).thenReturn(List.of()); // No existing
-                                                                                // addresses
-        when(userAddressRepository.save(any(UserAddress.class)))
-                .thenAnswer(invocation -> invocation.getArgument(0));
+        AddressSaveRequest saveRequest = createSaveRequest(false);
+        when(droniUserRepository.findById(userId)).thenReturn(Optional.of(testUser));
+        when(userAddressRepository.findByUser(testUser)).thenReturn(Collections.emptyList());
 
         // when
-        UserAddress newAddress = addressService.saveAddress(1L, saveRequest);
+        addressService.saveAddress(userId, saveRequest);
 
         // then
-        assertThat(newAddress.isPrimary()).isTrue();
-        verify(userAddressRepository, times(1)).save(any(UserAddress.class));
+        ArgumentCaptor<UserAddress> addressCaptor = ArgumentCaptor.forClass(UserAddress.class);
+        verify(userAddressRepository).save(addressCaptor.capture());
+        UserAddress savedAddress = addressCaptor.getValue();
+
+        assertThat(savedAddress.isPrimary()).isTrue();
     }
 
     @Test
-    @DisplayName("주소 저장 - 새 주소가 기본 주소로 설정되면 기존 기본 주소는 해제된다")
-    void saveAddress_newPrimaryDemotesOldPrimary() {
+    @DisplayName("SAVE-SUCCESS-002: 새로운 기본 주소 저장 시, 기존 기본 주소는 해제")
+    void saveAddress_newPrimaryShouldDemoteOldPrimary() {
         // given
         AddressSaveRequest saveRequest = createSaveRequest(true);
-        UserAddress oldPrimaryAddress =
-                UserAddress.builder().user(testUser).isPrimary(true).build();
+        UserAddress oldPrimaryAddress = UserAddress.builder().user(testUser).isPrimary(true).build();
         UserAddress otherAddress = UserAddress.builder().user(testUser).isPrimary(false).build();
 
-        when(droniUserRepository.findById(1L)).thenReturn(Optional.of(testUser));
-        when(userAddressRepository.findByUser(testUser))
-                .thenReturn(List.of(oldPrimaryAddress, otherAddress));
-        when(userAddressRepository.save(any(UserAddress.class)))
-                .thenAnswer(invocation -> invocation.getArgument(0));
+        when(droniUserRepository.findById(userId)).thenReturn(Optional.of(testUser));
+        when(userAddressRepository.findByUser(testUser)).thenReturn(List.of(oldPrimaryAddress, otherAddress));
 
         // when
-        UserAddress newAddress = addressService.saveAddress(1L, saveRequest);
+        addressService.saveAddress(userId, saveRequest);
 
         // then
+        ArgumentCaptor<UserAddress> addressCaptor = ArgumentCaptor.forClass(UserAddress.class);
+        verify(userAddressRepository).save(addressCaptor.capture());
+        UserAddress newAddress = addressCaptor.getValue();
+
         assertThat(newAddress.isPrimary()).isTrue();
-        assertThat(oldPrimaryAddress.isPrimary()).isFalse(); // Old primary should be demoted
-        assertThat(otherAddress.isPrimary()).isFalse(); // Other address should remain non-primary
-        verify(userAddressRepository, times(1)).save(any(UserAddress.class));
-    }
-
-    @Test
-    @DisplayName("주소 저장 - 기본 주소가 없는 상태에서 새 주소가 기본이 아니면 새 주소가 기본 주소가 된다")
-    void saveAddress_noExistingPrimaryNewNonPrimaryBecomesPrimary() {
-        // given
-        AddressSaveRequest saveRequest = createSaveRequest(false); // Request says not primary
-        UserAddress nonPrimaryAddress =
-                UserAddress.builder().user(testUser).isPrimary(false).build();
-
-        when(droniUserRepository.findById(1L)).thenReturn(Optional.of(testUser));
-        when(userAddressRepository.findByUser(testUser)).thenReturn(List.of(nonPrimaryAddress)); // No
-                                                                                                 // primary
-                                                                                                 // exists
-        when(userAddressRepository.save(any(UserAddress.class)))
-                .thenAnswer(invocation -> invocation.getArgument(0));
-
-        // when
-        UserAddress newAddress = addressService.saveAddress(1L, saveRequest);
-
-        // then
-        assertThat(newAddress.isPrimary()).isTrue(); // Should be promoted to primary
-        assertThat(nonPrimaryAddress.isPrimary()).isFalse();
-        verify(userAddressRepository, times(1)).save(any(UserAddress.class));
-    }
-
-    @Test
-    @DisplayName("주소 저장 - 기본 주소가 있는 상태에서 새 주소가 기본이 아니면 새 주소는 기본이 아니다")
-    void saveAddress_existingPrimaryNewNonPrimaryRemainsNonPrimary() {
-        // given
-        AddressSaveRequest saveRequest = createSaveRequest(false); // Request says not primary
-        UserAddress existingPrimaryAddress =
-                UserAddress.builder().user(testUser).isPrimary(true).build();
-        UserAddress otherAddress = UserAddress.builder().user(testUser).isPrimary(false).build();
-
-        when(droniUserRepository.findById(1L)).thenReturn(Optional.of(testUser));
-        when(userAddressRepository.findByUser(testUser))
-                .thenReturn(List.of(existingPrimaryAddress, otherAddress));
-        when(userAddressRepository.save(any(UserAddress.class)))
-                .thenAnswer(invocation -> invocation.getArgument(0));
-
-        // when
-        UserAddress newAddress = addressService.saveAddress(1L, saveRequest);
-
-        // then
-        assertThat(newAddress.isPrimary()).isFalse(); // Should remain non-primary
-        assertThat(existingPrimaryAddress.isPrimary()).isTrue(); // Existing primary should remain
-                                                                 // primary
+        assertThat(oldPrimaryAddress.isPrimary()).isFalse();
         assertThat(otherAddress.isPrimary()).isFalse();
-        verify(userAddressRepository, times(1)).save(any(UserAddress.class));
     }
 
     @Test
-    @DisplayName("주소 목록 조회")
-    void getUserAddresses() {
+    @DisplayName("SAVE-SUCCESS-003: 일반 주소 저장 시, 기존 기본 주소에 영향 없음")
+    void saveAddress_nonPrimaryShouldRemainNonPrimaryIfPrimaryExists() {
         // given
-        when(droniUserRepository.findById(1L)).thenReturn(Optional.of(testUser));
-        when(userAddressRepository.findByUser(testUser))
-                .thenReturn(List.of(UserAddress.builder().build(), UserAddress.builder().build()));
+        AddressSaveRequest saveRequest = createSaveRequest(false);
+        UserAddress existingPrimaryAddress = UserAddress.builder().user(testUser).isPrimary(true).build();
+
+        when(droniUserRepository.findById(userId)).thenReturn(Optional.of(testUser));
+        when(userAddressRepository.findByUser(testUser)).thenReturn(List.of(existingPrimaryAddress));
 
         // when
-        List<UserAddress> userAddresses = addressService.getUserAddresses(1L);
+        addressService.saveAddress(userId, saveRequest);
 
         // then
-        assertThat(userAddresses).hasSize(2);
+        ArgumentCaptor<UserAddress> addressCaptor = ArgumentCaptor.forClass(UserAddress.class);
+        verify(userAddressRepository).save(addressCaptor.capture());
+        UserAddress newAddress = addressCaptor.getValue();
+
+        assertThat(newAddress.isPrimary()).isFalse();
+        assertThat(existingPrimaryAddress.isPrimary()).isTrue();
     }
 
     @Test
-    @DisplayName("주소 저장 - 사용자를 찾을 수 없으면 DroniNotFoundException 발생")
-    void saveAddress_throwsDroniNotFoundException_whenUserNotFound() {
+    @DisplayName("SAVE-SUCCESS-004: 기존에 기본 주소 없을 시, 새 주소는 기본 주소로 자동 설정")
+    void saveAddress_shouldBecomePrimaryIfNoPrimaryExists() {
         // given
-        long userId = 1L;
+        AddressSaveRequest saveRequest = createSaveRequest(false);
+        UserAddress nonPrimaryAddress = UserAddress.builder().user(testUser).isPrimary(false).build();
+
+        when(droniUserRepository.findById(userId)).thenReturn(Optional.of(testUser));
+        when(userAddressRepository.findByUser(testUser)).thenReturn(List.of(nonPrimaryAddress));
+
+        // when
+        addressService.saveAddress(userId, saveRequest);
+
+        // then
+        ArgumentCaptor<UserAddress> addressCaptor = ArgumentCaptor.forClass(UserAddress.class);
+        verify(userAddressRepository).save(addressCaptor.capture());
+        UserAddress newAddress = addressCaptor.getValue();
+
+        assertThat(newAddress.isPrimary()).isTrue();
+        assertThat(nonPrimaryAddress.isPrimary()).isFalse();
+    }
+
+    @Test
+    @DisplayName("SAVE-FAIL-001: 존재하지 않는 사용자로 주소 저장 시, 예외 발생")
+    void saveAddress_shouldThrowException_whenUserNotFound() {
+        // given
         AddressSaveRequest saveRequest = createSaveRequest(true);
         when(droniUserRepository.findById(userId)).thenReturn(Optional.empty());
 
         // when & then
-        assertThrows(DroniNotFoundException.class, () -> {
-            addressService.saveAddress(userId, saveRequest);
-        });
-
+        assertThrows(DroniNotFoundException.class, () -> addressService.saveAddress(userId, saveRequest));
         verify(userAddressRepository, never()).save(any(UserAddress.class));
     }
 
     @Test
-    @DisplayName("주소 목록 조회 - 사용자를 찾을 수 없으면 DroniNotFoundException 발생")
-    void getUserAddresses_throwsDroniNotFoundException_whenUserNotFound() {
+    @DisplayName("GET-SUCCESS-001: 주소 목록 조회 성공")
+    void getUserAddresses_shouldReturnAddressList() {
         // given
-        long userId = 1L;
+        List<UserAddress> expectedAddresses = List.of(
+            UserAddress.builder().build(),
+            UserAddress.builder().build()
+        );
+        when(droniUserRepository.findById(userId)).thenReturn(Optional.of(testUser));
+        when(userAddressRepository.findByUser(testUser)).thenReturn(expectedAddresses);
+
+        // when
+        List<UserAddress> actualAddresses = addressService.getUserAddresses(userId);
+
+        // then
+        assertThat(actualAddresses).hasSize(2);
+        assertThat(actualAddresses).isEqualTo(expectedAddresses);
+    }
+
+    @Test
+    @DisplayName("GET-SUCCESS-002: 주소가 없는 사용자의 목록 조회 시, 빈 리스트 반환")
+    void getUserAddresses_shouldReturnEmptyList_whenNoAddresses() {
+        // given
+        when(droniUserRepository.findById(userId)).thenReturn(Optional.of(testUser));
+        when(userAddressRepository.findByUser(testUser)).thenReturn(Collections.emptyList());
+
+        // when
+        List<UserAddress> userAddresses = addressService.getUserAddresses(userId);
+
+        // then
+        assertThat(userAddresses).isNotNull();
+        assertThat(userAddresses).isEmpty();
+    }
+
+    @Test
+    @DisplayName("GET-FAIL-001: 존재하지 않는 사용자로 주소 목록 조회 시, 예외 발생")
+    void getUserAddresses_shouldThrowException_whenUserNotFound() {
+        // given
         when(droniUserRepository.findById(userId)).thenReturn(Optional.empty());
 
         // when & then
-        assertThrows(DroniNotFoundException.class, () -> {
-            addressService.getUserAddresses(userId);
-        });
-
+        assertThrows(DroniNotFoundException.class, () -> addressService.getUserAddresses(userId));
         verify(userAddressRepository, never()).findByUser(any(DroniUser.class));
     }
 }
