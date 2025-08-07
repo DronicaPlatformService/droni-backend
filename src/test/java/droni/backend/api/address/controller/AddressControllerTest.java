@@ -149,4 +149,37 @@ class AddressControllerTest {
         verify(droniUserRepository).findByOauthId(testPrincipal.getOAuth2Id());
         verify(addressService).saveAddress(eq(testUser.getUserId()), any(AddressSaveRequest.class));
     }
+
+    @Test
+    @DisplayName("POST /api/v1/addresses - 인증 정보에 해당하는 사용자를 찾을 수 없을 때 404 반환")
+    void saveAddress_userNotFound_shouldReturn404() throws Exception {
+        // Given
+        AddressSaveRequest request = new AddressSaveRequest();
+        request.setAddressName("테스트 주소");
+        request.setRecipientName("홍길동");
+        request.setContactNumber("010-1234-5678");
+        request.setAddress1("서울시 강남구");
+        request.setAddress2("101호");
+        request.setPrimary(true);
+
+        when(droniUserRepository.findByOauthId(testPrincipal.getOAuth2Id()))
+                .thenReturn(Optional.empty());
+
+        TestingAuthenticationToken authentication =
+                new TestingAuthenticationToken(testPrincipal, null, "ROLE_USER");
+
+        // When & Then
+        mockMvc.perform(post("/api/v1/addresses").principal(authentication)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(request))
+                .with(authentication(authentication)).with(csrf())).andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.error").value("유저를 찾을 수 없습니다."))
+                .andExpect(jsonPath("$.exception").value("DroniNotFoundException"))
+                .andExpect(jsonPath("$.httpStatus").value("NOT_FOUND"))
+                .andExpect(jsonPath("$.path").value("/api/v1/addresses"))
+                .andExpect(jsonPath("$.timestamp").isNotEmpty());
+
+        verify(droniUserRepository).findByOauthId(testPrincipal.getOAuth2Id());
+        // AddressService.saveAddress는 호출되지 않아야 함
+    }
 }
