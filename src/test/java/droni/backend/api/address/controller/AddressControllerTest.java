@@ -86,6 +86,34 @@ class AddressControllerTest {
         testPrincipal = new OAuth2UserPrincipal(userInfo);
     }
 
+    private AddressSaveRequest createAddressSaveRequest() {
+        AddressSaveRequest request = new AddressSaveRequest();
+        request.setAddressName("테스트 주소");
+        request.setRecipientName("홍길동");
+        request.setContactNumber("010-1234-5678");
+        request.setAddress1("서울시 강남구");
+        request.setAddress2("101호");
+        request.setPrimary(true);
+        return request;
+    }
+
+    private TestingAuthenticationToken createAuthToken() {
+        return new TestingAuthenticationToken(testPrincipal, null, "ROLE_USER");
+    }
+
+    private void setAuditFields(UserAddress address, LocalDateTime time) {
+        try {
+            var createdAtField = UserAddress.class.getDeclaredField("createdAt");
+            createdAtField.setAccessible(true);
+            createdAtField.set(address, time);
+            var updatedAtField = UserAddress.class.getDeclaredField("updatedAt");
+            updatedAtField.setAccessible(true);
+            updatedAtField.set(address, time);
+        } catch (NoSuchFieldException | IllegalAccessException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     @Test
     void contextLoads() {
         // 기본 설정 테스트
@@ -95,41 +123,26 @@ class AddressControllerTest {
     @DisplayName("POST /api/v1/addresses - 주소지 생성 성공")
     void saveAddress_success() throws Exception {
         // Given
-        AddressSaveRequest request = new AddressSaveRequest();
-        request.setAddressName("테스트 주소");
-        request.setRecipientName("홍길동");
-        request.setContactNumber("010-1234-5678");
-        request.setAddress1("서울시 강남구");
-        request.setAddress2("101호");
-        request.setPrimary(true);
+        AddressSaveRequest request = createAddressSaveRequest();
 
         UserAddress savedAddress = UserAddress.builder()
-            .addressName("테스트 주소")
-            .isPrimary(true)
-            .recipientName("홍길동")
-            .contactNumber("010-1234-5678")
-            .address1("서울시 강남구")
-            .address2("101호")
+            .addressName(request.getAddressName())
+            .isPrimary(request.isPrimary())
+            .recipientName(request.getRecipientName())
+            .contactNumber(request.getContactNumber())
+            .address1(request.getAddress1())
+            .address2(request.getAddress2())
             .user(testUser)
             .build();
 
-        try {
-            var createdAtField = UserAddress.class.getDeclaredField("createdAt");
-            createdAtField.setAccessible(true);
-            createdAtField.set(savedAddress, LocalDateTime.now());
-            var updatedAtField = UserAddress.class.getDeclaredField("updatedAt");
-            updatedAtField.setAccessible(true);
-            updatedAtField.set(savedAddress, LocalDateTime.now());
-        } catch (NoSuchFieldException | IllegalAccessException e) {
-            throw new RuntimeException(e);
-        }
+        setAuditFields(savedAddress, LocalDateTime.now());
 
         when(droniUserRepository.findByOauthId(testPrincipal.getOAuth2Id()))
             .thenReturn(Optional.of(testUser));
         when(addressService.saveAddress(eq(testUser.getUserId()), any(AddressSaveRequest.class)))
             .thenReturn(savedAddress);
 
-        TestingAuthenticationToken authentication = new TestingAuthenticationToken(testPrincipal, null, "ROLE_USER");
+        TestingAuthenticationToken authentication = createAuthToken();
 
         // When & Then
         mockMvc.perform(post("/api/v1/addresses")
@@ -156,30 +169,24 @@ class AddressControllerTest {
     @DisplayName("POST /api/v1/addresses - 인증 정보에 해당하는 사용자를 찾을 수 없을 때 404 반환")
     void saveAddress_userNotFound_shouldReturn404() throws Exception {
         // Given
-        AddressSaveRequest request = new AddressSaveRequest();
-        request.setAddressName("테스트 주소");
-        request.setRecipientName("홍길동");
-        request.setContactNumber("010-1234-5678");
-        request.setAddress1("서울시 강남구");
-        request.setAddress2("101호");
-        request.setPrimary(true);
+        AddressSaveRequest request = createAddressSaveRequest();
 
         when(droniUserRepository.findByOauthId(testPrincipal.getOAuth2Id()))
                 .thenReturn(Optional.empty());
 
-        TestingAuthenticationToken authentication =
-                new TestingAuthenticationToken(testPrincipal, null, "ROLE_USER");
+        TestingAuthenticationToken authentication = createAuthToken();
 
         // When & Then
         mockMvc.perform(post("/api/v1/addresses").principal(authentication)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request))
-                .with(authentication(authentication)).with(csrf())).andExpect(status().isNotFound())
-                .andExpect(jsonPath("$.error").value("유저를 찾을 수 없습니다."))
-                .andExpect(jsonPath("$.exception").value("DroniNotFoundException"))
-                .andExpect(jsonPath("$.httpStatus").value("NOT_FOUND"))
-                .andExpect(jsonPath("$.path").value("/api/v1/addresses"))
-                .andExpect(jsonPath("$.timestamp").isNotEmpty());
+                .with(authentication(authentication)).with(csrf()))
+            .andExpect(status().isNotFound())
+            .andExpect(jsonPath("$.error").value("유저를 찾을 수 없습니다."))
+            .andExpect(jsonPath("$.exception").value("DroniNotFoundException"))
+            .andExpect(jsonPath("$.httpStatus").value("NOT_FOUND"))
+            .andExpect(jsonPath("$.path").value("/api/v1/addresses"))
+            .andExpect(jsonPath("$.timestamp").isNotEmpty());
 
         verify(droniUserRepository).findByOauthId(testPrincipal.getOAuth2Id());
         // AddressService.saveAddress는 호출되지 않아야 함
@@ -208,23 +215,16 @@ class AddressControllerTest {
             .user(testUser)
             .build();
 
-        // createdAt/updatedAt 필드 설정
         var now = LocalDateTime.now();
-        for (UserAddress addr : new UserAddress[]{address1, address2}) {
-            var createdAtField = UserAddress.class.getDeclaredField("createdAt");
-            createdAtField.setAccessible(true);
-            createdAtField.set(addr, now);
-            var updatedAtField = UserAddress.class.getDeclaredField("updatedAt");
-            updatedAtField.setAccessible(true);
-            updatedAtField.set(addr, now);
-        }
+        setAuditFields(address1, now);
+        setAuditFields(address2, now);
 
         when(droniUserRepository.findByOauthId(testPrincipal.getOAuth2Id()))
             .thenReturn(Optional.of(testUser));
         when(addressService.getUserAddresses(testUser.getUserId()))
             .thenReturn(java.util.List.of(address1, address2));
 
-        TestingAuthenticationToken authentication = new TestingAuthenticationToken(testPrincipal, null, "ROLE_USER");
+        TestingAuthenticationToken authentication = createAuthToken();
 
         // When & Then
         mockMvc.perform(get("/api/v1/addresses")
@@ -253,7 +253,7 @@ class AddressControllerTest {
         when(addressService.getUserAddresses(testUser.getUserId()))
             .thenReturn(java.util.Collections.emptyList());
 
-        TestingAuthenticationToken authentication = new TestingAuthenticationToken(testPrincipal, null, "ROLE_USER");
+        TestingAuthenticationToken authentication = createAuthToken();
 
         // When & Then
         mockMvc.perform(get("/api/v1/addresses")
@@ -274,7 +274,7 @@ class AddressControllerTest {
         when(droniUserRepository.findByOauthId(testPrincipal.getOAuth2Id()))
             .thenReturn(Optional.empty());
 
-        TestingAuthenticationToken authentication = new TestingAuthenticationToken(testPrincipal, null, "ROLE_USER");
+        TestingAuthenticationToken authentication = createAuthToken();
 
         // When & Then
         mockMvc.perform(get("/api/v1/addresses")
