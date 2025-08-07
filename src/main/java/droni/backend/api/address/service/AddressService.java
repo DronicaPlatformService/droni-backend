@@ -21,6 +21,10 @@ public class AddressService {
     private final UserAddressRepository userAddressRepository;
     private final DroniUserRepository droniUserRepository;
 
+    /**
+     * 사용자의 주소를 저장합니다. 첫 주소 또는 기존 주소가 모두 비활성화된 경우 기본 주소로 설정합니다.
+     * 기본 주소로 저장 시 기존 기본 주소는 비활성화됩니다.
+     */
     public UserAddress saveAddress(Long userId, AddressSaveRequest request) {
         DroniUser user = droniUserRepository.findById(userId)
             .orElseThrow(() -> new DroniNotFoundException(HttpStatus.NOT_FOUND, "유저를 찾을 수 없습니다."));
@@ -30,12 +34,12 @@ public class AddressService {
 
         if (existingAddresses.isEmpty()) {
             isNewAddressPrimary = true;
-        }
-        else if (isNewAddressPrimary) {
-            existingAddresses.stream().filter(UserAddress::isPrimary).findFirst()
-                    .ifPresent(addr -> addr.setPrimary(false));
-        }
-        else if (existingAddresses.stream().noneMatch(UserAddress::isPrimary)) {
+        } else if (isNewAddressPrimary) {
+            existingAddresses.stream()
+                .filter(UserAddress::isPrimary)
+                .findFirst()
+                .ifPresent(addr -> addr.setPrimary(false));
+        } else if (existingAddresses.stream().noneMatch(UserAddress::isPrimary)) {
             isNewAddressPrimary = true;
         }
 
@@ -52,6 +56,9 @@ public class AddressService {
         return userAddressRepository.save(newAddress);
     }
 
+    /**
+     * 사용자의 모든 주소 목록을 조회합니다.
+     */
     @Transactional(readOnly = true)
     public List<UserAddress> getUserAddresses(Long userId) {
         DroniUser user = droniUserRepository.findById(userId)
