@@ -6,6 +6,7 @@ import droni.backend.api.address.service.AddressService;
 import droni.backend.oauth2.service.OAuth2UserPrincipal;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -32,7 +33,7 @@ public class AddressController {
     @ResponseStatus(HttpStatus.CREATED)
     public AddressResponse saveAddress(
             @AuthenticationPrincipal OAuth2UserPrincipal userPrincipal,
-            @RequestBody AddressSaveRequest request
+            @Valid @RequestBody AddressSaveRequest request
     ) {
         return AddressResponse.from(addressService.saveAddress(userPrincipal, request));
     }
