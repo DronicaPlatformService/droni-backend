@@ -13,7 +13,10 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "user_address", indexes = @Index(name = "idx_user_id", columnList = "user_id"))
+@Table(
+    name = "user_address",
+    indexes = @Index(name = "idx_user_id", columnList = "user_id")
+)
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @EntityListeners(AuditingEntityListener.class)
@@ -42,8 +45,16 @@ public class UserAddress {
     @LastModifiedDate
     private LocalDateTime updatedAt;
 
-    public UserAddress(Long addressId, String addressName, boolean isPrimary, String recipientName,
-            String contactNumber, String address1, String address2, DroniUser user) {
+    public UserAddress(
+        Long addressId,
+        String addressName,
+        boolean isPrimary,
+        String recipientName,
+        String contactNumber,
+        String address1,
+        String address2,
+        DroniUser user
+    ) {
         this.addressId = addressId;
         this.addressName = addressName;
         this.isPrimary = isPrimary;
@@ -54,9 +65,16 @@ public class UserAddress {
         this.user = user;
     }
 
-    @Builder
-    public UserAddress(String addressName, boolean isPrimary, String recipientName,
-            String contactNumber, String address1, String address2, DroniUser user) {
+    @Builder(access = AccessLevel.PRIVATE)
+    public UserAddress(
+        String addressName,
+        boolean isPrimary,
+        String recipientName,
+        String contactNumber,
+        String address1,
+        String address2,
+        DroniUser user
+    ) {
         this.addressName = addressName;
         this.isPrimary = isPrimary;
         this.recipientName = recipientName;
@@ -64,6 +82,26 @@ public class UserAddress {
         this.address1 = address1;
         this.address2 = address2;
         this.user = user;
+    }
+
+    public static UserAddress create(
+        String addressName,
+        boolean isPrimary,
+        String recipientName,
+        String contactNumber,
+        String address1,
+        String address2,
+        DroniUser user
+    ) {
+        return UserAddress.builder()
+            .addressName(addressName)
+            .isPrimary(isPrimary)
+            .recipientName(recipientName)
+            .contactNumber(contactNumber)
+            .address1(address1)
+            .address2(address2)
+            .user(user)
+            .build();
     }
 
     public void setPrimary(boolean isPrimary) {

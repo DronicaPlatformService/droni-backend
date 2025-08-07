@@ -23,7 +23,7 @@ public class AddressService {
 
     public UserAddress saveAddress(Long userId, AddressSaveRequest request) {
         DroniUser user = droniUserRepository.findById(userId)
-                .orElseThrow(() -> new DroniNotFoundException(HttpStatus.NOT_FOUND, "유저를 찾을 수 없습니다."));
+            .orElseThrow(() -> new DroniNotFoundException(HttpStatus.NOT_FOUND, "유저를 찾을 수 없습니다."));
 
         List<UserAddress> existingAddresses = userAddressRepository.findByUser(user);
 
@@ -35,22 +35,28 @@ public class AddressService {
         } else {
             if (isNewAddressPrimary) {
                 // 새 주소가 기본 주소로 지정되면 기존 기본 주소를 모두 false로 변경
-                existingAddresses.stream().filter(UserAddress::isPrimary)
-                        .forEach(address -> address.setPrimary(false));
+                existingAddresses.stream()
+                    .filter(UserAddress::isPrimary)
+                    .forEach(address -> address.setPrimary(false));
             } else {
                 // 새 주소가 기본이 아니지만 기존에 기본 주소가 없다면 새 주소를 기본으로 지정
-                boolean hasExistingPrimary =
-                        existingAddresses.stream().anyMatch(UserAddress::isPrimary);
+                boolean hasExistingPrimary = existingAddresses.stream()
+                    .anyMatch(UserAddress::isPrimary);
                 if (!hasExistingPrimary) {
                     isNewAddressPrimary = true;
                 }
             }
         }
 
-        UserAddress newAddress = UserAddress.builder().user(user)
-                .addressName(request.getAddressName()).isPrimary(isNewAddressPrimary)
-                .recipientName(request.getRecipientName()).contactNumber(request.getContactNumber())
-                .address1(request.getAddress1()).address2(request.getAddress2()).build();
+        UserAddress newAddress = UserAddress.create(
+            request.getAddressName(),
+            isNewAddressPrimary,
+            request.getRecipientName(),
+            request.getContactNumber(),
+            request.getAddress1(),
+            request.getAddress2(),
+            user
+        );
 
         return userAddressRepository.save(newAddress);
     }
@@ -58,7 +64,7 @@ public class AddressService {
     @Transactional(readOnly = true)
     public List<UserAddress> getUserAddresses(Long userId) {
         DroniUser user = droniUserRepository.findById(userId)
-                .orElseThrow(() -> new DroniNotFoundException(HttpStatus.NOT_FOUND, "유저를 찾을 수 없습니다."));
+            .orElseThrow(() -> new DroniNotFoundException(HttpStatus.NOT_FOUND, "유저를 찾을 수 없습니다."));
         return userAddressRepository.findByUser(user);
     }
 }

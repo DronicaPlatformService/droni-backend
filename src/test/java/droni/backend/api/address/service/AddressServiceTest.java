@@ -49,7 +49,9 @@ class AddressServiceTest {
 
     @BeforeEach
     void setUp() {
-        testUser = DroniUser.builder().userId(userId).build();
+        testUser = DroniUser.builder()
+            .userId(userId)
+            .build();
     }
 
     @Test
@@ -76,8 +78,12 @@ class AddressServiceTest {
     void saveAddress_newPrimaryShouldDemoteOldPrimary() {
         // given
         AddressSaveRequest saveRequest = createSaveRequest(true);
-        UserAddress oldPrimaryAddress = UserAddress.builder().user(testUser).isPrimary(true).build();
-        UserAddress otherAddress = UserAddress.builder().user(testUser).isPrimary(false).build();
+        UserAddress oldPrimaryAddress = UserAddress.create(
+            "oldPrimary", true, "홍길동", "010-1111-2222", "서울시", "강남구", testUser
+        );
+        UserAddress otherAddress = UserAddress.create(
+            "other", false, "김철수", "010-3333-4444", "부산시", "해운대구", testUser
+        );
 
         when(droniUserRepository.findById(userId)).thenReturn(Optional.of(testUser));
         when(userAddressRepository.findByUser(testUser)).thenReturn(List.of(oldPrimaryAddress, otherAddress));
@@ -100,7 +106,9 @@ class AddressServiceTest {
     void saveAddress_nonPrimaryShouldRemainNonPrimaryIfPrimaryExists() {
         // given
         AddressSaveRequest saveRequest = createSaveRequest(false);
-        UserAddress existingPrimaryAddress = UserAddress.builder().user(testUser).isPrimary(true).build();
+        UserAddress existingPrimaryAddress = UserAddress.create(
+            "기본주소", true, "홍길동", "010-1234-5678", "서울시", "강남구", testUser
+        );
 
         when(droniUserRepository.findById(userId)).thenReturn(Optional.of(testUser));
         when(userAddressRepository.findByUser(testUser)).thenReturn(List.of(existingPrimaryAddress));
@@ -122,7 +130,9 @@ class AddressServiceTest {
     void saveAddress_shouldBecomePrimaryIfNoPrimaryExists() {
         // given
         AddressSaveRequest saveRequest = createSaveRequest(false);
-        UserAddress nonPrimaryAddress = UserAddress.builder().user(testUser).isPrimary(false).build();
+        UserAddress nonPrimaryAddress = UserAddress.create(
+            "일반주소", false, "김철수", "010-9876-5432", "부산시", "해운대구", testUser
+        );
 
         when(droniUserRepository.findById(userId)).thenReturn(Optional.of(testUser));
         when(userAddressRepository.findByUser(testUser)).thenReturn(List.of(nonPrimaryAddress));
@@ -156,8 +166,8 @@ class AddressServiceTest {
     void getUserAddresses_shouldReturnAddressList() {
         // given
         List<UserAddress> expectedAddresses = List.of(
-            UserAddress.builder().build(),
-            UserAddress.builder().build()
+            UserAddress.create("주소1", true, "홍길동", "010-1234-5678", "서울시", "강남구", testUser),
+            UserAddress.create("주소2", false, "김철수", "010-9876-5432", "부산시", "해운대구", testUser)
         );
         when(droniUserRepository.findById(userId)).thenReturn(Optional.of(testUser));
         when(userAddressRepository.findByUser(testUser)).thenReturn(expectedAddresses);

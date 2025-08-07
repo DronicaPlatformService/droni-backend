@@ -125,15 +125,15 @@ class AddressControllerTest {
         // Given
         AddressSaveRequest request = createAddressSaveRequest();
 
-        UserAddress savedAddress = UserAddress.builder()
-            .addressName(request.getAddressName())
-            .isPrimary(request.isPrimary())
-            .recipientName(request.getRecipientName())
-            .contactNumber(request.getContactNumber())
-            .address1(request.getAddress1())
-            .address2(request.getAddress2())
-            .user(testUser)
-            .build();
+        UserAddress savedAddress = UserAddress.create(
+            request.getAddressName(),
+            request.isPrimary(),
+            request.getRecipientName(),
+            request.getContactNumber(),
+            request.getAddress1(),
+            request.getAddress2(),
+            testUser
+        );
 
         setAuditFields(savedAddress, LocalDateTime.now());
 
@@ -196,24 +196,24 @@ class AddressControllerTest {
     @DisplayName("GET /api/v1/addresses - 주소지 목록 조회 성공")
     void getUserAddresses_success() throws Exception {
         // Given
-        UserAddress address1 = UserAddress.builder()
-            .addressName("집")
-            .isPrimary(true)
-            .recipientName("홍길동")
-            .contactNumber("010-1111-2222")
-            .address1("서울시 강남구")
-            .address2("101호")
-            .user(testUser)
-            .build();
-        UserAddress address2 = UserAddress.builder()
-            .addressName("회사")
-            .isPrimary(false)
-            .recipientName("홍길동")
-            .contactNumber("010-3333-4444")
-            .address1("서울시 서초구")
-            .address2("202호")
-            .user(testUser)
-            .build();
+        UserAddress address1 = UserAddress.create(
+            "집",
+            true,
+            "홍길동",
+            "010-1111-2222",
+            "서울시 강남구",
+            "101호",
+            testUser
+        );
+        UserAddress address2 = UserAddress.create(
+            "회사",
+            false,
+            "홍길동",
+            "010-3333-4444",
+            "서울시 서초구",
+            "202호",
+            testUser
+        );
 
         var now = LocalDateTime.now();
         setAuditFields(address1, now);
