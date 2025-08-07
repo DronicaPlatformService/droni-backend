@@ -27,8 +27,10 @@ import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -181,5 +183,112 @@ class AddressControllerTest {
 
         verify(droniUserRepository).findByOauthId(testPrincipal.getOAuth2Id());
         // AddressService.saveAddress는 호출되지 않아야 함
+    }
+
+    @Test
+    @DisplayName("GET /api/v1/addresses - 주소지 목록 조회 성공")
+    void getUserAddresses_success() throws Exception {
+        // Given
+        UserAddress address1 = UserAddress.builder()
+            .addressName("집")
+            .isPrimary(true)
+            .recipientName("홍길동")
+            .contactNumber("010-1111-2222")
+            .address1("서울시 강남구")
+            .address2("101호")
+            .user(testUser)
+            .build();
+        UserAddress address2 = UserAddress.builder()
+            .addressName("회사")
+            .isPrimary(false)
+            .recipientName("홍길동")
+            .contactNumber("010-3333-4444")
+            .address1("서울시 서초구")
+            .address2("202호")
+            .user(testUser)
+            .build();
+
+        // createdAt/updatedAt 필드 설정
+        var now = LocalDateTime.now();
+        for (UserAddress addr : new UserAddress[]{address1, address2}) {
+            var createdAtField = UserAddress.class.getDeclaredField("createdAt");
+            createdAtField.setAccessible(true);
+            createdAtField.set(addr, now);
+            var updatedAtField = UserAddress.class.getDeclaredField("updatedAt");
+            updatedAtField.setAccessible(true);
+            updatedAtField.set(addr, now);
+        }
+
+        when(droniUserRepository.findByOauthId(testPrincipal.getOAuth2Id()))
+            .thenReturn(Optional.of(testUser));
+        when(addressService.getUserAddresses(testUser.getUserId()))
+            .thenReturn(java.util.List.of(address1, address2));
+
+        TestingAuthenticationToken authentication = new TestingAuthenticationToken(testPrincipal, null, "ROLE_USER");
+
+        // When & Then
+        mockMvc.perform(get("/api/v1/addresses")
+                .principal(authentication)
+                .with(authentication(authentication))
+                .with(csrf()))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.length()").value(2))
+            .andExpect(jsonPath("$[0].addressName").value("집"))
+            .andExpect(jsonPath("$[0].primary").value(true))
+            .andExpect(jsonPath("$[0].createdAt").isNotEmpty())
+            .andExpect(jsonPath("$[1].addressName").value("회사"))
+            .andExpect(jsonPath("$[1].primary").value(false))
+            .andExpect(jsonPath("$[1].createdAt").isNotEmpty());
+
+        verify(droniUserRepository).findByOauthId(testPrincipal.getOAuth2Id());
+        verify(addressService).getUserAddresses(testUser.getUserId());
+    }
+
+    @Test
+    @DisplayName("GET /api/v1/addresses - 주소지가 없는 경우 빈 리스트 반환")
+    void getUserAddresses_emptyList() throws Exception {
+        // Given
+        when(droniUserRepository.findByOauthId(testPrincipal.getOAuth2Id()))
+            .thenReturn(Optional.of(testUser));
+        when(addressService.getUserAddresses(testUser.getUserId()))
+            .thenReturn(java.util.Collections.emptyList());
+
+        TestingAuthenticationToken authentication = new TestingAuthenticationToken(testPrincipal, null, "ROLE_USER");
+
+        // When & Then
+        mockMvc.perform(get("/api/v1/addresses")
+                .principal(authentication)
+                .with(authentication(authentication))
+                .with(csrf()))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.length()").value(0));
+
+        verify(droniUserRepository).findByOauthId(testPrincipal.getOAuth2Id());
+        verify(addressService).getUserAddresses(testUser.getUserId());
+    }
+
+    @Test
+    @DisplayName("GET /api/v1/addresses - 인증 정보에 해당하는 사용자를 찾을 수 없을 때 404 반환")
+    void getUserAddresses_userNotFound_shouldReturn404() throws Exception {
+        // Given
+        when(droniUserRepository.findByOauthId(testPrincipal.getOAuth2Id()))
+            .thenReturn(Optional.empty());
+
+        TestingAuthenticationToken authentication = new TestingAuthenticationToken(testPrincipal, null, "ROLE_USER");
+
+        // When & Then
+        mockMvc.perform(get("/api/v1/addresses")
+                .principal(authentication)
+                .with(authentication(authentication))
+                .with(csrf()))
+            .andExpect(status().isNotFound())
+            .andExpect(jsonPath("$.error").value("유저를 찾을 수 없습니다."))
+            .andExpect(jsonPath("$.exception").value("DroniNotFoundException"))
+            .andExpect(jsonPath("$.httpStatus").value("NOT_FOUND"))
+            .andExpect(jsonPath("$.path").value("/api/v1/addresses"))
+            .andExpect(jsonPath("$.timestamp").isNotEmpty());
+
+        verify(droniUserRepository).findByOauthId(testPrincipal.getOAuth2Id());
+        verify(addressService, never()).getUserAddresses(any(Long.class));
     }
 }
