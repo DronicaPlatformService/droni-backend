@@ -26,26 +26,17 @@ public class AddressService {
             .orElseThrow(() -> new DroniNotFoundException(HttpStatus.NOT_FOUND, "유저를 찾을 수 없습니다."));
 
         List<UserAddress> existingAddresses = userAddressRepository.findByUser(user);
-
         boolean isNewAddressPrimary = request.isPrimary();
 
         if (existingAddresses.isEmpty()) {
-            // 첫 번째 주소는 반드시 기본 주소여야 함
             isNewAddressPrimary = true;
-        } else {
-            if (isNewAddressPrimary) {
-                // 새 주소가 기본 주소로 지정되면 기존 기본 주소를 모두 false로 변경
-                existingAddresses.stream()
-                    .filter(UserAddress::isPrimary)
-                    .forEach(address -> address.setPrimary(false));
-            } else {
-                // 새 주소가 기본이 아니지만 기존에 기본 주소가 없다면 새 주소를 기본으로 지정
-                boolean hasExistingPrimary = existingAddresses.stream()
-                    .anyMatch(UserAddress::isPrimary);
-                if (!hasExistingPrimary) {
-                    isNewAddressPrimary = true;
-                }
-            }
+        }
+        else if (isNewAddressPrimary) {
+            existingAddresses.stream().filter(UserAddress::isPrimary).findFirst()
+                    .ifPresent(addr -> addr.setPrimary(false));
+        }
+        else if (existingAddresses.stream().noneMatch(UserAddress::isPrimary)) {
+            isNewAddressPrimary = true;
         }
 
         UserAddress newAddress = UserAddress.create(
