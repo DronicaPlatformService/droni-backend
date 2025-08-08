@@ -104,6 +104,20 @@ public class UserAddress {
             .build();
     }
 
+    public void updateAddress(
+        String addressName,
+        String recipientName,
+        String contactNumber,
+        String address1,
+        String address2
+    ) {
+        this.addressName = addressName;
+        this.recipientName = recipientName;
+        this.contactNumber = contactNumber;
+        this.address1 = address1;
+        this.address2 = address2;
+    }
+
     public void setPrimary(boolean isPrimary) {
         this.isPrimary = isPrimary;
     }
