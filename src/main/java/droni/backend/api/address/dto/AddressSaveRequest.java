@@ -33,8 +33,4 @@ public class AddressSaveRequest {
 
     @Size(max = 100, message = "상세주소는 100자 이하여야 합니다.")
     private String address2;
-
-    public void setPrimary(boolean primary) {
-        this.isPrimary = primary;
-    }
 }
