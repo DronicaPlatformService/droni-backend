@@ -28,7 +28,10 @@ public class UserAddress {
     private Long addressId;
 
     private String addressName;
-    private boolean isPrimary;
+
+    @Column(name = "is_primary", nullable = false)
+    private boolean primary;
+
     private String recipientName;
     private String contactNumber;
     private String address1;
@@ -48,7 +51,7 @@ public class UserAddress {
     @Builder(access = AccessLevel.PRIVATE)
     public UserAddress(
         String addressName,
-        boolean isPrimary,
+        boolean primary,
         String recipientName,
         String contactNumber,
         String address1,
@@ -56,7 +59,7 @@ public class UserAddress {
         DroniUser user
     ) {
         this.addressName = addressName;
-        this.isPrimary = isPrimary;
+        this.primary = primary;
         this.recipientName = recipientName;
         this.contactNumber = contactNumber;
         this.address1 = address1;
@@ -66,7 +69,7 @@ public class UserAddress {
 
     public static UserAddress create(
         String addressName,
-        boolean isPrimary,
+        boolean primary,
         String recipientName,
         String contactNumber,
         String address1,
@@ -75,7 +78,7 @@ public class UserAddress {
     ) {
         return UserAddress.builder()
             .addressName(addressName)
-            .isPrimary(isPrimary)
+            .primary(primary)
             .recipientName(recipientName)
             .contactNumber(contactNumber)
             .address1(address1)
@@ -98,7 +101,7 @@ public class UserAddress {
         this.address2 = address2;
     }
 
-    public void setPrimary(boolean isPrimary) {
-        this.isPrimary = isPrimary;
+    public void updatePrimary(boolean primary) {
+        this.primary = primary;
     }
 }

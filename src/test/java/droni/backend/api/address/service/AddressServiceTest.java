@@ -51,7 +51,7 @@ class AddressServiceTest {
         request.setContactNumber("010-0000-0000");
         request.setAddress1("테스트 주소1");
         request.setAddress2("테스트 주소2");
-        request.setPrimary(isPrimary);
+        request.setIsPrimary(isPrimary);
         return request;
     }
 

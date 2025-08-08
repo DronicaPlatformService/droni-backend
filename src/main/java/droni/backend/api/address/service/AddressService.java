@@ -30,7 +30,7 @@ public class AddressService {
         DroniUser user = findUserByPrincipal(userPrincipal);
 
         List<UserAddress> existingAddresses = userAddressRepository.findByUser(user);
-        boolean isNewAddressPrimary = request.isPrimary();
+        boolean isNewAddressPrimary = request.getIsPrimary();
 
         if (existingAddresses.isEmpty()) {
             isNewAddressPrimary = true;
@@ -38,7 +38,7 @@ public class AddressService {
             existingAddresses.stream()
                 .filter(UserAddress::isPrimary)
                 .findFirst()
-                .ifPresent(addr -> addr.setPrimary(false));
+                .ifPresent(addr -> addr.updatePrimary(false));
         } else if (existingAddresses.stream().noneMatch(UserAddress::isPrimary)) {
             isNewAddressPrimary = true;
         }

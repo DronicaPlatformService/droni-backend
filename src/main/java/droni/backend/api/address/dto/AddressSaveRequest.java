@@ -1,6 +1,7 @@
 package droni.backend.api.address.dto;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
@@ -16,7 +17,8 @@ public class AddressSaveRequest {
     @Size(max = 50, message = "주소 이름은 50자 이하여야 합니다.")
     private String addressName;
 
-    private boolean isPrimary;
+    @NotNull(message = "기본 주소 여부는 필수입니다.")
+    private Boolean isPrimary;
 
     @NotBlank(message = "수령인 이름은 필수입니다.")
     @Size(max = 20, message = "수령인 이름은 20자 이하여야 합니다.")

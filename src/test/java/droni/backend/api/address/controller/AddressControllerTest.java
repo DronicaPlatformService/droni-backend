@@ -93,7 +93,7 @@ class AddressControllerTest {
         request.setContactNumber("010-1234-5678");
         request.setAddress1("서울시 강남구");
         request.setAddress2("101호");
-        request.setPrimary(true);
+        request.setIsPrimary(true);
         return request;
     }
 
@@ -120,7 +120,7 @@ class AddressControllerTest {
         // Given
         AddressSaveRequest request = createAddressSaveRequest();
         UserAddress savedAddress = UserAddress.create(
-            request.getAddressName(), request.isPrimary(), request.getRecipientName(),
+            request.getAddressName(), request.getIsPrimary(), request.getRecipientName(),
             request.getContactNumber(), request.getAddress1(), request.getAddress2(), testUser
         );
         setAuditFields(savedAddress, LocalDateTime.now());
