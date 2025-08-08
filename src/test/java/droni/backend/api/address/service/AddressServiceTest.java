@@ -15,8 +15,6 @@ import droni.backend.api.droniuser.entity.DroniUser;
 import droni.backend.api.droniuser.repository.DroniUserRepository;
 import droni.backend.global.exception.DroniNotFoundException;
 import droni.backend.oauth2.service.OAuth2UserPrincipal;
-import java.util.Collections;
-import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -69,7 +67,8 @@ class AddressServiceTest {
         // given
         AddressSaveRequest saveRequest = createSaveRequest(false);
         when(droniUserRepository.findByOauthId(oauthId)).thenReturn(Optional.of(testUser));
-        when(userAddressRepository.findByUser(testUser)).thenReturn(Collections.emptyList());
+        when(userAddressRepository.existsByUser(testUser)).thenReturn(false);
+        when(userAddressRepository.findByUserAndPrimaryTrue(testUser)).thenReturn(Optional.empty());
 
         // when
         addressService.saveAddress(testUserPrincipal, saveRequest);
@@ -96,19 +95,11 @@ class AddressServiceTest {
                         "서울시",
                         "강남구",
                         testUser);
-        UserAddress otherAddress =
-                UserAddress.create(
-                        "other",
-                        false,
-                        "김철수",
-                        "010-3333-4444",
-                        "부산시",
-                        "해운대구",
-                        testUser);
 
         when(droniUserRepository.findByOauthId(oauthId)).thenReturn(Optional.of(testUser));
-        when(userAddressRepository.findByUser(testUser))
-                .thenReturn(List.of(oldPrimaryAddress, otherAddress));
+        when(userAddressRepository.existsByUser(testUser)).thenReturn(true);
+        when(userAddressRepository.findByUserAndPrimaryTrue(testUser))
+                .thenReturn(Optional.of(oldPrimaryAddress));
 
         // when
         addressService.saveAddress(testUserPrincipal, saveRequest);
@@ -120,7 +111,6 @@ class AddressServiceTest {
 
         assertThat(newAddress.isPrimary()).isTrue();
         assertThat(oldPrimaryAddress.isPrimary()).isFalse();
-        assertThat(otherAddress.isPrimary()).isFalse();
     }
 
     @Test
@@ -139,8 +129,9 @@ class AddressServiceTest {
                         testUser);
 
         when(droniUserRepository.findByOauthId(oauthId)).thenReturn(Optional.of(testUser));
-        when(userAddressRepository.findByUser(testUser))
-                .thenReturn(List.of(existingPrimaryAddress));
+        when(userAddressRepository.existsByUser(testUser)).thenReturn(true);
+        when(userAddressRepository.findByUserAndPrimaryTrue(testUser))
+                .thenReturn(Optional.of(existingPrimaryAddress));
 
         // when
         addressService.saveAddress(testUserPrincipal, saveRequest);
@@ -159,19 +150,10 @@ class AddressServiceTest {
     void saveAddress_shouldBecomePrimaryIfNoPrimaryExists() {
         // given
         AddressSaveRequest saveRequest = createSaveRequest(false);
-        UserAddress nonPrimaryAddress =
-                UserAddress.create(
-                        "일반주소",
-                        false,
-                        "김철수",
-                        "010-9876-5432",
-                        "부산시",
-                        "해운대구",
-                        testUser);
-
         when(droniUserRepository.findByOauthId(oauthId)).thenReturn(Optional.of(testUser));
-        when(userAddressRepository.findByUser(testUser))
-                .thenReturn(List.of(nonPrimaryAddress));
+        when(userAddressRepository.existsByUser(testUser)).thenReturn(true);
+        when(userAddressRepository.findByUserAndPrimaryTrue(testUser))
+                .thenReturn(Optional.empty());
 
         // when
         addressService.saveAddress(testUserPrincipal, saveRequest);
@@ -182,7 +164,6 @@ class AddressServiceTest {
         UserAddress newAddress = addressCaptor.getValue();
 
         assertThat(newAddress.isPrimary()).isTrue();
-        assertThat(nonPrimaryAddress.isPrimary()).isFalse();
     }
 
     @Test

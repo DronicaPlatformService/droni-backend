@@ -28,13 +28,21 @@ public class AddressService {
      */
     public UserAddress saveAddress(OAuth2UserPrincipal userPrincipal, AddressSaveRequest request) {
         DroniUser user = findUserByPrincipal(userPrincipal);
-        List<UserAddress> existingAddresses = userAddressRepository.findByUser(user);
 
-        boolean shouldBePrimary = resolvePrimaryFlag(request.getIsPrimary(), existingAddresses);
+        boolean userHasAnyAddress = userAddressRepository.existsByUser(user);
+        boolean hasPrimary = userAddressRepository.findByUserAndPrimaryTrue(user).isPresent();
+
+        boolean shouldBePrimary;
+        if (!userHasAnyAddress) {
+            shouldBePrimary = true;
+        } else if (!hasPrimary) {
+            shouldBePrimary = true;
+        } else {
+            shouldBePrimary = Boolean.TRUE.equals(request.getIsPrimary());
+        }
+
         if (shouldBePrimary) {
-            existingAddresses.stream()
-                .filter(UserAddress::isPrimary)
-                .findFirst()
+            userAddressRepository.findByUserAndPrimaryTrue(user)
                 .ifPresent(addr -> addr.updatePrimary(false));
         }
 
@@ -63,18 +71,5 @@ public class AddressService {
     private DroniUser findUserByPrincipal(OAuth2UserPrincipal userPrincipal) {
         return droniUserRepository.findByOauthId(userPrincipal.getOAuth2Id())
             .orElseThrow(() -> new DroniNotFoundException(HttpStatus.NOT_FOUND, "유저를 찾을 수 없습니다."));
-    }
-
-    private boolean resolvePrimaryFlag(boolean requestedPrimary, List<UserAddress> existingAddresses) {
-        if (existingAddresses.isEmpty()) {
-            return true;
-        }
-
-        boolean hasPrimary = existingAddresses.stream().anyMatch(UserAddress::isPrimary);
-        if (!hasPrimary) {
-            return true;
-        }
-
-        return requestedPrimary;
     }
 }

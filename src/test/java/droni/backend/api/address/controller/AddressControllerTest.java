@@ -24,13 +24,11 @@ import org.springframework.http.MediaType;
 import org.springframework.security.authentication.TestingAuthenticationToken;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.authentication;
@@ -113,9 +111,6 @@ class AddressControllerTest {
             request.getAddressName(), request.getIsPrimary(), request.getRecipientName(),
             request.getContactNumber(), request.getAddress1(), request.getAddress2(), testUser
         );
-        LocalDateTime now = LocalDateTime.now();
-        doReturn(now).when(savedAddress).getCreatedAt();
-        doReturn(now).when(savedAddress).getUpdatedAt();
 
         when(addressService.saveAddress(any(OAuth2UserPrincipal.class), any(AddressSaveRequest.class)))
             .thenReturn(savedAddress);
@@ -162,13 +157,8 @@ class AddressControllerTest {
     @DisplayName("GET /api/v1/addresses - 주소지 목록 조회 성공")
     void getUserAddresses_success() throws Exception {
         // Given
-        LocalDateTime now = LocalDateTime.now();
         UserAddress address1 = UserAddress.create("집", true, "홍길동", "010-1111-2222", "서울시 강남구", "101호", testUser);
         UserAddress address2 = UserAddress.create("회사", false, "홍길동", "010-3333-4444", "서울시 서초구", "202호", testUser);
-        doReturn(now).when(address1).getCreatedAt();
-        doReturn(now).when(address1).getUpdatedAt();
-        doReturn(now).when(address2).getCreatedAt();
-        doReturn(now).when(address2).getUpdatedAt();
 
         when(addressService.getUserAddresses(any(OAuth2UserPrincipal.class)))
             .thenReturn(List.of(address1, address2));
