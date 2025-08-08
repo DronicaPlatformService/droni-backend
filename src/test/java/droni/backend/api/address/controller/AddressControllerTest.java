@@ -25,17 +25,20 @@ import org.springframework.security.authentication.TestingAuthenticationToken;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.LocalDateTime;
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.authentication;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.authentication;
 
 @WebMvcTest(
     controllers = AddressController.class,
@@ -101,19 +104,6 @@ class AddressControllerTest {
         return new TestingAuthenticationToken(testPrincipal, null, "ROLE_USER");
     }
 
-    private void setAuditFields(UserAddress address, LocalDateTime time) {
-        try {
-            var createdAtField = UserAddress.class.getDeclaredField("createdAt");
-            createdAtField.setAccessible(true);
-            createdAtField.set(address, time);
-            var updatedAtField = UserAddress.class.getDeclaredField("updatedAt");
-            updatedAtField.setAccessible(true);
-            updatedAtField.set(address, time);
-        } catch (NoSuchFieldException | IllegalAccessException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
     @Test
     @DisplayName("POST /api/v1/addresses - 주소지 생성 성공")
     void saveAddress_success() throws Exception {
@@ -123,7 +113,9 @@ class AddressControllerTest {
             request.getAddressName(), request.getIsPrimary(), request.getRecipientName(),
             request.getContactNumber(), request.getAddress1(), request.getAddress2(), testUser
         );
-        setAuditFields(savedAddress, LocalDateTime.now());
+        LocalDateTime now = LocalDateTime.now();
+        doReturn(now).when(savedAddress).getCreatedAt();
+        doReturn(now).when(savedAddress).getUpdatedAt();
 
         when(addressService.saveAddress(any(OAuth2UserPrincipal.class), any(AddressSaveRequest.class)))
             .thenReturn(savedAddress);
@@ -170,13 +162,16 @@ class AddressControllerTest {
     @DisplayName("GET /api/v1/addresses - 주소지 목록 조회 성공")
     void getUserAddresses_success() throws Exception {
         // Given
+        LocalDateTime now = LocalDateTime.now();
         UserAddress address1 = UserAddress.create("집", true, "홍길동", "010-1111-2222", "서울시 강남구", "101호", testUser);
         UserAddress address2 = UserAddress.create("회사", false, "홍길동", "010-3333-4444", "서울시 서초구", "202호", testUser);
-        setAuditFields(address1, LocalDateTime.now());
-        setAuditFields(address2, LocalDateTime.now());
+        doReturn(now).when(address1).getCreatedAt();
+        doReturn(now).when(address1).getUpdatedAt();
+        doReturn(now).when(address2).getCreatedAt();
+        doReturn(now).when(address2).getUpdatedAt();
 
         when(addressService.getUserAddresses(any(OAuth2UserPrincipal.class)))
-            .thenReturn(java.util.List.of(address1, address2));
+            .thenReturn(List.of(address1, address2));
 
         TestingAuthenticationToken authentication = createAuthToken();
 
@@ -197,7 +192,7 @@ class AddressControllerTest {
     void getUserAddresses_emptyList() throws Exception {
         // Given
         when(addressService.getUserAddresses(any(OAuth2UserPrincipal.class)))
-            .thenReturn(java.util.Collections.emptyList());
+            .thenReturn(Collections.emptyList());
 
         TestingAuthenticationToken authentication = createAuthToken();
 
