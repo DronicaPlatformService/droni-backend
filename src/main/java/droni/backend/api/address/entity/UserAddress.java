@@ -45,26 +45,6 @@ public class UserAddress {
     @LastModifiedDate
     private LocalDateTime updatedAt;
 
-    public UserAddress(
-        Long addressId,
-        String addressName,
-        boolean isPrimary,
-        String recipientName,
-        String contactNumber,
-        String address1,
-        String address2,
-        DroniUser user
-    ) {
-        this.addressId = addressId;
-        this.addressName = addressName;
-        this.isPrimary = isPrimary;
-        this.recipientName = recipientName;
-        this.contactNumber = contactNumber;
-        this.address1 = address1;
-        this.address2 = address2;
-        this.user = user;
-    }
-
     @Builder(access = AccessLevel.PRIVATE)
     public UserAddress(
         String addressName,
